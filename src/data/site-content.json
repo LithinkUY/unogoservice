@@ -1,0 +1,168 @@
+{
+  "company": {
+    "name": "Hassle Free Home Services",
+    "phone": "(866) 88-HASSLE",
+    "phoneHref": "tel:8668842775",
+    "emergency": "24/7 Emergency Dispatch",
+    "tagline": "Your home, handled.",
+    "location": "Serving MD, DC, VA, CT, GA, FL, IL & MA",
+    "footerBlurb": "Founded in 2003, Hassle Free Home Services is the premier residential preventative maintenance and home concierge management company in the United States. Your home, handled."
+  },
+  "home": {
+    "hero": {
+      "eyebrow": "Proactive Home Care",
+      "title": "Your Home, Handled.",
+      "subtitle": "Proactive seasonal maintenance, routine handyman repairs, and full-service project management. One dedicated, background-checked W-2 technician. Zero contractor headaches.",
+      "primaryCta": "Schedule Complimentary Walkthrough",
+      "secondaryCta": "Calculate Your Plan",
+      "zipPlaceholder": "Enter your zip code (e.g. 20854, 22101, 06880)"
+    }
+  },
+  "gallery": [
+    {
+      "id": "g1",
+      "title": "Modern Exterior Refresh",
+      "category": "Exterior",
+      "description": "Lighting upgrades and trim restoration around a premium family home.",
+      "image": "https://images.unsplash.com/photo-1600585154340-be6161a56a0c?auto=format&fit=crop&w=900&q=80"
+    },
+    {
+      "id": "g2",
+      "title": "Indoor Comfort Upgrade",
+      "category": "HVAC",
+      "description": "Seasonal system checks and filter replacement for better airflow and efficiency.",
+      "image": "https://images.unsplash.com/photo-1505693416388-ac5ce068fe85?auto=format&fit=crop&w=900&q=80"
+    },
+    {
+      "id": "g3",
+      "title": "Kitchen & Bath Detail Work",
+      "category": "Handyman",
+      "description": "Caulking, fixture updates, and quick repairs completed during a scheduled visit.",
+      "image": "https://images.unsplash.com/photo-1484154218962-a197022b5858?auto=format&fit=crop&w=900&q=80"
+    },
+    {
+      "id": "g4",
+      "title": "Estate Maintenance",
+      "category": "Concierge",
+      "description": "Ongoing management for a luxury home across recurring seasonal checklists.",
+      "image": "https://images.unsplash.com/photo-1494526585095-c41746248156?auto=format&fit=crop&w=900&q=80"
+    }
+  ],
+  "pages": {
+    "services": {
+      "id": "services",
+      "title": "Our Services",
+      "subtitle": "Preventative care and project support designed for busy households.",
+      "intro": "We help homeowners stay ahead of maintenance issues through recurring visits, expert repairs, and hands-on project management.",
+      "sections": [
+        {
+          "id": "s1",
+          "title": "Preventative Maintenance",
+          "body": "Recurring home inspections keep systems tuned, surfaces protected, and small concerns from turning into costly faults."
+        },
+        {
+          "id": "s2",
+          "title": "Repairs & Handyman Tasks",
+          "body": "From installing fixtures to re-caulking bathrooms and fixing sticking doors, our team handles the tasks that pile up between weekends."
+        },
+        {
+          "id": "s3",
+          "title": "Project Coordination",
+          "body": "We coordinate vetted subcontractors, supervise work, and keep quality standards high from start to finish."
+        }
+      ]
+    },
+    "story": {
+      "id": "story",
+      "title": "Our Story",
+      "subtitle": "A local company built around trust, care, and doing things properly.",
+      "intro": "Hassle Free began with a simple idea: homeowners deserve a reliable partner to proactively maintain and improve their homes without the stress of managing contractors.",
+      "sections": [
+        {
+          "id": "st1",
+          "title": "Founded in 2003",
+          "body": "What started as a focused home services company has grown into a trusted team serving families across multiple regions."
+        },
+        {
+          "id": "st2",
+          "title": "Built on Long-Term Relationships",
+          "body": "We prioritize consistency, communication, and a technician-first experience that homeowners can rely on year after year."
+        },
+        {
+          "id": "st3",
+          "title": "Our Mission",
+          "body": "To make homeownership feel easier by creating a proactive maintenance system that protects value and peace of mind."
+        }
+      ]
+    },
+    "locations": {
+      "id": "locations",
+      "title": "Locations",
+      "subtitle": "Regional service hubs with dedicated local field teams.",
+      "intro": "We serve homeowners across major metropolitan areas with local dispatch teams that understand the specific needs of each region.",
+      "sections": [
+        {
+          "id": "l1",
+          "title": "Maryland",
+          "body": "Serving Bethesda, Potomac, Rockville, Silver Spring and surrounding communities."
+        },
+        {
+          "id": "l2",
+          "title": "Virginia",
+          "body": "Coverage across McLean, Great Falls, Vienna, Arlington, Alexandria and more."
+        },
+        {
+          "id": "l3",
+          "title": "Connecticut & Georgia",
+          "body": "Local support for Fairfield County, Metro Atlanta and nearby areas."
+        }
+      ]
+    },
+    "faq": {
+      "id": "faq",
+      "title": "FAQs",
+      "subtitle": "Helpful answers for members and new homeowners.",
+      "intro": "From technician expectations to membership details, these answers help you understand how our service works and what to expect.",
+      "sections": [
+        {
+          "id": "f1",
+          "title": "Who performs the work?",
+          "body": "All routine maintenance and handyman tasks are completed by our full-time, W-2 employed, background-checked technicians."
+        },
+        {
+          "id": "f2",
+          "title": "Is there a contract?",
+          "body": "Memberships are simple month-to-month plans designed to provide flexibility without long-term lock-in."
+        },
+        {
+          "id": "f3",
+          "title": "What if there is an emergency?",
+          "body": "Members have access to 24/7 emergency support to help prevent damage and keep homes protected."
+        }
+      ]
+    },
+    "careers": {
+      "id": "careers",
+      "title": "Careers",
+      "subtitle": "Join the team that helps homeowners feel supported every day.",
+      "intro": "We seek dependable, service-minded professionals who care about doing quality work and delivering a great customer experience.",
+      "sections": [
+        {
+          "id": "c1",
+          "title": "Why Join Us?",
+          "body": "We invest in dependable team members, clear expectations, and a culture built on professionalism."
+        },
+        {
+          "id": "c2",
+          "title": "What We Look For",
+          "body": "Strong communication, craftsmanship, reliability, and a willingness to solve problems proactively."
+        },
+        {
+          "id": "c3",
+          "title": "How to Apply",
+          "body": "Reach out through our contact and scheduling process to start a conversation about joining the team."
+        }
+      ]
+    }
+  }
+}
