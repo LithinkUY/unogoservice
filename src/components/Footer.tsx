@@ -43,8 +43,17 @@ export const Footer: React.FC<FooterProps> = ({
     }, 4000);
   };
 
+  const footerBg = footerData.footerBgColor || footerData.bgColor || '#0b1c2d';
+  const footerText = footerData.footerTextColor || footerData.textColor;
+
   return (
-    <footer className="bg-[#0b1c2d] text-slate-300 pt-16 pb-12 border-t border-slate-800">
+    <footer 
+      className="pt-16 pb-12 border-t border-slate-800"
+      style={{
+        backgroundColor: footerBg,
+        color: footerText || undefined
+      }}
+    >
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
 
         {/* Top Callout Box: Seasonal Checklist Download */}
@@ -119,7 +128,7 @@ export const Footer: React.FC<FooterProps> = ({
             </div>
 
             <p className="text-xs text-slate-400 leading-relaxed max-w-sm">
-              {footerData.brandDescription || footerData.aboutText || 'Founded in 2003, Premier Home Services is the premier residential preventative maintenance and home concierge management company in the United States. Your home, handled.'}
+              {footerData.description || footerData.brandDescription || footerData.aboutText || 'Founded in 2003, Premier Home Services is the premier residential preventative maintenance and home concierge management company in the United States. Your home, handled.'}
             </p>
 
             <div className="space-y-2 pt-2 text-xs">

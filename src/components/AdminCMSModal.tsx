@@ -103,6 +103,7 @@ export const AdminCMSModal: React.FC<AdminCMSModalProps> = ({ isOpen, onClose, p
     updateAdminCredentials,
     updateFooter,
     updateFaqs,
+    updateServiceAreas,
     addPage,
     updatePage,
     deletePage,
@@ -2007,71 +2008,192 @@ export const AdminCMSModal: React.FC<AdminCMSModalProps> = ({ isOpen, onClose, p
 
                 {/* Section Titles Editor */}
                 <div className="bg-white p-5 rounded-2xl border border-slate-200 shadow-2xs space-y-4">
-                  <span className="text-xs font-bold text-slate-900 block border-b pb-2">Títulos de Otras Secciones</span>
+                  <span className="text-xs font-bold text-slate-900 block border-b pb-2">Títulos y Textos de Otras Secciones</span>
 
                   <div className="space-y-3">
+
+                    {/* Sección: La Diferencia */}
                     <div className="p-3 bg-slate-50 rounded-xl border border-slate-200 space-y-2">
-                      <span className="text-[11px] font-bold text-slate-800 block">Sección: La Diferencia Premier Home Services</span>
-                      <input
-                        type="text"
-                        value={config.content.difference.title}
-                        onChange={(e) => updateContent({
-                          difference: { ...config.content.difference, title: e.target.value }
-                        })}
-                        className="w-full p-2 text-xs rounded-lg border border-slate-300 bg-white font-bold"
-                      />
-                      <input
-                        type="text"
-                        value={config.content.difference.subtitle}
-                        onChange={(e) => updateContent({
-                          difference: { ...config.content.difference, subtitle: e.target.value }
-                        })}
-                        className="w-full p-2 text-xs rounded-lg border border-slate-300 bg-white text-slate-600"
-                      />
+                      <span className="text-[11px] font-bold text-slate-800 block">🔄 Sección: La Diferencia Premier Home Services</span>
+                      <div>
+                        <label className="text-[10px] text-slate-500">Badge Superior</label>
+                        <input type="text" value={config.content.difference.badge || ''} onChange={(e) => updateContent({ difference: { ...config.content.difference, badge: e.target.value } })} className="w-full p-2 text-xs rounded-lg border border-slate-300 bg-white" />
+                      </div>
+                      <div>
+                        <label className="text-[10px] text-slate-500">Título Principal</label>
+                        <input type="text" value={config.content.difference.title} onChange={(e) => updateContent({ difference: { ...config.content.difference, title: e.target.value } })} className="w-full p-2 text-xs rounded-lg border border-slate-300 bg-white font-bold" />
+                      </div>
+                      <div>
+                        <label className="text-[10px] text-slate-500">Título Resaltado (color verde)</label>
+                        <input type="text" value={(config.content.difference as any).titleHighlight || ''} onChange={(e) => updateContent({ difference: { ...config.content.difference, titleHighlight: e.target.value } as any })} className="w-full p-2 text-xs rounded-lg border border-slate-300 bg-white text-emerald-700 font-bold" />
+                      </div>
+                      <div>
+                        <label className="text-[10px] text-slate-500">Subtítulo</label>
+                        <input type="text" value={config.content.difference.subtitle} onChange={(e) => updateContent({ difference: { ...config.content.difference, subtitle: e.target.value } })} className="w-full p-2 text-xs rounded-lg border border-slate-300 bg-white text-slate-600" />
+                      </div>
+                      {config.content.difference.items?.length > 0 && (
+                        <div className="pt-2 border-t border-slate-200 space-y-3">
+                          <label className="text-[10px] text-slate-500 block font-bold uppercase">Items de Comparación (La Diferencia)</label>
+                          {config.content.difference.items.map((item: any, idx: number) => (
+                            <div key={idx} className="bg-white p-3 rounded-lg border border-slate-200 space-y-2">
+                              <label className="text-[10px] font-bold text-slate-500 block">Item #{idx + 1}</label>
+                              <div>
+                                <label className="text-[10px] text-rose-500">❌ El problema (izquierda):</label>
+                                <textarea rows={2} value={item.traditional || ''} onChange={(e) => {
+                                  const items = [...config.content.difference.items];
+                                  items[idx] = { ...items[idx], traditional: e.target.value };
+                                  updateContent({ difference: { ...config.content.difference, items } });
+                                }} className="w-full p-2 text-xs rounded-lg border border-slate-300 bg-white" />
+                              </div>
+                              <div>
+                                <label className="text-[10px] text-emerald-600">✅ La solución Premier (derecha):</label>
+                                <textarea rows={2} value={item.premierCare || item.serviceSolution || ''} onChange={(e) => {
+                                  const items = [...config.content.difference.items];
+                                  items[idx] = { ...items[idx], premierCare: e.target.value, serviceSolution: e.target.value };
+                                  updateContent({ difference: { ...config.content.difference, items } });
+                                }} className="w-full p-2 text-xs rounded-lg border border-slate-300 bg-white" />
+                              </div>
+                            </div>
+                          ))}
+                        </div>
+                      )}
                     </div>
 
+                    {/* Sección: 3 Pilares */}
                     <div className="p-3 bg-slate-50 rounded-xl border border-slate-200 space-y-2">
-                      <span className="text-[11px] font-bold text-slate-800 block">Sección: Los 3 Pilares del Hogar</span>
-                      <input
-                        type="text"
-                        value={config.content.threePillars.title}
-                        onChange={(e) => updateContent({
-                          threePillars: { ...config.content.threePillars, title: e.target.value }
-                        })}
-                        className="w-full p-2 text-xs rounded-lg border border-slate-300 bg-white font-bold"
-                      />
+                      <span className="text-[11px] font-bold text-slate-800 block">🏛️ Sección: Los 3 Pilares del Hogar</span>
+                      <div>
+                        <label className="text-[10px] text-slate-500">Título</label>
+                        <input type="text" value={config.content.threePillars.title} onChange={(e) => updateContent({ threePillars: { ...config.content.threePillars, title: e.target.value } })} className="w-full p-2 text-xs rounded-lg border border-slate-300 bg-white font-bold" />
+                      </div>
+                      <div>
+                        <label className="text-[10px] text-slate-500">Subtítulo</label>
+                        <input type="text" value={(config.content.threePillars as any).subtitle || ''} onChange={(e) => updateContent({ threePillars: { ...config.content.threePillars, subtitle: e.target.value } as any })} className="w-full p-2 text-xs rounded-lg border border-slate-300 bg-white" />
+                      </div>
+                      {(config.content.threePillars as any).pillars?.map((pillar: any, idx: number) => (
+                        <div key={idx} className="bg-white p-3 rounded-lg border border-slate-200 space-y-2">
+                          <label className="text-[10px] font-bold text-slate-500">Pilar #{idx + 1}</label>
+                          <input type="text" value={pillar.title || ''} onChange={(e) => {
+                            const pillars = [...(config.content.threePillars as any).pillars];
+                            pillars[idx] = { ...pillars[idx], title: e.target.value };
+                            updateContent({ threePillars: { ...(config.content.threePillars as any), pillars } });
+                          }} placeholder="Título del pilar" className="w-full p-2 text-xs rounded-lg border border-slate-300 bg-white font-bold" />
+                          <textarea rows={2} value={pillar.description || ''} onChange={(e) => {
+                            const pillars = [...(config.content.threePillars as any).pillars];
+                            pillars[idx] = { ...pillars[idx], description: e.target.value };
+                            updateContent({ threePillars: { ...(config.content.threePillars as any), pillars } });
+                          }} placeholder="Descripción" className="w-full p-2 text-xs rounded-lg border border-slate-300 bg-white" />
+                        </div>
+                      ))}
                     </div>
 
+                    {/* Sección: Cómo Funciona */}
                     <div className="p-3 bg-slate-50 rounded-xl border border-slate-200 space-y-2">
-                      <span className="text-[11px] font-bold text-slate-800 block">Sección: Cómo Funciona (Textos)</span>
-                      <input
-                        type="text"
-                        value={config.content.howItWorks.title}
-                        onChange={(e) => updateContent({
-                          howItWorks: { ...config.content.howItWorks, title: e.target.value }
-                        })}
-                        placeholder="Título"
-                        className="w-full p-2 text-xs rounded-lg border border-slate-300 bg-white font-bold"
-                      />
-                      <input
-                        type="text"
-                        value={config.content.howItWorks.ctaTitle || ''}
-                        onChange={(e) => updateContent({
-                          howItWorks: { ...config.content.howItWorks, ctaTitle: e.target.value }
-                        })}
-                        placeholder="CTA Título"
-                        className="w-full p-2 text-xs rounded-lg border border-slate-300 bg-white"
-                      />
-                      <input
-                        type="text"
-                        value={config.content.howItWorks.ctaButtonText || ''}
-                        onChange={(e) => updateContent({
-                          howItWorks: { ...config.content.howItWorks, ctaButtonText: e.target.value }
-                        })}
-                        placeholder="CTA Texto Botón"
-                        className="w-full p-2 text-xs rounded-lg border border-slate-300 bg-white"
-                      />
+                      <span className="text-[11px] font-bold text-slate-800 block">⚙️ Sección: Cómo Funciona (4 Pasos)</span>
+                      <div>
+                        <label className="text-[10px] text-slate-500">Título</label>
+                        <input type="text" value={config.content.howItWorks.title} onChange={(e) => updateContent({ howItWorks: { ...config.content.howItWorks, title: e.target.value } })} className="w-full p-2 text-xs rounded-lg border border-slate-300 bg-white font-bold" />
+                      </div>
+                      <div>
+                        <label className="text-[10px] text-slate-500">Subtítulo</label>
+                        <input type="text" value={(config.content.howItWorks as any).subtitle || ''} onChange={(e) => updateContent({ howItWorks: { ...config.content.howItWorks, subtitle: e.target.value } as any })} className="w-full p-2 text-xs rounded-lg border border-slate-300 bg-white" />
+                      </div>
+                      {config.content.howItWorks.steps?.map((step: any, idx: number) => (
+                        <div key={idx} className="bg-white p-3 rounded-lg border border-slate-200 space-y-2">
+                          <label className="text-[10px] font-bold text-slate-500">Paso {step.step}</label>
+                          <input type="text" value={step.title || ''} onChange={(e) => {
+                            const steps = [...config.content.howItWorks.steps];
+                            steps[idx] = { ...steps[idx], title: e.target.value };
+                            updateContent({ howItWorks: { ...config.content.howItWorks, steps } });
+                          }} placeholder="Título del paso" className="w-full p-2 text-xs rounded-lg border border-slate-300 bg-white font-bold" />
+                          <textarea rows={2} value={step.description || ''} onChange={(e) => {
+                            const steps = [...config.content.howItWorks.steps];
+                            steps[idx] = { ...steps[idx], description: e.target.value };
+                            updateContent({ howItWorks: { ...config.content.howItWorks, steps } });
+                          }} placeholder="Descripción" className="w-full p-2 text-xs rounded-lg border border-slate-300 bg-white" />
+                        </div>
+                      ))}
+                      <div>
+                        <label className="text-[10px] text-slate-500">CTA Título inferior</label>
+                        <input type="text" value={config.content.howItWorks.ctaTitle || ''} onChange={(e) => updateContent({ howItWorks: { ...config.content.howItWorks, ctaTitle: e.target.value } })} className="w-full p-2 text-xs rounded-lg border border-slate-300 bg-white" />
+                      </div>
+                      <div>
+                        <label className="text-[10px] text-slate-500">CTA Texto del Botón</label>
+                        <input type="text" value={config.content.howItWorks.ctaButtonText || ''} onChange={(e) => updateContent({ howItWorks: { ...config.content.howItWorks, ctaButtonText: e.target.value } })} className="w-full p-2 text-xs rounded-lg border border-slate-300 bg-white" />
+                      </div>
                     </div>
+
+                    {/* Sección: Precios */}
+                    <div className="p-3 bg-slate-50 rounded-xl border border-slate-200 space-y-2">
+                      <span className="text-[11px] font-bold text-slate-800 block">💰 Sección: Planes y Precios</span>
+                      <div>
+                        <label className="text-[10px] text-slate-500">Badge</label>
+                        <input type="text" value={(config.content as any).pricing?.badge || ''} onChange={(e) => updateContent({ pricing: { ...(config.content as any).pricing, badge: e.target.value } } as any)} className="w-full p-2 text-xs rounded-lg border border-slate-300 bg-white" />
+                      </div>
+                      <div>
+                        <label className="text-[10px] text-slate-500">Título</label>
+                        <input type="text" value={(config.content as any).pricing?.title || ''} onChange={(e) => updateContent({ pricing: { ...(config.content as any).pricing, title: e.target.value } } as any)} className="w-full p-2 text-xs rounded-lg border border-slate-300 bg-white font-bold" />
+                      </div>
+                      <div>
+                        <label className="text-[10px] text-slate-500">Subtítulo</label>
+                        <textarea rows={2} value={(config.content as any).pricing?.subtitle || ''} onChange={(e) => updateContent({ pricing: { ...(config.content as any).pricing, subtitle: e.target.value } } as any)} className="w-full p-2 text-xs rounded-lg border border-slate-300 bg-white" />
+                      </div>
+                    </div>
+
+                    {/* Sección: Áreas de Servicio */}
+                    <div className="p-3 bg-slate-50 rounded-xl border border-slate-200 space-y-2">
+                      <span className="text-[11px] font-bold text-slate-800 block">📍 Sección: Áreas de Servicio</span>
+                      <div>
+                        <label className="text-[10px] text-slate-500">Título</label>
+                        <input type="text" value={(config.content.serviceAreas as any)?.title || ''} onChange={(e) => updateContent({ serviceAreas: { ...(config.content.serviceAreas as any), title: e.target.value } } as any)} className="w-full p-2 text-xs rounded-lg border border-slate-300 bg-white font-bold" />
+                      </div>
+                      <div>
+                        <label className="text-[10px] text-slate-500">Subtítulo</label>
+                        <input type="text" value={(config.content.serviceAreas as any)?.subtitle || ''} onChange={(e) => updateContent({ serviceAreas: { ...(config.content.serviceAreas as any), subtitle: e.target.value } } as any)} className="w-full p-2 text-xs rounded-lg border border-slate-300 bg-white" />
+                      </div>
+                      <div className="pt-2 border-t border-slate-200">
+                        <label className="text-[10px] font-bold text-slate-500 block mb-2 uppercase">Regiones / Hubs (Editar Nombre, Teléfono y Ciudades)</label>
+                        {config.serviceAreas?.map((area: any, aIdx: number) => (
+                          <div key={aIdx} className="bg-white p-3 rounded-lg border border-slate-200 space-y-2 mb-2">
+                            <div className="flex gap-2">
+                              <div className="flex-1">
+                                <label className="text-[10px] text-slate-500">Estado/Hub</label>
+                                <input type="text" value={area.state || ''} onChange={(e) => {
+                                  const arr = [...config.serviceAreas];
+                                  arr[aIdx] = { ...arr[aIdx], state: e.target.value };
+                                  updateServiceAreas(arr);
+                                }} className="w-full p-1.5 text-xs rounded-lg border border-slate-300 bg-white" />
+                              </div>
+                              <div className="flex-1">
+                                <label className="text-[10px] text-slate-500">Teléfono</label>
+                                <input type="text" value={area.phone || ''} onChange={(e) => {
+                                  const arr = [...config.serviceAreas];
+                                  arr[aIdx] = { ...arr[aIdx], phone: e.target.value };
+                                  updateServiceAreas(arr);
+                                }} className="w-full p-1.5 text-xs rounded-lg border border-slate-300 bg-white" />
+                              </div>
+                            </div>
+                            <div>
+                              <label className="text-[10px] text-slate-500">Nombre del Hub</label>
+                              <input type="text" value={area.name || ''} onChange={(e) => {
+                                const arr = [...config.serviceAreas];
+                                arr[aIdx] = { ...arr[aIdx], name: e.target.value };
+                                updateServiceAreas(arr);
+                              }} className="w-full p-1.5 text-xs rounded-lg border border-slate-300 bg-white font-bold" />
+                            </div>
+                            <div>
+                              <label className="text-[10px] text-slate-500">Dirección de la Oficina</label>
+                              <input type="text" value={area.officeAddress || ''} onChange={(e) => {
+                                const arr = [...config.serviceAreas];
+                                arr[aIdx] = { ...arr[aIdx], officeAddress: e.target.value };
+                                updateServiceAreas(arr);
+                              }} className="w-full p-1.5 text-xs rounded-lg border border-slate-300 bg-white" />
+                            </div>
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+
                   </div>
                 </div>
 

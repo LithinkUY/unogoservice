@@ -247,11 +247,14 @@ export interface FooterConfig {
   copyrightText: string;
   companyName: string;
   establishedYear: string;
-  quickLinks: Array<{ label: string; sectionId: string; enabled: boolean; pageSlug?: string; href?: string }>;
-  serviceRegions: Array<{ label: string; enabled: boolean }>;
-  trustLinks: Array<{ label: string; type: 'link' | 'text'; action?: string; enabled: boolean }>;
+  quickLinks: Array<{ id?: string; label: string; sectionId?: string; enabled?: boolean; pageSlug?: string; href?: string; url?: string }>;
+  serviceRegions: Array<{ id?: string; name?: string; label?: string; enabled?: boolean }>;
+  trustLinks: Array<{ id?: string; label: string; type?: 'link' | 'text'; action?: string; enabled?: boolean; url?: string }>;
   footerBgColor?: string;
   footerTextColor?: string;
+  bgColor?: string;
+  textColor?: string;
+  description?: string;
   showNewsletter?: boolean;
   showRatingBadge?: boolean;
   licenseNumbers?: Array<{ label: string; enabled: boolean }>;
