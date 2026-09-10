@@ -483,6 +483,8 @@ export const DEFAULT_CMS_CONFIG: SiteCMSConfig = {
   gallery: DEFAULT_GALLERY_ITEMS,
   appointments: DEFAULT_APPOINTMENTS,
   clients: DEFAULT_CLIENTS,
+  adminUsername: 'admin',
+  adminPassword: 'admin',
   footer: {
     newsletterTitle: 'Get Our Seasonal Home Care Guide',
     newsletterSubtitle: 'Discover the exact 50 checkpoints our master technicians inspect every quarter to protect home value and prevent expensive emergencies.',

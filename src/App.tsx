@@ -18,10 +18,8 @@ import { AdminCMSModal } from './components/AdminCMSModal';
 import { Phone, Calendar, CheckCircle2 } from 'lucide-react';
 import { PageSection } from './types';
 
-const ADMIN_USERNAME = 'admin';
-const ADMIN_PASSWORD = 'admin';
-
 function AdminPage({ onBackToSite }: { onBackToSite: () => void }) {
+  const { config } = useCms();
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
@@ -33,7 +31,10 @@ function AdminPage({ onBackToSite }: { onBackToSite: () => void }) {
   const handleLogin = (event: React.FormEvent) => {
     event.preventDefault();
 
-    if (username === ADMIN_USERNAME && password === ADMIN_PASSWORD) {
+    const adminUsername = config.adminUsername?.trim() || 'admin';
+    const adminPassword = config.adminPassword?.trim() || 'admin';
+
+    if (username === adminUsername && password === adminPassword) {
       setError('');
       setAuthenticated(true);
       if (typeof window !== 'undefined') {

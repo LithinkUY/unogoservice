@@ -92,6 +92,7 @@ export const AdminCMSModal: React.FC<AdminCMSModalProps> = ({ isOpen, onClose, p
     addClient,
     updateClient,
     deleteClient,
+    updateAdminCredentials,
     updateFooter,
     saveAndNotify,
     resetToDefaults,
@@ -1554,6 +1555,34 @@ export const AdminCMSModal: React.FC<AdminCMSModalProps> = ({ isOpen, onClose, p
                         </div>
                       </div>
                     ))}
+                  </div>
+                </div>
+
+                <div className="bg-white p-5 rounded-2xl border border-slate-200 shadow-2xs space-y-4">
+                  <span className="text-xs font-bold text-slate-900 block">Credenciales de Acceso del Administrador</span>
+                  <p className="text-[11px] text-slate-500">Cambia el usuario y la contraseña usados para entrar al panel admin del sitio.</p>
+
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                    <div className="p-3 bg-slate-50 rounded-xl border border-slate-200 space-y-2">
+                      <label className="text-xs font-bold text-slate-800 block">Nombre de usuario</label>
+                      <input
+                        type="text"
+                        value={config.adminUsername}
+                        onChange={(e) => updateAdminCredentials({ adminUsername: e.target.value })}
+                        className="w-full p-2 text-xs rounded-lg border border-slate-300 bg-white"
+                        placeholder="admin"
+                      />
+                    </div>
+                    <div className="p-3 bg-slate-50 rounded-xl border border-slate-200 space-y-2">
+                      <label className="text-xs font-bold text-slate-800 block">Contraseña</label>
+                      <input
+                        type="text"
+                        value={config.adminPassword}
+                        onChange={(e) => updateAdminCredentials({ adminPassword: e.target.value })}
+                        className="w-full p-2 text-xs rounded-lg border border-slate-300 bg-white"
+                        placeholder="admin"
+                      />
+                    </div>
                   </div>
                 </div>
 

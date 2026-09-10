@@ -48,6 +48,7 @@ interface CmsContextType {
   addClient: (client: Omit<ClientRecord, 'id' | 'createdAt'>) => void;
   updateClient: (id: string, updates: Partial<ClientRecord>) => void;
   deleteClient: (id: string) => void;
+  updateAdminCredentials: (credentials: { adminUsername?: string; adminPassword?: string }) => void;
   updateFooter: (footer: Partial<FooterConfig>) => void;
   saveFullConfig: (newConfig: SiteCMSConfig) => void;
   saveAndNotify: (sectionLabel?: string) => void;
@@ -321,6 +322,14 @@ export const CmsProvider: React.FC<{ children: React.ReactNode }> = ({ children 
     }));
   };
 
+  const updateAdminCredentials = (credentials: { adminUsername?: string; adminPassword?: string }) => {
+    setConfig(prev => ({
+      ...prev,
+      adminUsername: credentials.adminUsername ?? prev.adminUsername,
+      adminPassword: credentials.adminPassword ?? prev.adminPassword
+    }));
+  };
+
   const updateFooter = (newFooter: Partial<FooterConfig>) => {
     setConfig(prev => ({
       ...prev,
@@ -391,6 +400,7 @@ export const CmsProvider: React.FC<{ children: React.ReactNode }> = ({ children 
         addClient,
         updateClient,
         deleteClient,
+        updateAdminCredentials,
         updateFooter,
         saveFullConfig,
         saveAndNotify,

@@ -338,6 +338,8 @@ export interface SiteCMSConfig {
   gallery: GalleryItem[];
   appointments: Appointment[];
   clients: ClientRecord[];
+  adminUsername: string;
+  adminPassword: string;
   footer: FooterConfig;
 }
 
