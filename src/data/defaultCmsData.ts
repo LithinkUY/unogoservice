@@ -1,4 +1,4 @@
-import { SiteCMSConfig, GalleryItem, Appointment, ClientRecord, PageSection } from '../types';
+import { SiteCMSConfig, GalleryItem, Appointment, ClientRecord, PageSection, ScheduleModalConfig } from '../types';
 import {
   CHECKLIST_ITEMS,
   PRICING_PLANS,
@@ -223,6 +223,73 @@ export const DEFAULT_CLIENTS: ClientRecord[] = [
   }
 ];
 
+export const DEFAULT_SCHEDULE_MODAL_CONFIG: ScheduleModalConfig = {
+  badge: 'Complimentary & No-Obligation',
+  title: 'Schedule Your Home Walkthrough',
+  subtitle: 'A Senior Home Manager conducts an in-depth, room-by-room audit of your appliances, HVAC systems, plumbing shutoffs, and exterior.',
+  step1Title: 'Where is your home located?',
+  step1Subtitle: 'We verify regional technician route coverage in real time.',
+  addressLabel: 'Street Address',
+  cityLabel: 'City',
+  stateLabel: 'State / Region',
+  zipLabel: 'Zip Code',
+  sqftLabel: 'Metros Cuadrados / Pies Cuadrados (Sq Ft)',
+  sqftPlaceholder: 'Ej: 4,500 sq ft o 420 m² (puedes escribir a mano)',
+  sqftPresets: [
+    'Under 3,000 sq ft (280 m²)',
+    '3,000 - 5,000 sq ft (460 m²)',
+    '5,000 - 7,500 sq ft (700 m²)',
+    '7,500+ sq ft / Estate (700+ m²)'
+  ],
+  homeTypeLabel: 'Residence Type',
+  homeTypes: [
+    'Single Family Home',
+    'Luxury Estate',
+    'Historic Property',
+    'Townhome',
+    'Condo / Penthouse'
+  ],
+  availableCities: [
+    'Greenwich', 'Stamford', 'Westport', 'Darien', 'New Canaan', 'Fairfield', 'Norwalk', 'Wilton', 'Ridgefield', 'Trumbull',
+    'White Plains', 'Scarsdale', 'Rye', 'New Rochelle', 'Bedford', 'Chappaqua', 'Mamaroneck', 'Bronxville', 'Larchmont', 'Yonkers'
+  ],
+  availableStates: [
+    'Fairfield County, CT',
+    'Westchester County, NY',
+    'Connecticut (CT)',
+    'New York (NY)'
+  ],
+  step2Title: 'What are your primary goals for your home?',
+  step2Subtitle: 'Select all that apply to help us tailor your walkthrough checklist.',
+  prioritiesList: [
+    'Preventative Maintenance (Water heaters, coils, filters)',
+    'Handyman Honey-Do Repairs (Lights, caulking, locks)',
+    'Worry about hidden leaks, roof, attic or gutters',
+    'Major upcoming project (Painting, roofing, HVAC overhaul)',
+    'Frequent business travel / need property oversight',
+    'Sick of chasing unreliable, unvetted contractors'
+  ],
+  notesLabel: 'Any specific issues you\'d like our Senior Home Manager to look at?',
+  notesPlaceholder: 'e.g. Sump pump makes a vibration, master bathroom door rubs on carpet, upstairs HVAC runs constantly...',
+  step3Title: 'Who should we send the confirmation to?',
+  step3Subtitle: 'We will never spam or share your information.',
+  fullNameLabel: 'Full Name',
+  phoneLabel: 'Phone Number',
+  emailLabel: 'Email Address',
+  preferredDateLabel: 'Preferred Date',
+  preferredTimeLabel: 'Preferred Time Window',
+  timeSlots: [
+    'Morning (9:00 AM - 12:00 PM)',
+    'Afternoon (1:00 PM - 4:00 PM)',
+    'Flexible / Any Weekday Window'
+  ],
+  guaranteeText: '100% Free Consultation Guarantee: There is absolutely no pressure or obligation. We inspect your home, document your mechanical systems, and present you with a transparent monthly care proposal.',
+  submitButtonText: 'Confirm & Schedule Walkthrough',
+  successTitle: 'Walkthrough Confirmed!',
+  successMessage: 'A Senior Home Manager has been assigned to your address. We will review your property systems on the selected date.',
+  successBadge: 'Zero Cost / No Obligation'
+};
+
 export const DEFAULT_CMS_CONFIG: SiteCMSConfig = {
   theme: {
     primaryColor: '#059669', // Emerald 600
@@ -302,7 +369,7 @@ export const DEFAULT_CMS_CONFIG: SiteCMSConfig = {
         primaryBtnText: 'Schedule Complimentary Walkthrough',
         primaryBtnAction: 'walkthrough',
         secondaryBtnText: 'Calculate Your Plan',
-        secondaryBtnAction: 'pricing',
+        secondaryBtnAction: 'calculator',
         overlayDarkness: 45,
         align: 'left',
         enabled: true
@@ -589,5 +656,6 @@ export const DEFAULT_CMS_CONFIG: SiteCMSConfig = {
       { label: 'CT HIC #0634192', enabled: true },
       { label: 'GA Residential', enabled: true }
     ]
-  }
+  },
+  scheduleModal: DEFAULT_SCHEDULE_MODAL_CONFIG
 };

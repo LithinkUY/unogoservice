@@ -15,6 +15,7 @@ import {
   Sparkles
 } from 'lucide-react';
 import { useCms } from '../context/CmsContext';
+import { DEFAULT_SCHEDULE_MODAL_CONFIG } from '../data/defaultCmsData';
 
 interface WalkthroughModalProps {
   isOpen: boolean;
@@ -27,21 +28,22 @@ export const WalkthroughModal: React.FC<WalkthroughModalProps> = ({
   onClose,
   prefilledZip = ''
 }) => {
-  const { addAppointment } = useCms();
+  const { config, addAppointment } = useCms();
+  const modalConfig = config.scheduleModal || DEFAULT_SCHEDULE_MODAL_CONFIG;
   const [step, setStep] = useState<number>(1);
   const [formData, setFormData] = useState({
     address: '',
     city: '',
-    state: 'MD',
+    state: modalConfig.availableStates[0] || '',
     zip: prefilledZip,
-    sqft: '4,500',
-    homeType: 'Single Family Home',
-    priorities: ['Preventative Maintenance', 'Handyman Honey-Do Repairs'],
+    sqft: '',
+    homeType: modalConfig.homeTypes[0] || 'Single Family Home',
+    priorities: [] as string[],
     fullName: '',
     email: '',
     phone: '',
     preferredDate: '',
-    preferredTime: 'Morning (9am - 12pm)',
+    preferredTime: modalConfig.timeSlots[0] || 'Morning (9:00 AM - 12:00 PM)',
     notes: ''
   });
 
@@ -121,11 +123,11 @@ export const WalkthroughModal: React.FC<WalkthroughModalProps> = ({
             <div className="flex items-center gap-2">
               <span className="w-2 h-2 rounded-full bg-emerald-400"></span>
               <span className="text-xs font-bold tracking-wider text-emerald-400 uppercase">
-                Complimentary & No-Obligation
+                {modalConfig.badge}
               </span>
             </div>
             <h3 className="text-lg sm:text-xl font-black text-white mt-0.5">
-              Schedule Your Home Walkthrough
+              {modalConfig.title}
             </h3>
           </div>
 
@@ -173,22 +175,23 @@ export const WalkthroughModal: React.FC<WalkthroughModalProps> = ({
 
               <div className="space-y-2">
                 <h4 className="text-2xl font-black text-[#0f2942]">
-                  Walkthrough Confirmed!
+                  {modalConfig.successTitle}
                 </h4>
                 <p className="text-sm text-slate-600 max-w-md mx-auto leading-relaxed">
                   Thank you, <strong className="text-slate-800">{formData.fullName || 'Neighbor'}</strong>. 
-                  A Senior Home Manager has been assigned to your address in {formData.city || 'your area'}.
+                  {modalConfig.successMessage}
                 </p>
               </div>
 
               <div className="bg-slate-50 p-4 rounded-2xl border border-slate-200 max-w-md mx-auto text-left text-xs space-y-2 text-slate-700">
                 <div className="flex items-center justify-between font-bold text-slate-900 border-b pb-2">
                   <span>Inspection Overview:</span>
-                  <span className="text-emerald-700">Zero Cost / No Obligation</span>
+                  <span className="text-emerald-700">{modalConfig.successBadge}</span>
                 </div>
                 <div><strong>Address:</strong> {formData.address || '123 Main St'}, {formData.city} {formData.state} {formData.zip}</div>
                 <div><strong>Time Window:</strong> {formData.preferredDate || 'Upcoming Weekday'} ({formData.preferredTime})</div>
-                <div><strong>What to expect:</strong> Complete 50-point baseline mechanical audit, filter dimension logging, and custom proposal.</div>
+                {formData.sqft && <div><strong>Size:</strong> {formData.sqft}</div>}
+                <div><strong>What to expect:</strong> Complete baseline mechanical audit, filter dimension logging, and custom proposal.</div>
               </div>
 
               <button
@@ -205,12 +208,12 @@ export const WalkthroughModal: React.FC<WalkthroughModalProps> = ({
               {step === 1 && (
                 <div className="space-y-4">
                   <div>
-                    <h4 className="text-base font-bold text-[#0f2942]">Where is your home located?</h4>
-                    <p className="text-xs text-slate-500">We verify regional technician route coverage in real time.</p>
+                    <h4 className="text-base font-bold text-[#0f2942]">{modalConfig.step1Title}</h4>
+                    <p className="text-xs text-slate-500">{modalConfig.step1Subtitle}</p>
                   </div>
 
                   <div>
-                    <label className="text-xs font-bold text-slate-700 block mb-1">Street Address</label>
+                    <label className="text-xs font-bold text-slate-700 block mb-1">{modalConfig.addressLabel}</label>
                     <input
                       type="text"
                       required
@@ -223,43 +226,44 @@ export const WalkthroughModal: React.FC<WalkthroughModalProps> = ({
 
                   <div className="grid grid-cols-3 gap-3">
                     <div className="col-span-1">
-                      <label className="text-xs font-bold text-slate-700 block mb-1">City</label>
+                      <label className="text-xs font-bold text-slate-700 block mb-1">{modalConfig.cityLabel}</label>
                       <input
                         type="text"
                         required
+                        list="modal-cities-list"
                         value={formData.city}
                         onChange={(e) => setFormData({ ...formData, city: e.target.value })}
-                        placeholder="e.g. Bethesda"
+                        placeholder="e.g. Greenwich"
                         className="w-full p-2.5 rounded-xl border border-slate-300 text-xs font-medium text-slate-900 focus:ring-2 focus:ring-emerald-500 outline-hidden"
                       />
+                      <datalist id="modal-cities-list">
+                        {modalConfig.availableCities.map((c, i) => (
+                          <option key={i} value={c} />
+                        ))}
+                      </datalist>
                     </div>
 
                     <div>
-                      <label className="text-xs font-bold text-slate-700 block mb-1">State</label>
+                      <label className="text-xs font-bold text-slate-700 block mb-1">{modalConfig.stateLabel}</label>
                       <select
                         value={formData.state}
                         onChange={(e) => setFormData({ ...formData, state: e.target.value })}
                         className="w-full p-2.5 rounded-xl border border-slate-300 text-xs font-medium text-slate-900 focus:ring-2 focus:ring-emerald-500 outline-hidden bg-white"
                       >
-                        <option value="MD">Maryland (MD)</option>
-                        <option value="DC">Washington D.C. (DC)</option>
-                        <option value="VA">Virginia (VA)</option>
-                        <option value="CT">Connecticut (CT)</option>
-                        <option value="GA">Georgia (GA)</option>
-                        <option value="FL">Florida (FL)</option>
-                        <option value="IL">Illinois (IL)</option>
-                        <option value="MA">Massachusetts (MA)</option>
+                        {modalConfig.availableStates.map((s, i) => (
+                          <option key={i} value={s}>{s}</option>
+                        ))}
                       </select>
                     </div>
 
                     <div>
-                      <label className="text-xs font-bold text-slate-700 block mb-1">Zip Code</label>
+                      <label className="text-xs font-bold text-slate-700 block mb-1">{modalConfig.zipLabel}</label>
                       <input
                         type="text"
                         required
                         value={formData.zip}
                         onChange={(e) => setFormData({ ...formData, zip: e.target.value })}
-                        placeholder="e.g. 20854"
+                        placeholder="e.g. 06830"
                         className="w-full p-2.5 rounded-xl border border-slate-300 text-xs font-medium text-slate-900 focus:ring-2 focus:ring-emerald-500 outline-hidden"
                       />
                     </div>
@@ -267,30 +271,44 @@ export const WalkthroughModal: React.FC<WalkthroughModalProps> = ({
 
                   <div className="grid grid-cols-2 gap-3 pt-1">
                     <div>
-                      <label className="text-xs font-bold text-slate-700 block mb-1">Approximate Sq Footage</label>
-                      <select
+                      <label className="text-xs font-bold text-slate-700 block mb-1">{modalConfig.sqftLabel}</label>
+                      <input
+                        type="text"
                         value={formData.sqft}
                         onChange={(e) => setFormData({ ...formData, sqft: e.target.value })}
-                        className="w-full p-2.5 rounded-xl border border-slate-300 text-xs font-medium text-slate-900 focus:ring-2 focus:ring-emerald-500 outline-hidden bg-white"
-                      >
-                        <option>Under 3,000 sq ft</option>
-                        <option>3,000 - 5,000 sq ft</option>
-                        <option>5,000 - 7,500 sq ft</option>
-                        <option>7,500+ sq ft (Estate)</option>
-                      </select>
+                        placeholder={modalConfig.sqftPlaceholder}
+                        className="w-full p-2.5 rounded-xl border border-slate-300 text-xs font-medium text-slate-900 focus:ring-2 focus:ring-emerald-500 outline-hidden"
+                      />
+                      {modalConfig.sqftPresets.length > 0 && (
+                        <div className="flex flex-wrap gap-1.5 mt-2">
+                          {modalConfig.sqftPresets.map((preset, i) => (
+                            <button
+                              key={i}
+                              type="button"
+                              onClick={() => setFormData({ ...formData, sqft: preset })}
+                              className={`px-2.5 py-1 rounded-lg text-[10px] font-semibold border transition-all cursor-pointer ${
+                                formData.sqft === preset
+                                  ? 'bg-emerald-50 border-emerald-400 text-emerald-800'
+                                  : 'bg-white border-slate-200 text-slate-600 hover:border-slate-300'
+                              }`}
+                            >
+                              {preset}
+                            </button>
+                          ))}
+                        </div>
+                      )}
                     </div>
 
                     <div>
-                      <label className="text-xs font-bold text-slate-700 block mb-1">Residence Type</label>
+                      <label className="text-xs font-bold text-slate-700 block mb-1">{modalConfig.homeTypeLabel}</label>
                       <select
                         value={formData.homeType}
                         onChange={(e) => setFormData({ ...formData, homeType: e.target.value })}
                         className="w-full p-2.5 rounded-xl border border-slate-300 text-xs font-medium text-slate-900 focus:ring-2 focus:ring-emerald-500 outline-hidden bg-white"
                       >
-                        <option>Single Family Home</option>
-                        <option>Luxury Estate</option>
-                        <option>Historic Property</option>
-                        <option>Townhome</option>
+                        {modalConfig.homeTypes.map((ht, i) => (
+                          <option key={i} value={ht}>{ht}</option>
+                        ))}
                       </select>
                     </div>
                   </div>
@@ -312,19 +330,12 @@ export const WalkthroughModal: React.FC<WalkthroughModalProps> = ({
               {step === 2 && (
                 <div className="space-y-4">
                   <div>
-                    <h4 className="text-base font-bold text-[#0f2942]">What are your primary goals for your home?</h4>
-                    <p className="text-xs text-slate-500">Select all that apply to help us tailor your walkthrough checklist.</p>
+                    <h4 className="text-base font-bold text-[#0f2942]">{modalConfig.step2Title}</h4>
+                    <p className="text-xs text-slate-500">{modalConfig.step2Subtitle}</p>
                   </div>
 
                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                    {[
-                      'Preventative Maintenance (Water heaters, coils, filters)',
-                      'Handyman Honey-Do Repairs (Lights, caulking, locks)',
-                      'Worry about hidden leaks, roof, attic or gutters',
-                      'Major upcoming project (Painting, roofing, HVAC overhaul)',
-                      'Frequent business travel / need property oversight',
-                      'Sick of chasing unreliable, unvetted contractors'
-                    ].map((p, idx) => {
+                    {modalConfig.prioritiesList.map((p, idx) => {
                       const isChecked = formData.priorities.includes(p);
                       return (
                         <div
@@ -349,13 +360,13 @@ export const WalkthroughModal: React.FC<WalkthroughModalProps> = ({
 
                   <div>
                     <label className="text-xs font-bold text-slate-700 block mb-1">
-                      Any specific issues you'd like our Senior Home Manager to look at?
+                      {modalConfig.notesLabel}
                     </label>
                     <textarea
                       rows={2}
                       value={formData.notes}
                       onChange={(e) => setFormData({ ...formData, notes: e.target.value })}
-                      placeholder="e.g. Sump pump makes a vibration, master bathroom door rubs on carpet, upstairs HVAC runs constantly"
+                      placeholder={modalConfig.notesPlaceholder}
                       className="w-full p-2.5 rounded-xl border border-slate-300 text-xs font-medium text-slate-900 focus:ring-2 focus:ring-emerald-500 outline-hidden"
                     />
                   </div>
@@ -385,13 +396,13 @@ export const WalkthroughModal: React.FC<WalkthroughModalProps> = ({
               {step === 3 && (
                 <div className="space-y-4">
                   <div>
-                    <h4 className="text-base font-bold text-[#0f2942]">Who should we send the confirmation to?</h4>
-                    <p className="text-xs text-slate-500">We will never spam or share your information.</p>
+                    <h4 className="text-base font-bold text-[#0f2942]">{modalConfig.step3Title}</h4>
+                    <p className="text-xs text-slate-500">{modalConfig.step3Subtitle}</p>
                   </div>
 
                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                     <div>
-                      <label className="text-xs font-bold text-slate-700 block mb-1">Full Name</label>
+                      <label className="text-xs font-bold text-slate-700 block mb-1">{modalConfig.fullNameLabel}</label>
                       <input
                         type="text"
                         required
@@ -403,20 +414,20 @@ export const WalkthroughModal: React.FC<WalkthroughModalProps> = ({
                     </div>
 
                     <div>
-                      <label className="text-xs font-bold text-slate-700 block mb-1">Phone Number</label>
+                      <label className="text-xs font-bold text-slate-700 block mb-1">{modalConfig.phoneLabel}</label>
                       <input
                         type="tel"
                         required
                         value={formData.phone}
                         onChange={(e) => setFormData({ ...formData, phone: e.target.value })}
-                        placeholder="(301) 555-0199"
+                        placeholder="(203) 555-0199"
                         className="w-full p-2.5 rounded-xl border border-slate-300 text-xs font-medium text-slate-900 focus:ring-2 focus:ring-emerald-500 outline-hidden"
                       />
                     </div>
                   </div>
 
                   <div>
-                    <label className="text-xs font-bold text-slate-700 block mb-1">Email Address</label>
+                    <label className="text-xs font-bold text-slate-700 block mb-1">{modalConfig.emailLabel}</label>
                     <input
                       type="email"
                       required
@@ -429,7 +440,7 @@ export const WalkthroughModal: React.FC<WalkthroughModalProps> = ({
 
                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                     <div>
-                      <label className="text-xs font-bold text-slate-700 block mb-1">Preferred Date</label>
+                      <label className="text-xs font-bold text-slate-700 block mb-1">{modalConfig.preferredDateLabel}</label>
                       <input
                         type="date"
                         value={formData.preferredDate}
@@ -439,15 +450,15 @@ export const WalkthroughModal: React.FC<WalkthroughModalProps> = ({
                     </div>
 
                     <div>
-                      <label className="text-xs font-bold text-slate-700 block mb-1">Preferred Time Window</label>
+                      <label className="text-xs font-bold text-slate-700 block mb-1">{modalConfig.preferredTimeLabel}</label>
                       <select
                         value={formData.preferredTime}
                         onChange={(e) => setFormData({ ...formData, preferredTime: e.target.value })}
                         className="w-full p-2.5 rounded-xl border border-slate-300 text-xs font-medium text-slate-900 focus:ring-2 focus:ring-emerald-500 outline-hidden bg-white"
                       >
-                        <option>Morning (9:00 AM - 12:00 PM)</option>
-                        <option>Afternoon (1:00 PM - 4:00 PM)</option>
-                        <option>Flexible / Any Weekday Window</option>
+                        {modalConfig.timeSlots.map((slot, i) => (
+                          <option key={i} value={slot}>{slot}</option>
+                        ))}
                       </select>
                     </div>
                   </div>
@@ -455,7 +466,7 @@ export const WalkthroughModal: React.FC<WalkthroughModalProps> = ({
                   <div className="p-3.5 rounded-xl bg-emerald-50 border border-emerald-200 text-[11px] text-emerald-900 flex items-start gap-2">
                     <ShieldCheck className="w-4 h-4 text-emerald-600 shrink-0 mt-0.5" />
                     <span>
-                      100% Free Consultation Guarantee: There is absolutely no pressure or obligation. We inspect your home, document your mechanical systems, and present you with a transparent monthly care proposal.
+                      {modalConfig.guaranteeText}
                     </span>
                   </div>
 
@@ -472,7 +483,7 @@ export const WalkthroughModal: React.FC<WalkthroughModalProps> = ({
                       type="submit"
                       className="px-6 py-3 rounded-xl bg-emerald-600 hover:bg-emerald-700 active:bg-emerald-800 text-white font-black text-xs shadow-md shadow-emerald-700/20 cursor-pointer"
                     >
-                      Confirm Walkthrough Request
+                      {modalConfig.submitButtonText}
                     </button>
                   </div>
                 </div>

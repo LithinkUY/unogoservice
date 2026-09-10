@@ -37,7 +37,8 @@ import {
   MessageCircle,
   User,
   HelpCircle,
-  Calculator
+  Calculator,
+  MapPin
 } from 'lucide-react';
 import { useCms } from '../context/CmsContext';
 import {
@@ -51,6 +52,7 @@ import {
   PageSection,
   FaqItem
 } from '../types';
+import { DEFAULT_SCHEDULE_MODAL_CONFIG } from '../data/defaultCmsData';
 
 interface AdminCMSModalProps {
   isOpen: boolean;
@@ -71,6 +73,8 @@ type TabType =
   | 'gallery'
   | 'clients'
   | 'schedule'
+  | 'schedule-config'
+  | 'service-areas'
   | 'footer'
   | 'faqs'
   | 'pages'
@@ -112,7 +116,8 @@ export const AdminCMSModal: React.FC<AdminCMSModalProps> = ({ isOpen, onClose, p
     saveAndNotify,
     resetToDefaults,
     exportConfigAsJson,
-    importConfigFromJson
+    importConfigFromJson,
+    updateScheduleModal
   } = useCms();
 
   const [activeTab, setActiveTab] = useState<TabType>('styles');
@@ -690,13 +695,15 @@ export const AdminCMSModal: React.FC<AdminCMSModalProps> = ({ isOpen, onClose, p
               { id: 'faqs', label: '8. Preguntas FAQ', icon: HelpCircle },
               { id: 'pricing', label: '9. Tarjetas de Precios', icon: DollarSign },
               { id: 'calculator', label: '10. Calculadora Estimadora', icon: Calculator },
-              { id: 'gallery', label: '11. Galería', icon: Images },
-              { id: 'clients', label: '12. Clientes', icon: UserCheck, badge: config.clients.length },
-              { id: 'schedule', label: '13. Schedule', icon: Calendar, badge: config.appointments.filter(a => a.status === 'pending').length },
-              { id: 'footer', label: '14. Footer y Contacto', icon: Layout },
-              { id: 'usuario', label: '15. Usuario Admin', icon: User },
-              { id: 'whatsapp', label: '16. WhatsApp', icon: MessageCircle },
-              { id: 'backup', label: '17. Backup', icon: RotateCcw }
+              { id: 'service-areas', label: '11. Zonas & Dispatch Regional', icon: MapPin },
+              { id: 'gallery', label: '12. Galería', icon: Images },
+              { id: 'clients', label: '13. Clientes', icon: UserCheck, badge: config.clients.length },
+              { id: 'schedule', label: '14. Citas Schedule', icon: Calendar, badge: config.appointments.filter(a => a.status === 'pending').length },
+              { id: 'schedule-config', label: '15. Config Modal Schedule', icon: Settings },
+              { id: 'footer', label: '16. Footer y Contacto', icon: Layout },
+              { id: 'usuario', label: '17. Usuario Admin', icon: User },
+              { id: 'whatsapp', label: '18. WhatsApp', icon: MessageCircle },
+              { id: 'backup', label: '19. Backup', icon: RotateCcw }
             ].map(tab => {
               const Icon = tab.icon;
               const isActive = activeTab === tab.id;
@@ -3092,6 +3099,382 @@ export const AdminCMSModal: React.FC<AdminCMSModalProps> = ({ isOpen, onClose, p
               );
             })()}
 
+            {/* ================= TAB 11: ZONAS Y DISPATCH REGIONAL (FAIRFIELD / WESTCHESTER) ================= */}
+            {activeTab === 'service-areas' && (
+              <div className="space-y-6 max-w-4xl">
+                <div>
+                  <h4 className="text-lg font-black text-[#0f2942]">
+                    Áreas de Servicio, Hubs de Despacho & Filtro de Códigos Postales
+                  </h4>
+                  <p className="text-xs text-slate-500">
+                    Configura las zonas de cobertura (Fairfield County, CT / Westchester County, NY), teléfonos directos, oficinas locales, municipios y los códigos postales exactos aceptados por el verificador.
+                  </p>
+                </div>
+
+                {/* Textos y Encabezados Globales de la Sección */}
+                <div className="bg-white p-5 rounded-2xl border border-slate-200 shadow-2xs space-y-4">
+                  <span className="text-xs font-bold text-slate-900 block border-b pb-2">
+                    Textos Generales de la Sección de Cobertura
+                  </span>
+
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                    <div>
+                      <label className="text-[11px] font-bold text-slate-700 block mb-1">Badge Superior:</label>
+                      <input
+                        type="text"
+                        value={(config.content.serviceAreas as any)?.badge || ''}
+                        onChange={(e) => updateContent({ serviceAreas: { ...(config.content.serviceAreas as any), badge: e.target.value } } as any)}
+                        placeholder="Coast to Coast Service"
+                        className="w-full p-2 text-xs rounded-xl border border-slate-300"
+                      />
+                    </div>
+                    <div>
+                      <label className="text-[11px] font-bold text-slate-700 block mb-1">Título Principal:</label>
+                      <input
+                        type="text"
+                        value={(config.content.serviceAreas as any)?.title || ''}
+                        onChange={(e) => updateContent({ serviceAreas: { ...(config.content.serviceAreas as any), title: e.target.value } } as any)}
+                        placeholder="Our Regional Service Areas"
+                        className="w-full p-2 text-xs rounded-xl border border-slate-300 font-bold"
+                      />
+                    </div>
+                  </div>
+
+                  <div>
+                    <label className="text-[11px] font-bold text-slate-700 block mb-1">Subtítulo Descriptivo:</label>
+                    <textarea
+                      rows={2}
+                      value={(config.content.serviceAreas as any)?.subtitle || ''}
+                      onChange={(e) => updateContent({ serviceAreas: { ...(config.content.serviceAreas as any), subtitle: e.target.value } } as any)}
+                      placeholder="Premier Home Services operates dedicated local field teams across key metropolitan regions."
+                      className="w-full p-2 text-xs rounded-xl border border-slate-300"
+                    />
+                  </div>
+
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 pt-2 border-t border-slate-100">
+                    <div>
+                      <label className="text-[11px] font-bold text-slate-700 block mb-1">Placeholder Buscador de Zip:</label>
+                      <input
+                        type="text"
+                        value={(config.content.serviceAreas as any)?.zipPlaceholder || ''}
+                        onChange={(e) => updateContent({ serviceAreas: { ...(config.content.serviceAreas as any), zipPlaceholder: e.target.value } } as any)}
+                        placeholder="Check your 5-digit zip code..."
+                        className="w-full p-2 text-xs rounded-xl border border-slate-300"
+                      />
+                    </div>
+                    <div>
+                      <label className="text-[11px] font-bold text-slate-700 block mb-1">Texto Botón Verificar Zip:</label>
+                      <input
+                        type="text"
+                        value={(config.content.serviceAreas as any)?.zipButtonText || ''}
+                        onChange={(e) => updateContent({ serviceAreas: { ...(config.content.serviceAreas as any), zipButtonText: e.target.value } } as any)}
+                        placeholder="Verify Zip Code"
+                        className="w-full p-2 text-xs rounded-xl border border-slate-300 font-bold"
+                      />
+                    </div>
+                    <div>
+                      <label className="text-[11px] font-bold text-slate-700 block mb-1">Título Selector de Regiones:</label>
+                      <input
+                        type="text"
+                        value={(config.content.serviceAreas as any)?.regionSelectTitle || ''}
+                        onChange={(e) => updateContent({ serviceAreas: { ...(config.content.serviceAreas as any), regionSelectTitle: e.target.value } } as any)}
+                        placeholder="Select Your Region"
+                        className="w-full p-2 text-xs rounded-xl border border-slate-300"
+                      />
+                    </div>
+                    <div>
+                      <label className="text-[11px] font-bold text-slate-700 block mb-1">Badge Hub Activo:</label>
+                      <input
+                        type="text"
+                        value={(config.content.serviceAreas as any)?.activeHubBadge || ''}
+                        onChange={(e) => updateContent({ serviceAreas: { ...(config.content.serviceAreas as any), activeHubBadge: e.target.value } } as any)}
+                        placeholder="Active Regional Hub"
+                        className="w-full p-2 text-xs rounded-xl border border-slate-300"
+                      />
+                    </div>
+                    <div>
+                      <label className="text-[11px] font-bold text-slate-700 block mb-1">Etiqueta Municipios / Ciudades:</label>
+                      <input
+                        type="text"
+                        value={(config.content.serviceAreas as any)?.municipalitiesLabel || ''}
+                        onChange={(e) => updateContent({ serviceAreas: { ...(config.content.serviceAreas as any), municipalitiesLabel: e.target.value } } as any)}
+                        placeholder="Key Municipalities Served:"
+                        className="w-full p-2 text-xs rounded-xl border border-slate-300"
+                      />
+                    </div>
+                    <div>
+                      <label className="text-[11px] font-bold text-slate-700 block mb-1">Etiqueta Condados / Distritos:</label>
+                      <input
+                        type="text"
+                        value={(config.content.serviceAreas as any)?.countiesLabel || ''}
+                        onChange={(e) => updateContent({ serviceAreas: { ...(config.content.serviceAreas as any), countiesLabel: e.target.value } } as any)}
+                        placeholder="Counties & Districts:"
+                        className="w-full p-2 text-xs rounded-xl border border-slate-300"
+                      />
+                    </div>
+                    <div>
+                      <label className="text-[11px] font-bold text-slate-700 block mb-1">Texto Badge Flota Técnica:</label>
+                      <input
+                        type="text"
+                        value={(config.content.serviceAreas as any)?.fleetBadgeText || ''}
+                        onChange={(e) => updateContent({ serviceAreas: { ...(config.content.serviceAreas as any), fleetBadgeText: e.target.value } } as any)}
+                        placeholder="Full local fleet with certified W-2 technicians"
+                        className="w-full p-2 text-xs rounded-xl border border-slate-300"
+                      />
+                    </div>
+                    <div>
+                      <label className="text-[11px] font-bold text-slate-700 block mb-1">Prefijo Botón Agendar Walkthrough:</label>
+                      <input
+                        type="text"
+                        value={(config.content.serviceAreas as any)?.scheduleButtonText || ''}
+                        onChange={(e) => updateContent({ serviceAreas: { ...(config.content.serviceAreas as any), scheduleButtonText: e.target.value } } as any)}
+                        placeholder="Schedule Walkthrough in"
+                        className="w-full p-2 text-xs rounded-xl border border-slate-300 font-bold text-emerald-700"
+                      />
+                    </div>
+                  </div>
+                </div>
+
+                {/* Hubs & Regiones Individuales */}
+                <div className="bg-white p-5 rounded-2xl border border-slate-200 shadow-2xs space-y-4">
+                  <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b pb-3">
+                    <div>
+                      <h5 className="text-sm font-bold text-slate-900">
+                        Hubs Regionales de Despacho ({config.serviceAreas?.length || 0})
+                      </h5>
+                      <p className="text-[11px] text-slate-500">
+                        Solo los códigos postales que coincidan con los prefijos o zips configurados aquí serán aprobados en el verificador web.
+                      </p>
+                    </div>
+
+                    <div className="flex items-center gap-2">
+                      <button
+                        type="button"
+                        onClick={() => {
+                          if (confirm('¿Restablecer las regiones a Fairfield y Westchester Counties (CT y NY)?')) {
+                            updateServiceAreas([
+                              {
+                                state: 'Fairfield County, CT',
+                                name: 'Fairfield County Regional Dispatch',
+                                counties: ['Fairfield County', 'Coastal Fairfield', 'Gold Coast Area'],
+                                keyCities: ['Greenwich', 'Stamford', 'Westport', 'Darien', 'New Canaan', 'Fairfield', 'Norwalk', 'Wilton', 'Ridgefield', 'Trumbull'],
+                                zipPrefixes: ['068', '069'],
+                                phone: '(203) 658-8870',
+                                officeAddress: '100 West Putnam Ave, Greenwich, CT 06830'
+                              },
+                              {
+                                state: 'Westchester County, NY',
+                                name: 'Westchester County Regional Dispatch',
+                                counties: ['Westchester County', 'Sound Shore', 'Central & North Westchester'],
+                                keyCities: ['White Plains', 'Scarsdale', 'Rye', 'New Rochelle', 'Bedford', 'Chappaqua', 'Mamaroneck', 'Bronxville', 'Larchmont', 'Yonkers'],
+                                zipPrefixes: ['105', '106', '107', '108'],
+                                phone: '(914) 205-4420',
+                                officeAddress: '50 Main St, White Plains, NY 10606'
+                              }
+                            ]);
+                            showToast('¡Hubs de Fairfield y Westchester restablecidos!');
+                          }
+                        }}
+                        className="text-xs font-bold text-blue-600 hover:text-blue-700 bg-blue-50 border border-blue-200 px-3 py-1.5 rounded-xl cursor-pointer"
+                      >
+                        Restablecer Fairfield & Westchester
+                      </button>
+
+                      <button
+                        type="button"
+                        onClick={() => {
+                          const newRegion = {
+                            state: 'Nueva Región / Condado',
+                            name: 'Centro Regional Dispatch',
+                            counties: ['Condado Principal'],
+                            keyCities: ['Ciudad 1', 'Ciudad 2'],
+                            zipPrefixes: ['000'],
+                            phone: '(888) 555-CARE',
+                            officeAddress: 'Dirección de la oficina local'
+                          };
+                          updateServiceAreas([...config.serviceAreas, newRegion]);
+                          showToast('Nueva región agregada');
+                        }}
+                        className="px-3 py-1.5 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-xs flex items-center gap-1 cursor-pointer"
+                      >
+                        <Plus className="w-3.5 h-3.5" />
+                        <span>Añadir Región / Hub</span>
+                      </button>
+                    </div>
+                  </div>
+
+                  <div className="space-y-4">
+                    {config.serviceAreas?.map((area: any, aIdx: number) => (
+                      <div key={aIdx} className="p-4 bg-slate-50 rounded-2xl border border-slate-200 space-y-3">
+                        <div className="flex items-center justify-between">
+                          <span className="text-xs font-black text-slate-800 flex items-center gap-2">
+                            <MapPin className="w-3.5 h-3.5 text-emerald-600" />
+                            <span>Hub #{aIdx + 1}: {area.name || area.state}</span>
+                          </span>
+                          <button
+                            type="button"
+                            onClick={() => {
+                              if (confirm(`¿Eliminar la región "${area.state}"?`)) {
+                                const arr = [...config.serviceAreas];
+                                arr.splice(aIdx, 1);
+                                updateServiceAreas(arr);
+                                showToast('Región eliminada');
+                              }
+                            }}
+                            className="text-red-500 hover:text-red-700 text-xs font-bold flex items-center gap-1 cursor-pointer"
+                          >
+                            <Trash2 className="w-3.5 h-3.5" />
+                            <span>Eliminar</span>
+                          </button>
+                        </div>
+
+                        <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                          <div>
+                            <label className="text-[10px] font-bold text-slate-600 block mb-0.5">Nombre Región / Estado / Condado</label>
+                            <input
+                              type="text"
+                              value={area.state}
+                              onChange={(e) => {
+                                const arr = [...config.serviceAreas];
+                                arr[aIdx] = { ...arr[aIdx], state: e.target.value };
+                                updateServiceAreas(arr);
+                              }}
+                              className="w-full p-2 text-xs rounded-xl border border-slate-300 bg-white font-bold"
+                              placeholder="Ej: Fairfield County, CT"
+                            />
+                          </div>
+
+                          <div>
+                            <label className="text-[10px] font-bold text-slate-600 block mb-0.5">Nombre del Hub de Despacho</label>
+                            <input
+                              type="text"
+                              value={area.name}
+                              onChange={(e) => {
+                                const arr = [...config.serviceAreas];
+                                arr[aIdx] = { ...arr[aIdx], name: e.target.value };
+                                updateServiceAreas(arr);
+                              }}
+                              className="w-full p-2 text-xs rounded-xl border border-slate-300 bg-white font-bold"
+                              placeholder="Ej: Fairfield County Regional Dispatch"
+                            />
+                          </div>
+
+                          <div>
+                            <label className="text-[10px] font-bold text-slate-600 block mb-0.5">Teléfono Directo del Hub</label>
+                            <input
+                              type="text"
+                              value={area.phone}
+                              onChange={(e) => {
+                                const arr = [...config.serviceAreas];
+                                arr[aIdx] = { ...arr[aIdx], phone: e.target.value };
+                                updateServiceAreas(arr);
+                              }}
+                              className="w-full p-2 text-xs rounded-xl border border-slate-300 bg-white"
+                              placeholder="Ej: (203) 658-8870"
+                            />
+                          </div>
+
+                          <div>
+                            <label className="text-[10px] font-bold text-slate-600 block mb-0.5">Dirección de Oficina / Despacho Local</label>
+                            <input
+                              type="text"
+                              value={area.officeAddress}
+                              onChange={(e) => {
+                                const arr = [...config.serviceAreas];
+                                arr[aIdx] = { ...arr[aIdx], officeAddress: e.target.value };
+                                updateServiceAreas(arr);
+                              }}
+                              className="w-full p-2 text-xs rounded-xl border border-slate-300 bg-white"
+                              placeholder="Ej: 100 West Putnam Ave, Greenwich, CT 06830"
+                            />
+                          </div>
+                        </div>
+
+                        <div>
+                          <label className="text-[10px] font-bold text-slate-600 block mb-0.5">
+                            Ciudades y Municipios Servidos (separados por coma)
+                          </label>
+                          <textarea
+                            rows={2}
+                            value={Array.isArray(area.keyCities) ? area.keyCities.join(', ') : area.keyCities || ''}
+                            onChange={(e) => {
+                              const arr = [...config.serviceAreas];
+                              arr[aIdx] = {
+                                ...arr[aIdx],
+                                keyCities: e.target.value.split(',').map((s: string) => s.trim()).filter(Boolean)
+                              };
+                              updateServiceAreas(arr);
+                            }}
+                            className="w-full p-2 text-xs rounded-xl border border-slate-300 bg-white"
+                            placeholder="Greenwich, Stamford, Westport, Darien, New Canaan..."
+                          />
+                        </div>
+
+                        <div>
+                          <label className="text-[10px] font-bold text-slate-600 block mb-0.5">
+                            Condados y Distritos (separados por coma)
+                          </label>
+                          <textarea
+                            rows={2}
+                            value={Array.isArray(area.counties) ? area.counties.join(', ') : area.counties || ''}
+                            onChange={(e) => {
+                              const arr = [...config.serviceAreas];
+                              arr[aIdx] = {
+                                ...arr[aIdx],
+                                counties: e.target.value.split(',').map((s: string) => s.trim()).filter(Boolean)
+                              };
+                              updateServiceAreas(arr);
+                            }}
+                            className="w-full p-2 text-xs rounded-xl border border-slate-300 bg-white"
+                            placeholder="Fairfield County, Coastal Fairfield, Gold Coast Area..."
+                          />
+                        </div>
+
+                        <div>
+                          <div className="flex items-center justify-between mb-0.5">
+                            <label className="text-[10px] font-bold text-slate-600">
+                              Códigos Postales / Prefijos Habilitados (separados por coma)
+                            </label>
+                            <span className="text-[10px] text-emerald-700 font-semibold">
+                              Ej: 068, 069 o 06830, 06831...
+                            </span>
+                          </div>
+                          <input
+                            type="text"
+                            value={Array.isArray(area.zipPrefixes) ? area.zipPrefixes.join(', ') : area.zipPrefixes || ''}
+                            onChange={(e) => {
+                              const arr = [...config.serviceAreas];
+                              arr[aIdx] = {
+                                ...arr[aIdx],
+                                zipPrefixes: e.target.value.split(',').map((s: string) => s.trim()).filter(Boolean)
+                              };
+                              updateServiceAreas(arr);
+                            }}
+                            className="w-full p-2 text-xs rounded-xl border border-emerald-300 bg-white font-mono text-slate-800"
+                            placeholder="068, 069"
+                          />
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+
+                  <div className="pt-3 border-t border-slate-200 flex justify-end">
+                    <button
+                      type="button"
+                      onClick={() => {
+                        saveAndNotify('Áreas de Servicio y Zonas');
+                        showToast('¡Configuración de áreas de servicio y hubs guardada!');
+                      }}
+                      className="px-6 py-2.5 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-xs shadow-sm flex items-center gap-2 cursor-pointer transition-all hover:scale-105"
+                    >
+                      <Save className="w-4 h-4" />
+                      <span>Guardar Áreas de Servicio y Zonas</span>
+                    </button>
+                  </div>
+                </div>
+              </div>
+            )}
+
             {/* ================= TAB 7: GALERIA DE PROYECTOS ================= */}
             {activeTab === 'gallery' && (
               <div className="space-y-6 max-w-4xl">
@@ -3489,6 +3872,438 @@ export const AdminCMSModal: React.FC<AdminCMSModalProps> = ({ isOpen, onClose, p
 
               </div>
             )}
+
+            {/* ================= TAB 15: CONFIGURAR MODAL SCHEDULE ================= */}
+            {activeTab === 'schedule-config' && (() => {
+              const sm = config.scheduleModal || DEFAULT_SCHEDULE_MODAL_CONFIG;
+              return (
+                <div className="space-y-6 max-w-4xl">
+                  <div>
+                    <h4 className="text-lg font-black text-[#0f2942]">
+                      Configuración del Modal de Schedule (Walkthrough)
+                    </h4>
+                    <p className="text-xs text-slate-500">
+                      Personaliza todos los campos, textos, zonas, ciudades, lista de prioridades y opciones de metros cuadrados del modal que ven los clientes.
+                    </p>
+                  </div>
+
+                  {/* Encabezado y Textos Generales */}
+                  <div className="bg-white p-5 rounded-2xl border border-slate-200 shadow-2xs space-y-4">
+                    <span className="text-xs font-bold text-slate-900 block border-b pb-2">
+                      Encabezado del Modal & Textos Principales
+                    </span>
+
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                      <div>
+                        <label className="text-[11px] font-bold text-slate-700 block mb-1">Badge Superior:</label>
+                        <input
+                          type="text"
+                          value={sm.badge}
+                          onChange={e => updateScheduleModal({ badge: e.target.value })}
+                          className="w-full p-2 text-xs rounded-xl border border-slate-300"
+                        />
+                      </div>
+                      <div>
+                        <label className="text-[11px] font-bold text-slate-700 block mb-1">Título del Modal:</label>
+                        <input
+                          type="text"
+                          value={sm.title}
+                          onChange={e => updateScheduleModal({ title: e.target.value })}
+                          className="w-full p-2 text-xs rounded-xl border border-slate-300 font-bold"
+                        />
+                      </div>
+                    </div>
+
+                    <div>
+                      <label className="text-[11px] font-bold text-slate-700 block mb-1">Subtítulo / Explicación:</label>
+                      <textarea
+                        rows={2}
+                        value={sm.subtitle || ''}
+                        onChange={e => updateScheduleModal({ subtitle: e.target.value })}
+                        className="w-full p-2 text-xs rounded-xl border border-slate-300"
+                      />
+                    </div>
+                  </div>
+
+                  {/* Paso 1: Ubicación y Metros Cuadrados */}
+                  <div className="bg-white p-5 rounded-2xl border border-slate-200 shadow-2xs space-y-4">
+                    <span className="text-xs font-bold text-slate-900 block border-b pb-2">
+                      Paso 1: Ubicación, Tipos de Propiedad y Metros Cuadrados (Puesto a mano por el cliente)
+                    </span>
+
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                      <div>
+                        <label className="text-[11px] font-bold text-slate-700 block mb-1">Título Paso 1:</label>
+                        <input
+                          type="text"
+                          value={sm.step1Title}
+                          onChange={e => updateScheduleModal({ step1Title: e.target.value })}
+                          className="w-full p-2 text-xs rounded-xl border border-slate-300 font-bold"
+                        />
+                      </div>
+                      <div>
+                        <label className="text-[11px] font-bold text-slate-700 block mb-1">Subtítulo Paso 1:</label>
+                        <input
+                          type="text"
+                          value={sm.step1Subtitle}
+                          onChange={e => updateScheduleModal({ step1Subtitle: e.target.value })}
+                          className="w-full p-2 text-xs rounded-xl border border-slate-300"
+                        />
+                      </div>
+                    </div>
+
+                    <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
+                      <div>
+                        <label className="text-[11px] font-bold text-slate-700 block mb-1">Label Dirección:</label>
+                        <input
+                          type="text"
+                          value={sm.addressLabel}
+                          onChange={e => updateScheduleModal({ addressLabel: e.target.value })}
+                          className="w-full p-2 text-xs rounded-xl border border-slate-300"
+                        />
+                      </div>
+                      <div>
+                        <label className="text-[11px] font-bold text-slate-700 block mb-1">Label Ciudad:</label>
+                        <input
+                          type="text"
+                          value={sm.cityLabel}
+                          onChange={e => updateScheduleModal({ cityLabel: e.target.value })}
+                          className="w-full p-2 text-xs rounded-xl border border-slate-300"
+                        />
+                      </div>
+                      <div>
+                        <label className="text-[11px] font-bold text-slate-700 block mb-1">Label Estado / Región:</label>
+                        <input
+                          type="text"
+                          value={sm.stateLabel}
+                          onChange={e => updateScheduleModal({ stateLabel: e.target.value })}
+                          className="w-full p-2 text-xs rounded-xl border border-slate-300"
+                        />
+                      </div>
+                      <div>
+                        <label className="text-[11px] font-bold text-slate-700 block mb-1">Label Código Postal:</label>
+                        <input
+                          type="text"
+                          value={sm.zipLabel}
+                          onChange={e => updateScheduleModal({ zipLabel: e.target.value })}
+                          className="w-full p-2 text-xs rounded-xl border border-slate-300"
+                        />
+                      </div>
+                    </div>
+
+                    {/* Metros Cuadrados / Sqft */}
+                    <div className="p-4 bg-emerald-50/50 rounded-xl border border-emerald-200 space-y-3">
+                      <div className="flex items-center justify-between">
+                        <span className="text-xs font-bold text-emerald-950">
+                          📐 Campo de Metros Cuadrados / Pies Cuadrados (Entrada Manual)
+                        </span>
+                        <span className="text-[10px] text-emerald-700 bg-emerald-100 font-semibold px-2 py-0.5 rounded-full">
+                          El cliente puede escribir libremente a mano
+                        </span>
+                      </div>
+
+                      <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                        <div>
+                          <label className="text-[11px] font-bold text-slate-700 block mb-1">Label Metros / Sq Ft:</label>
+                          <input
+                            type="text"
+                            value={sm.sqftLabel}
+                            onChange={e => updateScheduleModal({ sqftLabel: e.target.value })}
+                            className="w-full p-2 text-xs rounded-xl border border-slate-300 bg-white font-bold"
+                          />
+                        </div>
+                        <div>
+                          <label className="text-[11px] font-bold text-slate-700 block mb-1">Placeholder del Campo:</label>
+                          <input
+                            type="text"
+                            value={sm.sqftPlaceholder}
+                            onChange={e => updateScheduleModal({ sqftPlaceholder: e.target.value })}
+                            className="w-full p-2 text-xs rounded-xl border border-slate-300 bg-white"
+                          />
+                        </div>
+                      </div>
+
+                      <div>
+                        <label className="text-[11px] font-bold text-slate-700 block mb-1">
+                          Botones Rápidos de Sugerencia / Presets (uno por línea):
+                        </label>
+                        <textarea
+                          rows={4}
+                          value={sm.sqftPresets.join('\n')}
+                          onChange={e => updateScheduleModal({ sqftPresets: e.target.value.split('\n').map(s => s.trim()).filter(Boolean) })}
+                          className="w-full p-2 text-xs rounded-xl border border-slate-300 bg-white font-mono"
+                          placeholder="Under 3,000 sq ft (280 m²)&#10;3,000 - 5,000 sq ft (460 m²)..."
+                        />
+                      </div>
+                    </div>
+
+                    {/* Estados y Ciudades disponibles en el modal */}
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                      <div>
+                        <label className="text-[11px] font-bold text-slate-700 block mb-1">
+                          Estados / Regiones Disponibles en el Selector (uno por línea):
+                        </label>
+                        <textarea
+                          rows={4}
+                          value={sm.availableStates.join('\n')}
+                          onChange={e => updateScheduleModal({ availableStates: e.target.value.split('\n').map(s => s.trim()).filter(Boolean) })}
+                          className="w-full p-2 text-xs rounded-xl border border-slate-300 font-mono"
+                        />
+                      </div>
+                      <div>
+                        <label className="text-[11px] font-bold text-slate-700 block mb-1">
+                          Tipos de Residencia / Propiedad (uno por línea):
+                        </label>
+                        <textarea
+                          rows={4}
+                          value={sm.homeTypes.join('\n')}
+                          onChange={e => updateScheduleModal({ homeTypes: e.target.value.split('\n').map(s => s.trim()).filter(Boolean) })}
+                          className="w-full p-2 text-xs rounded-xl border border-slate-300 font-mono"
+                        />
+                      </div>
+                    </div>
+
+                    <div>
+                      <label className="text-[11px] font-bold text-slate-700 block mb-1">
+                        Ciudades Disponibles para Autocompletar / Datalist (una por línea):
+                      </label>
+                      <textarea
+                        rows={4}
+                        value={sm.availableCities.join('\n')}
+                        onChange={e => updateScheduleModal({ availableCities: e.target.value.split('\n').map(s => s.trim()).filter(Boolean) })}
+                        className="w-full p-2 text-xs rounded-xl border border-slate-300 font-mono"
+                        placeholder="Greenwich&#10;Stamford&#10;Westport..."
+                      />
+                    </div>
+                  </div>
+
+                  {/* Paso 2: Prioridades */}
+                  <div className="bg-white p-5 rounded-2xl border border-slate-200 shadow-2xs space-y-4">
+                    <span className="text-xs font-bold text-slate-900 block border-b pb-2">
+                      Paso 2: Metas, Prioridades y Notas Específicas
+                    </span>
+
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                      <div>
+                        <label className="text-[11px] font-bold text-slate-700 block mb-1">Título Paso 2:</label>
+                        <input
+                          type="text"
+                          value={sm.step2Title}
+                          onChange={e => updateScheduleModal({ step2Title: e.target.value })}
+                          className="w-full p-2 text-xs rounded-xl border border-slate-300 font-bold"
+                        />
+                      </div>
+                      <div>
+                        <label className="text-[11px] font-bold text-slate-700 block mb-1">Subtítulo Paso 2:</label>
+                        <input
+                          type="text"
+                          value={sm.step2Subtitle}
+                          onChange={e => updateScheduleModal({ step2Subtitle: e.target.value })}
+                          className="w-full p-2 text-xs rounded-xl border border-slate-300"
+                        />
+                      </div>
+                    </div>
+
+                    <div>
+                      <label className="text-[11px] font-bold text-slate-700 block mb-1">
+                        Lista de Opciones / Prioridades (una por línea):
+                      </label>
+                      <textarea
+                        rows={6}
+                        value={sm.prioritiesList.join('\n')}
+                        onChange={e => updateScheduleModal({ prioritiesList: e.target.value.split('\n').map(s => s.trim()).filter(Boolean) })}
+                        className="w-full p-2 text-xs rounded-xl border border-slate-300 font-mono"
+                      />
+                    </div>
+
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                      <div>
+                        <label className="text-[11px] font-bold text-slate-700 block mb-1">Label Campo de Notas:</label>
+                        <input
+                          type="text"
+                          value={sm.notesLabel}
+                          onChange={e => updateScheduleModal({ notesLabel: e.target.value })}
+                          className="w-full p-2 text-xs rounded-xl border border-slate-300"
+                        />
+                      </div>
+                      <div>
+                        <label className="text-[11px] font-bold text-slate-700 block mb-1">Placeholder Campo de Notas:</label>
+                        <input
+                          type="text"
+                          value={sm.notesPlaceholder}
+                          onChange={e => updateScheduleModal({ notesPlaceholder: e.target.value })}
+                          className="w-full p-2 text-xs rounded-xl border border-slate-300"
+                        />
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* Paso 3: Contacto, Horarios y Garantía */}
+                  <div className="bg-white p-5 rounded-2xl border border-slate-200 shadow-2xs space-y-4">
+                    <span className="text-xs font-bold text-slate-900 block border-b pb-2">
+                      Paso 3: Datos de Contacto, Franjas Horarias & Garantía
+                    </span>
+
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                      <div>
+                        <label className="text-[11px] font-bold text-slate-700 block mb-1">Título Paso 3:</label>
+                        <input
+                          type="text"
+                          value={sm.step3Title}
+                          onChange={e => updateScheduleModal({ step3Title: e.target.value })}
+                          className="w-full p-2 text-xs rounded-xl border border-slate-300 font-bold"
+                        />
+                      </div>
+                      <div>
+                        <label className="text-[11px] font-bold text-slate-700 block mb-1">Subtítulo Paso 3:</label>
+                        <input
+                          type="text"
+                          value={sm.step3Subtitle}
+                          onChange={e => updateScheduleModal({ step3Subtitle: e.target.value })}
+                          className="w-full p-2 text-xs rounded-xl border border-slate-300"
+                        />
+                      </div>
+                    </div>
+
+                    <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
+                      <div>
+                        <label className="text-[11px] font-bold text-slate-700 block mb-1">Label Nombre Completo:</label>
+                        <input
+                          type="text"
+                          value={sm.fullNameLabel}
+                          onChange={e => updateScheduleModal({ fullNameLabel: e.target.value })}
+                          className="w-full p-2 text-xs rounded-xl border border-slate-300"
+                        />
+                      </div>
+                      <div>
+                        <label className="text-[11px] font-bold text-slate-700 block mb-1">Label Teléfono:</label>
+                        <input
+                          type="text"
+                          value={sm.phoneLabel}
+                          onChange={e => updateScheduleModal({ phoneLabel: e.target.value })}
+                          className="w-full p-2 text-xs rounded-xl border border-slate-300"
+                        />
+                      </div>
+                      <div>
+                        <label className="text-[11px] font-bold text-slate-700 block mb-1">Label Email:</label>
+                        <input
+                          type="text"
+                          value={sm.emailLabel}
+                          onChange={e => updateScheduleModal({ emailLabel: e.target.value })}
+                          className="w-full p-2 text-xs rounded-xl border border-slate-300"
+                        />
+                      </div>
+                    </div>
+
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                      <div>
+                        <label className="text-[11px] font-bold text-slate-700 block mb-1">Label Fecha Preferida:</label>
+                        <input
+                          type="text"
+                          value={sm.preferredDateLabel}
+                          onChange={e => updateScheduleModal({ preferredDateLabel: e.target.value })}
+                          className="w-full p-2 text-xs rounded-xl border border-slate-300"
+                        />
+                      </div>
+                      <div>
+                        <label className="text-[11px] font-bold text-slate-700 block mb-1">Label Franja Horaria:</label>
+                        <input
+                          type="text"
+                          value={sm.preferredTimeLabel}
+                          onChange={e => updateScheduleModal({ preferredTimeLabel: e.target.value })}
+                          className="w-full p-2 text-xs rounded-xl border border-slate-300"
+                        />
+                      </div>
+                    </div>
+
+                    <div>
+                      <label className="text-[11px] font-bold text-slate-700 block mb-1">
+                        Franjas Horarias Disponibles (una por línea):
+                      </label>
+                      <textarea
+                        rows={3}
+                        value={sm.timeSlots.join('\n')}
+                        onChange={e => updateScheduleModal({ timeSlots: e.target.value.split('\n').map(s => s.trim()).filter(Boolean) })}
+                        className="w-full p-2 text-xs rounded-xl border border-slate-300 font-mono"
+                      />
+                    </div>
+
+                    <div>
+                      <label className="text-[11px] font-bold text-slate-700 block mb-1">Texto de Garantía y Cero Obligación:</label>
+                      <textarea
+                        rows={3}
+                        value={sm.guaranteeText}
+                        onChange={e => updateScheduleModal({ guaranteeText: e.target.value })}
+                        className="w-full p-2 text-xs rounded-xl border border-slate-300"
+                      />
+                    </div>
+
+                    <div>
+                      <label className="text-[11px] font-bold text-slate-700 block mb-1">Texto del Botón Final:</label>
+                      <input
+                        type="text"
+                        value={sm.submitButtonText}
+                        onChange={e => updateScheduleModal({ submitButtonText: e.target.value })}
+                        className="w-full p-2 text-xs rounded-xl border border-slate-300 font-bold text-emerald-700"
+                      />
+                    </div>
+                  </div>
+
+                  {/* Pantalla de Confirmación */}
+                  <div className="bg-white p-5 rounded-2xl border border-slate-200 shadow-2xs space-y-4">
+                    <span className="text-xs font-bold text-slate-900 block border-b pb-2">
+                      Pantalla de Confirmación Exitosa
+                    </span>
+
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                      <div>
+                        <label className="text-[11px] font-bold text-slate-700 block mb-1">Título de Confirmación:</label>
+                        <input
+                          type="text"
+                          value={sm.successTitle}
+                          onChange={e => updateScheduleModal({ successTitle: e.target.value })}
+                          className="w-full p-2 text-xs rounded-xl border border-slate-300 font-bold"
+                        />
+                      </div>
+                      <div>
+                        <label className="text-[11px] font-bold text-slate-700 block mb-1">Badge de Confirmación:</label>
+                        <input
+                          type="text"
+                          value={sm.successBadge}
+                          onChange={e => updateScheduleModal({ successBadge: e.target.value })}
+                          className="w-full p-2 text-xs rounded-xl border border-slate-300"
+                        />
+                      </div>
+                    </div>
+
+                    <div>
+                      <label className="text-[11px] font-bold text-slate-700 block mb-1">Mensaje de Confirmación:</label>
+                      <textarea
+                        rows={2}
+                        value={sm.successMessage}
+                        onChange={e => updateScheduleModal({ successMessage: e.target.value })}
+                        className="w-full p-2 text-xs rounded-xl border border-slate-300"
+                      />
+                    </div>
+                  </div>
+
+                  {/* Botón Guardar */}
+                  <div className="pt-2 flex justify-end">
+                    <button
+                      type="button"
+                      onClick={() => {
+                        saveAndNotify('Configuración Modal Schedule');
+                        showToast('¡Configuración del Modal Schedule guardada exitosamente!');
+                      }}
+                      className="px-6 py-2.5 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-xs shadow-sm flex items-center gap-2 cursor-pointer transition-all hover:scale-105"
+                    >
+                      <Save className="w-4 h-4" />
+                      <span>Guardar Configuración Modal Schedule</span>
+                    </button>
+                  </div>
+                </div>
+              );
+            })()}
 
             {/* ================= TAB 9: FOOTER Y CONTACTO ================= */}
             {activeTab === 'footer' && (

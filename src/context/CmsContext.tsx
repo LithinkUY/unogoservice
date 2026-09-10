@@ -15,7 +15,8 @@ import {
   ClientRecord,
   FooterConfig,
   PageSection,
-  CmsPage
+  CmsPage,
+  ScheduleModalConfig
 } from '../types';
 import { DEFAULT_CMS_CONFIG, DEFAULT_PAGE_SECTIONS } from '../data/defaultCmsData';
 
@@ -51,6 +52,7 @@ interface CmsContextType {
   deleteClient: (id: string) => void;
   updateAdminCredentials: (credentials: { adminUsername?: string; adminPassword?: string }) => void;
   updateFooter: (footer: Partial<FooterConfig>) => void;
+  updateScheduleModal: (scheduleModal: Partial<ScheduleModalConfig>) => void;
   saveFullConfig: (newConfig: SiteCMSConfig) => void;
   saveAndNotify: (sectionLabel?: string) => void;
   saveNotification: string | null;
@@ -142,7 +144,8 @@ export const CmsProvider: React.FC<{ children: React.ReactNode }> = ({ children 
           sections: finalSections,
           serviceAreas: serviceAreasToUse,
           gallery: parsed.gallery && parsed.gallery.length > 0 ? parsed.gallery : DEFAULT_CMS_CONFIG.gallery,
-          footer: { ...DEFAULT_CMS_CONFIG.footer, ...parsed.footer }
+          footer: { ...DEFAULT_CMS_CONFIG.footer, ...parsed.footer },
+          scheduleModal: { ...DEFAULT_CMS_CONFIG.scheduleModal, ...(parsed.scheduleModal || {}) }
         };
       }
     } catch (e) {
@@ -399,6 +402,16 @@ export const CmsProvider: React.FC<{ children: React.ReactNode }> = ({ children 
     }));
   };
 
+  const updateScheduleModal = (updates: Partial<ScheduleModalConfig>) => {
+    setConfig(prev => ({
+      ...prev,
+      scheduleModal: {
+        ...(prev.scheduleModal || DEFAULT_CMS_CONFIG.scheduleModal!),
+        ...updates
+      }
+    }));
+  };
+
   const saveFullConfig = (newConfig: SiteCMSConfig) => {
     setConfig(newConfig);
   };
@@ -464,6 +477,7 @@ export const CmsProvider: React.FC<{ children: React.ReactNode }> = ({ children 
         deleteClient,
         updateAdminCredentials,
         updateFooter,
+        updateScheduleModal,
         saveFullConfig,
         saveAndNotify,
         saveNotification,

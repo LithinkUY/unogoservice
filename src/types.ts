@@ -401,6 +401,51 @@ export interface CmsPage {
   createdAt: string;
 }
 
+export interface ScheduleModalConfig {
+  badge: string;
+  title: string;
+  subtitle?: string;
+  
+  // Step 1: Location & Property
+  step1Title: string;
+  step1Subtitle: string;
+  addressLabel: string;
+  cityLabel: string;
+  stateLabel: string;
+  zipLabel: string;
+  sqftLabel: string;
+  sqftPlaceholder: string;
+  sqftPresets: string[];
+  homeTypeLabel: string;
+  homeTypes: string[];
+  availableCities: string[];
+  availableStates: string[];
+
+  // Step 2: Priorities
+  step2Title: string;
+  step2Subtitle: string;
+  prioritiesList: string[];
+  notesLabel: string;
+  notesPlaceholder: string;
+
+  // Step 3: Contact & Time
+  step3Title: string;
+  step3Subtitle: string;
+  fullNameLabel: string;
+  phoneLabel: string;
+  emailLabel: string;
+  preferredDateLabel: string;
+  preferredTimeLabel: string;
+  timeSlots: string[];
+  guaranteeText: string;
+  submitButtonText: string;
+
+  // Success Confirmation
+  successTitle: string;
+  successMessage: string;
+  successBadge: string;
+}
+
 export interface SiteCMSConfig {
   theme: ThemeConfig;
   header: HeaderConfig;
@@ -419,5 +464,6 @@ export interface SiteCMSConfig {
   adminUsername: string;
   adminPassword: string;
   footer: FooterConfig;
+  scheduleModal?: ScheduleModalConfig;
 }
 

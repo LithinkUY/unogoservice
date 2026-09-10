@@ -135,9 +135,11 @@ export const Hero: React.FC<HeroProps> = ({
 
   const handleAction = (action?: string) => {
     if (action === 'walkthrough') onOpenWalkthrough();
+    else if (action === 'calculator') onNavigateSection('calculator');
     else if (action === 'pricing') onNavigateSection('pricing');
     else if (action === 'gallery') onNavigateSection('gallery');
     else if (action === 'portal') onNavigateSection('portal');
+    else if (action) onNavigateSection(action);
     else onOpenWalkthrough();
   };
 
@@ -411,7 +413,7 @@ export const Hero: React.FC<HeroProps> = ({
                 </button>
 
                 <button
-                  onClick={() => onNavigateSection('pricing')}
+                  onClick={() => onNavigateSection('calculator')}
                   className="px-6 py-4 rounded-xl border border-white/20 bg-white/10 hover:bg-white/20 text-white font-bold text-sm sm:text-base transition-all flex items-center justify-center gap-2 cursor-pointer"
                 >
                   <span>{config.content.hero.secondaryBtnText}</span>
