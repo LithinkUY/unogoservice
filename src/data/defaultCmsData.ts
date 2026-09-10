@@ -274,7 +274,7 @@ export const DEFAULT_CMS_CONFIG: SiteCMSConfig = {
     stickyHeader: true,
     transparentHeader: true,
     headerTransparency: 80,
-    whatsappEnabled: true,
+    whatsappEnabled: false,
     whatsappPhone: '(888) 555-CARE',
     whatsappMessage: 'Hola, me gustaría conocer más sobre sus servicios.',
     showAdminButton: true,
