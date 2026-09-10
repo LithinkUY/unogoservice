@@ -237,7 +237,7 @@ export const DEFAULT_CMS_CONFIG: SiteCMSConfig = {
   },
   header: {
     topBar: {
-      enabled: true,
+      enabled: false,
       badgeText: 'TRUSTED SINCE 2003',
       regionsText: 'Serving MD, DC, VA, CT, GA, FL, IL & MA Fine Homes',
       ratingScore: '4.9/5',

@@ -13,7 +13,10 @@ import {
   Play,
   Pause,
   Sparkles,
-  Sliders
+  Sliders,
+  Edit3,
+  Trash2,
+  X
 } from 'lucide-react';
 import { useCms } from '../context/CmsContext';
 
@@ -38,9 +41,57 @@ export const Hero: React.FC<HeroProps> = ({
   const [currentSlideIndex, setCurrentSlideIndex] = useState(0);
   const [isPlaying, setIsPlaying] = useState(true);
 
-  const activeSlides = config.slider.slides.filter(s => s.enabled);
+    const activeSlides = config.slider.slides.filter(s => s.enabled);
   const isSliderMode = config.slider.sliderMode && activeSlides.length > 0;
   const heroTopOffset = config.header.transparentHeader ? '-mt-4 sm:-mt-5' : '';
+
+  // Admin quick-edit state
+  const [isAdmin, setIsAdmin] = useState(() => {
+    if (typeof window === 'undefined') return false;
+    return localStorage.getItem('hasslefree_admin_auth') === 'true';
+  });
+  const [editingSlide, setEditingSlide] = useState(null);
+  const [editDraft, setEditDraft] = useState(null);
+  const [removeConfirm, setRemoveConfirm] = useState(null);
+  const [adminKey, setAdminKey] = useState('');
+  const [adminError, setAdminError] = useState('');
+
+  const handleAdminLogin = () => {
+    const adminUser = config.adminUsername?.trim() || 'admin';
+    if (adminKey === adminUser) {
+      setIsAdmin(true);
+      setAdminError('');
+      if (typeof window !== 'undefined') {
+        localStorage.setItem('hasslefree_admin_auth', 'true');
+      }
+    } else {
+      setAdminError('Clave incorrecta');
+    }
+  };
+
+  const handleOpenEdit = (slide) => {
+    setEditDraft({ ...slide });
+    setEditingSlide(slide);
+  };
+
+  const handleSaveEdit = () => {
+    if (!editDraft) return;
+    const updated = config.slider.slides.map(s => s.id === editDraft.id ? { ...s, ...editDraft } : s);
+    updateSlider({ slides: updated });
+    setEditingSlide(null);
+    setEditDraft(null);
+  };
+
+  const handleRemoveSlide = (id) => {
+    const updated = config.slider.slides.map(s => s.id === id ? { ...s, enabled: false } : s);
+    updateSlider({ slides: updated });
+    setRemoveConfirm(null);
+    // Remove from active slides
+    let newIndex = currentSlideIndex;
+    const remaining = updated.filter(s => s.enabled);
+    if (newIndex >= remaining.length) newIndex = Math.max(0, remaining.length - 1);
+    setCurrentSlideIndex(newIndex);
+  };
 
   // Autoplay timer
   useEffect(() => {
@@ -91,8 +142,44 @@ export const Hero: React.FC<HeroProps> = ({
 
   const currentSlide = activeSlides[currentSlideIndex] || activeSlides[0];
 
-  return (
+    return (
     <section id="hero" className={`relative overflow-hidden bg-slate-950 text-white border-b border-slate-800 ${heroTopOffset}`}>
+
+      {/* Admin Quick-Login Panel (top-right corner) */}
+      {onOpenAdmin && (
+        <div className="absolute top-4 right-4 z-50 flex items-center gap-2">
+          {!isAdmin ? (
+            <div className="flex items-center gap-2 bg-slate-900/80 rounded-lg px-2.5 py-1.5 border border-white/20">
+              <input
+                type="password"
+                placeholder="Clave admin"
+                value={adminKey}
+                onChange={(e) => { setAdminKey(e.target.value); setAdminError(''); }}
+                className="text-xs px-2 py-1 rounded bg-slate-800 text-white placeholder-slate-500 outline-none focus:ring-1 focus:ring-emerald-500"
+              />
+              <button
+                onClick={handleAdminLogin}
+                className="text-xs px-2.5 py-1 bg-emerald-600 hover:bg-emerald-700 rounded text-white font-bold cursor-pointer transition-colors"
+              >
+                Acceder
+              </button>
+            </div>
+          ) : (
+            <button
+              onClick={() => onOpenAdmin()}
+              className="p-2 bg-emerald-600 hover:bg-emerald-700 rounded-lg text-white transition-colors"
+              title="Abrir panel de administración completo"
+            >
+              <Sliders className="w-4 h-4" />
+            </button>
+          )}
+        </div>
+      )}
+      {adminError && (
+        <div className="absolute top-4 right-4 z-50 text-xs text-red-400 bg-red-500/10 px-2.5 py-1 rounded-lg border border-red-500/30">
+          {adminError}
+        </div>
+      )}
 
       {/* Background Subtle Geometric Grid */}
       <div className="absolute inset-0 opacity-10 pointer-events-none bg-[radial-gradient(#ffffff_1px,transparent_1px)] [background-size:24px_24px]"></div>
@@ -140,11 +227,7 @@ export const Hero: React.FC<HeroProps> = ({
               {/* Left Column: Headlines, Copy, CTAs */}
               <div className="lg:col-span-8 space-y-6 animate-in fade-in slide-in-from-bottom-3 duration-500">
 
-                {/* Eyebrow Trust Badge */}
-                <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-emerald-500/20 border border-emerald-400/40 text-emerald-300 text-xs sm:text-sm font-bold backdrop-blur-md">
-                  <span className="flex h-2 w-2 rounded-full bg-emerald-400 animate-ping"></span>
-                  <span className="font-extrabold uppercase tracking-wider">{currentSlide.eyebrow}</span>
-                </div>
+                {/* Eyebrow removed */}
 
                 {/* Main Headline with Highlight */}
                 <div className="space-y-3">
@@ -165,36 +248,7 @@ export const Hero: React.FC<HeroProps> = ({
                   </p>
                 </div>
 
-                {/* Quick Zip Coverage Search Overlay */}
-                <div className="bg-slate-900/90 backdrop-blur-md p-2.5 sm:p-3 rounded-2xl border border-white/20 shadow-2xl max-w-xl">
-                  <form onSubmit={handleZipSubmit} className="flex flex-col sm:flex-row items-stretch gap-2">
-                    <div className="relative flex-1">
-                      <MapPin className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" />
-                      <input
-                        type="text"
-                        value={zipInput}
-                        onChange={(e) => setZipInput(e.target.value)}
-                        placeholder={config.content.hero.zipPlaceholder || "Enter your zip code (e.g. 20854, 22101, 06880)"}
-                        maxLength={5}
-                        className="w-full pl-10 pr-3 py-2.5 text-xs sm:text-sm rounded-xl border-none focus:ring-2 focus:ring-emerald-500 outline-hidden text-white placeholder-slate-400 bg-slate-800/80 font-medium"
-                      />
-                    </div>
-                    <button
-                      type="submit"
-                      className="px-5 py-2.5 rounded-xl text-white text-xs sm:text-sm font-bold transition-all flex items-center justify-center gap-1.5 shadow-md cursor-pointer whitespace-nowrap"
-                      style={{ backgroundColor: config.theme.primaryColor || '#059669' }}
-                    >
-                      <span>{config.content.hero.coverageButtonText || "Check Coverage"}</span>
-                      <ArrowRight className="w-4 h-4" />
-                    </button>
-                  </form>
-                  {zipFeedback && (
-                    <div className="mt-2 text-xs font-semibold px-2.5 py-1.5 rounded-lg bg-slate-800/90 text-emerald-300 flex items-center gap-1.5 border border-emerald-500/30 animate-in fade-in">
-                      <CheckCircle2 className="w-3.5 h-3.5 text-emerald-400 shrink-0" />
-                      <span>{zipFeedback}</span>
-                    </div>
-                  )}
-                </div>
+                {/* Zip form removed */}
 
                 {/* Slide Primary / Secondary CTA Buttons */}
                 <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-3.5 pt-2">
@@ -220,53 +274,7 @@ export const Hero: React.FC<HeroProps> = ({
 
               </div>
 
-              {/* Right Column: Slide Preview Card / Tech Certification */}
-              <div className="lg:col-span-4 hidden lg:block">
-                <div className="bg-slate-900/85 backdrop-blur-md p-6 rounded-3xl border border-white/20 shadow-2xl text-white space-y-4">
-
-                  <div className="flex items-center justify-between border-b border-white/10 pb-4">
-                    <div className="flex items-center gap-3">
-                      <div className="w-11 h-11 rounded-2xl bg-emerald-600 text-white flex items-center justify-center font-black text-sm shadow-md">
-                        HF
-                      </div>
-                      <div>
-                        <div className="text-xs font-bold text-slate-200">Dedicated Technician</div>
-                        <div className="text-sm font-black text-white">Mark Jenkins • Lead W-2</div>
-                      </div>
-                    </div>
-                    <span className="px-2 py-1 rounded text-[10px] font-black bg-emerald-500/20 text-emerald-400 border border-emerald-500/30 uppercase">
-                      CERTIFIED
-                    </span>
-                  </div>
-
-                  <div className="space-y-2 text-xs text-slate-300">
-                    <div className="flex items-center gap-2">
-                      <CheckCircle2 className="w-4 h-4 text-emerald-400 shrink-0" />
-                      <span>50-Point seasonal mechanical audit included</span>
-                    </div>
-                    <div className="flex items-center gap-2">
-                      <CheckCircle2 className="w-4 h-4 text-emerald-400 shrink-0" />
-                      <span>Up to 3.5 hours handyman labor every visit</span>
-                    </div>
-                    <div className="flex items-center gap-2">
-                      <CheckCircle2 className="w-4 h-4 text-emerald-400 shrink-0" />
-                      <span>24/7/365 Emergency dispatch on call</span>
-                    </div>
-                  </div>
-
-                  {/* Rating Callout */}
-                  <div className="pt-3 border-t border-white/10 flex items-center justify-between text-xs">
-                    <div className="flex items-center gap-1.5">
-                      <div className="flex text-amber-400">
-                        {'★'.repeat(5)}
-                      </div>
-                      <span className="font-bold text-white">4.9 / 5.0</span>
-                    </div>
-                    <span className="text-slate-400">350+ Google Reviews</span>
-                  </div>
-
-                </div>
-              </div>
+              {/* Right Column removed */}
 
             </div>
           </div>
@@ -314,13 +322,34 @@ export const Hero: React.FC<HeroProps> = ({
                 >
                   {isPlaying ? <Pause className="w-3.5 h-3.5" /> : <Play className="w-3.5 h-3.5" />}
                 </button>
-              </div>
-            </>
-          )}
+                            </>
+            )}
 
-        </div>
+            {/* Admin Quick-Edit Buttons for Current Slide */}
+            {isAdmin && isSliderMode && currentSlide && (
+              <div className="absolute top-4 left-4 z-30 flex gap-2">
+                <button
+                  onClick={() => handleOpenEdit(currentSlide)}
+                  className="p-2 rounded-lg bg-slate-900/80 hover:bg-slate-900 text-white border border-white/20 backdrop-blur-md transition-all flex items-center gap-1.5 text-xs font-semibold cursor-pointer"
+                  title="Editar esta diapositiva"
+                >
+                  <Edit3 className="w-3.5 h-3.5 text-emerald-400" />
+                  Editar
+                </button>
+                <button
+                  onClick={() => setRemoveConfirm(currentSlide)}
+                  className="p-2 rounded-lg bg-red-600/80 hover:bg-red-600 text-white border border-red-400/30 backdrop-blur-md transition-all flex items-center gap-1.5 text-xs font-semibold cursor-pointer"
+                  title="Eliminar esta diapositiva"
+                >
+                  <Trash2 className="w-3.5 h-3.5" />
+                  Quitar
+                </button>
+              </div>
+            )}
+
+          </div>
       ) : (
-        /* ================= STATIC HERO MODE ================= */
+        {/* ================= STATIC HERO MODE ================= */}
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16 sm:py-24 relative z-10">
           <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 items-center">
 
@@ -347,30 +376,7 @@ export const Hero: React.FC<HeroProps> = ({
                 {config.content.hero.description}
               </p>
 
-              {/* Zip Code Form */}
-              <div className="bg-slate-900/90 backdrop-blur-md p-3 rounded-2xl border border-white/20 shadow-xl max-w-xl">
-                <form onSubmit={handleZipSubmit} className="flex flex-col sm:flex-row items-stretch gap-2">
-                  <div className="relative flex-1">
-                    <MapPin className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" />
-                    <input
-                      type="text"
-                      value={zipInput}
-                      onChange={(e) => setZipInput(e.target.value)}
-                      placeholder={config.content.hero.zipPlaceholder}
-                      maxLength={5}
-                      className="w-full pl-10 pr-3 py-2.5 text-xs sm:text-sm rounded-xl border-none text-white placeholder-slate-400 bg-slate-800/90 font-medium"
-                    />
-                  </div>
-                  <button
-                    type="submit"
-                    className="px-5 py-2.5 rounded-xl text-white text-xs sm:text-sm font-bold flex items-center justify-center gap-1.5 cursor-pointer"
-                    style={{ backgroundColor: config.theme.primaryColor || '#059669' }}
-                  >
-                    <span>{config.content.hero.coverageButtonText}</span>
-                    <ArrowRight className="w-4 h-4" />
-                  </button>
-                </form>
-              </div>
+              {/* Zip code form removed */}
 
               {/* Action Buttons */}
               <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-3.5 pt-2">
