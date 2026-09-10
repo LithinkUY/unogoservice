@@ -47,6 +47,7 @@ export interface FaqItem {
   question: string;
   answer: string;
   category: 'general' | 'technicians' | 'pricing' | 'services';
+  hidden?: boolean;
 }
 
 export interface PortalTask {
@@ -80,6 +81,8 @@ export interface NavItemConfig {
   enabled: boolean;
   isExternal?: boolean;
   href?: string;
+  children?: NavItemConfig[];
+  pageSlug?: string;
 }
 
 export interface PageSection {
@@ -244,6 +247,14 @@ export interface FooterConfig {
   copyrightText: string;
   companyName: string;
   establishedYear: string;
+  quickLinks: Array<{ label: string; sectionId: string; enabled: boolean; pageSlug?: string; href?: string }>;
+  serviceRegions: Array<{ label: string; enabled: boolean }>;
+  trustLinks: Array<{ label: string; type: 'link' | 'text'; action?: string; enabled: boolean }>;
+  footerBgColor?: string;
+  footerTextColor?: string;
+  showNewsletter?: boolean;
+  showRatingBadge?: boolean;
+  licenseNumbers?: Array<{ label: string; enabled: boolean }>;
 }
 
 export interface ContentConfig {
@@ -289,11 +300,15 @@ export interface ContentConfig {
     badge: string;
     title: string;
     subtitle: string;
+    ctaTitle?: string;
+    ctaSubtitle?: string;
+    ctaButtonText?: string;
     steps: Array<{
       step: number;
       title: string;
       subtitle: string;
       description: string;
+      highlight?: string;
     }>;
   };
   checklist: {
@@ -316,12 +331,37 @@ export interface ContentConfig {
     title: string;
     subtitle: string;
     sliderType?: 'grid' | 'carousel';
+    statsYears?: string;
+    statsReviews?: string;
+    statsRenewal?: string;
+    statsBackground?: string;
   };
   faq: {
     badge: string;
     title: string;
     subtitle: string;
+    ctaTitle?: string;
+    ctaSubtitle?: string;
+    ctaPhoneText?: string;
+    ctaPhoneNumber?: string;
+    ctaButtonText?: string;
   };
+  serviceAreas?: {
+    badge?: string;
+    title?: string;
+    subtitle?: string;
+    areas?: ServiceArea[];
+  };
+}
+
+export interface CmsPage {
+  id: string;
+  slug: string;
+  title: string;
+  metaDescription?: string;
+  enabled: boolean;
+  sections: PageSection[];
+  createdAt: string;
 }
 
 export interface SiteCMSConfig {
@@ -330,6 +370,7 @@ export interface SiteCMSConfig {
   slider: SliderConfig;
   content: ContentConfig;
   sections: PageSection[];
+  pages?: CmsPage[];
   checklist: ChecklistItem[];
   pricingPlans: PricingPlan[];
   serviceAreas: ServiceArea[];

@@ -178,6 +178,46 @@ function AppContent() {
     return <AdminPage onBackToSite={() => navigateTo('/')} />;
   }
 
+  if (currentPath.startsWith('/page/')) {
+    const slug = currentPath.replace('/page/', '');
+    const page = config.pages?.find(p => p.slug === slug);
+
+    if (page && page.enabled) {
+      return (
+        <div className="min-h-screen bg-white text-slate-900 flex flex-col font-sans antialiased">
+          <Header
+            onOpenWalkthrough={() => setWalkthroughOpen(true)}
+            onOpenPortal={() => setPortalOpen(true)}
+            onNavigateSection={handleNavigateSection}
+            onOpenAdmin={() => navigateTo('/admin')}
+          />
+          <main className="flex-1 pt-32 pb-20">
+            <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+              <h1 className="text-4xl font-extrabold text-[#0f2942] mb-8">{page.title}</h1>
+              {page.sections && page.sections.length > 0 ? (
+                page.sections.map(section => (
+                  <div key={section.id} className="mb-12">
+                    {section.title && <h2 className="text-2xl font-bold mb-4">{section.title}</h2>}
+                    {section.content && <div className="text-slate-700 whitespace-pre-line leading-relaxed">{section.content}</div>}
+                    {section.imageUrl && <img src={section.imageUrl} alt={section.title} className="mt-4 rounded-xl" />}
+                  </div>
+                ))
+              ) : (
+                <div className="text-slate-500">El contenido de esta página está en construcción.</div>
+              )}
+            </div>
+          </main>
+          <Footer
+            onOpenWalkthrough={() => setWalkthroughOpen(true)}
+            onOpenPortal={() => setPortalOpen(true)}
+            onNavigateSection={handleNavigateSection}
+            onOpenAdmin={() => navigateTo('/admin')}
+          />
+        </div>
+      );
+    }
+  }
+
   const renderSection = (section: PageSection) => {
     if (!section.enabled) return null;
     switch (section.id) {

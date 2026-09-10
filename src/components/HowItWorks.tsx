@@ -20,36 +20,15 @@ export const HowItWorks: React.FC<HowItWorksProps> = ({ onOpenWalkthrough }) => 
   const { config } = useCms();
   const howContent = config.content.howItWorks;
 
-  const steps = [
-    {
-      number: '01',
-      title: 'Complimentary Home Walkthrough',
-      description: 'A Senior Home Manager conducts an in-depth, room-by-room audit of your appliances, HVAC systems, plumbing shutoffs, electrical panels, and exterior envelope.',
-      highlight: 'Full mechanical inventory created at no charge',
-      icon: ClipboardCheck
-    },
-    {
-      number: '02',
-      title: 'Custom Care Plan & Dedicated Tech',
-      description: 'We construct a customized seasonal maintenance roadmap tailored to your specific home systems and assign your dedicated, background-checked primary W-2 technician.',
-      highlight: 'You see the same trusted face every single visit',
-      icon: UserCheck
-    },
-    {
-      number: '03',
-      title: 'Proactive Seasonal Visits & Repairs',
-      description: 'Your technician arrives on schedule in uniform, fully equipped with filters, lubricants, and tools to execute your 50-point checklist and tackle your honey-do list.',
-      highlight: 'Included handyman hours applied to repairs',
-      icon: Wrench
-    },
-    {
-      number: '04',
-      title: 'Digital Reports & 24/7 Peace of Mind',
-      description: 'Receive detailed photo-documented inspection reports in your client portal after every visit. Plus, enjoy 24/7/365 emergency dispatch whenever urgent issues arise.',
-      highlight: 'Complete home maintenance history at your fingertips',
-      icon: Smartphone
-    }
-  ];
+  const ICONS = [ClipboardCheck, UserCheck, Wrench, Smartphone];
+
+  const steps = howContent.steps.map((cmsStep, idx) => ({
+    number: `0${cmsStep.step}`,
+    title: cmsStep.title,
+    description: cmsStep.description,
+    highlight: cmsStep.highlight || '',
+    icon: ICONS[idx % ICONS.length]
+  }));
 
   return (
     <section id="how-it-works" className="py-20 bg-slate-50 border-b border-slate-200/80">
@@ -101,12 +80,14 @@ export const HowItWorks: React.FC<HowItWorksProps> = ({ onOpenWalkthrough }) => 
                   </p>
                 </div>
 
-                <div className="mt-6 pt-4 border-t border-slate-100">
-                  <div className="flex items-center gap-2 text-xs font-bold text-slate-800">
-                    <CheckCircle2 className="w-4 h-4 text-emerald-600 shrink-0" />
-                    <span>{step.highlight}</span>
+                {step.highlight && (
+                  <div className="mt-6 pt-4 border-t border-slate-100">
+                    <div className="flex items-center gap-2 text-xs font-bold text-slate-800">
+                      <CheckCircle2 className="w-4 h-4 text-emerald-600 shrink-0" />
+                      <span>{step.highlight}</span>
+                    </div>
                   </div>
-                </div>
+                )}
               </div>
             );
           })}
@@ -116,10 +97,10 @@ export const HowItWorks: React.FC<HowItWorksProps> = ({ onOpenWalkthrough }) => 
         <div className="mt-14 bg-white rounded-3xl p-8 border border-slate-200 shadow-sm max-w-4xl mx-auto flex flex-col sm:flex-row items-center justify-between gap-6">
           <div className="space-y-1 text-center sm:text-left">
             <h4 className="text-xl font-black text-[#0f2942]">
-              Ready to take the first step?
+              {howContent.ctaTitle || 'Ready to take the first step?'}
             </h4>
             <p className="text-xs sm:text-sm text-slate-600">
-              Schedule your complimentary, no-obligation walkthrough with a Senior Home Manager today.
+              {howContent.ctaSubtitle || 'Schedule your complimentary, no-obligation walkthrough with a Senior Home Manager today.'}
             </p>
           </div>
           <button
@@ -127,7 +108,7 @@ export const HowItWorks: React.FC<HowItWorksProps> = ({ onOpenWalkthrough }) => 
             className="px-6 py-3.5 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-sm shadow-md flex items-center gap-2 cursor-pointer shrink-0"
           >
             <Calendar className="w-4 h-4" />
-            <span>Book Your Walkthrough</span>
+            <span>{howContent.ctaButtonText || 'Book Your Walkthrough'}</span>
           </button>
         </div>
 

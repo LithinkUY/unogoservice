@@ -420,30 +420,37 @@ export const DEFAULT_CMS_CONFIG: SiteCMSConfig = {
       badge: 'Streamlined Onboarding',
       title: 'How Premier Care Works in 4 Simple Steps',
       subtitle: 'Getting started is seamless, free of charge, and requires zero long-term contractual commitments.',
+      ctaTitle: 'Ready to take the first step?',
+      ctaSubtitle: 'Schedule your complimentary, no-obligation walkthrough with a Senior Home Manager today.',
+      ctaButtonText: 'Book Your Walkthrough',
       steps: [
         {
           step: 1,
           title: 'Complimentary Home Walkthrough',
           subtitle: 'Zero Cost / Zero Obligation',
-          description: 'A Senior Home Manager conducts a thorough 60-minute walk through of your residence, documenting HVAC units, water heaters, roof age, and special quirks.'
+          description: 'A Senior Home Manager conducts an in-depth, room-by-room audit of your appliances, HVAC systems, plumbing shutoffs, electrical panels, and exterior envelope.',
+          highlight: 'Full mechanical inventory created at no charge'
         },
         {
           step: 2,
-          title: 'Tailored Home Care Proposal',
+          title: 'Custom Care Plan & Dedicated Tech',
           subtitle: 'Transparent Monthly Pricing',
-          description: 'We calculate your custom membership tier based on your square footage and mechanical complexity. No hidden fees, surprise invoices, or markups.'
+          description: 'We construct a customized seasonal maintenance roadmap tailored to your specific home systems and assign your dedicated, background-checked primary W-2 technician.',
+          highlight: 'You see the same trusted face every single visit'
         },
         {
           step: 3,
-          title: 'Dedicated Technician Assigned',
+          title: 'Proactive Seasonal Visits & Repairs',
           subtitle: 'Your Trusted Household Partner',
-          description: 'You are matched with a permanent, background-checked W-2 technician who learns your home inside out and visits on your preferred recurring cadence.'
+          description: 'Your technician arrives on schedule in uniform, fully equipped with filters, lubricants, and tools to execute your 50-point checklist and tackle your honey-do list.',
+          highlight: 'Included handyman hours applied to repairs'
         },
         {
           step: 4,
-          title: 'Digital Reports & Total Peace of Mind',
+          title: 'Digital Reports & 24/7 Peace of Mind',
           subtitle: 'Complete Transparency in Portal',
-          description: 'After every visit, receive a detailed photographic report logging work completed, items serviced, and any recommendations for future maintenance.'
+          description: 'Receive detailed photo-documented inspection reports in your client portal after every visit. Plus, enjoy 24/7/365 emergency dispatch whenever urgent issues arise.',
+          highlight: 'Complete home maintenance history at your fingertips'
         }
       ]
     },
@@ -466,15 +473,30 @@ export const DEFAULT_CMS_CONFIG: SiteCMSConfig = {
       badge: 'Real Homeowners',
       title: 'Trusted by Over 1,500 Fine Residences',
       subtitle: 'Read authentic reviews from homeowners who reclaimed their weekends and protected their properties.',
-      sliderType: 'grid'
+      sliderType: 'grid',
+      statsYears: '20+',
+      statsReviews: '350+',
+      statsRenewal: '98%',
+      statsBackground: '100%'
     },
     faq: {
       badge: 'Clear Answers',
       title: 'Frequently Asked Questions',
-      subtitle: 'Everything you need to know about our preventative maintenance protocol, dedicated technicians, and membership terms.'
+      subtitle: 'Everything you need to know about our preventative maintenance protocol, dedicated technicians, and membership terms.',
+      ctaTitle: 'Have a question specific to your property?',
+      ctaSubtitle: 'Our home care advisors are available to answer your property-specific questions any time.',
+      ctaPhoneText: '(888) 555-CARE',
+      ctaPhoneNumber: 'tel:8885552273',
+      ctaButtonText: 'Request a Callback'
+    },
+    serviceAreas: {
+      badge: 'Coast to Coast Service',
+      title: 'Our Regional Service Areas',
+      subtitle: 'Premier Home Services operates dedicated local field teams across 8 key metropolitan regions.'
     }
   },
   sections: DEFAULT_PAGE_SECTIONS,
+  pages: [],
   checklist: CHECKLIST_ITEMS,
   pricingPlans: PRICING_PLANS,
   serviceAreas: SERVICE_AREAS,
@@ -496,6 +518,40 @@ export const DEFAULT_CMS_CONFIG: SiteCMSConfig = {
     licenseText: 'MHIC #91288 • VA Class A Contractor • CT HIC #0634192 • GA Residential',
     copyrightText: 'Premier Home Services, Inc. All rights reserved. Licensed in MD, DC, VA, CT, GA, FL, IL & MA.',
     companyName: 'Premier Home Services',
-    establishedYear: '2003'
+    establishedYear: '2003',
+    showNewsletter: true,
+    showRatingBadge: true,
+    footerBgColor: '#0b1c2d',
+    footerTextColor: '#94a3b8',
+    quickLinks: [
+      { label: 'How It Works', sectionId: 'how-it-works', enabled: true },
+      { label: 'Pricing Plans', sectionId: 'pricing', enabled: true },
+      { label: 'Project Gallery', sectionId: 'gallery', enabled: true },
+      { label: 'Client Reviews', sectionId: 'reviews', enabled: true },
+      { label: 'FAQ', sectionId: 'faqs', enabled: true }
+    ],
+    serviceRegions: [
+      { label: 'Maryland', enabled: true },
+      { label: 'Washington D.C.', enabled: true },
+      { label: 'Virginia', enabled: true },
+      { label: 'Connecticut', enabled: true },
+      { label: 'Georgia', enabled: true },
+      { label: 'Florida', enabled: true },
+      { label: 'Illinois', enabled: true },
+      { label: 'Massachusetts', enabled: true }
+    ],
+    trustLinks: [
+      { label: 'Schedule Walkthrough', type: 'link', action: 'walkthrough', enabled: true },
+      { label: 'Member Portal Login', type: 'link', action: 'portal', enabled: true },
+      { label: 'Terms of Service', type: 'link', action: '#', enabled: true },
+      { label: 'Privacy Policy', type: 'link', action: '#', enabled: true },
+      { label: 'Contact Support', type: 'link', action: '#', enabled: true }
+    ],
+    licenseNumbers: [
+      { label: 'MHIC #91288', enabled: true },
+      { label: 'VA Class A Contractor', enabled: true },
+      { label: 'CT HIC #0634192', enabled: true },
+      { label: 'GA Residential', enabled: true }
+    ]
   }
 };

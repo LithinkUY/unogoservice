@@ -193,7 +193,7 @@ export const ThreePillars: React.FC<ThreePillarsProps> = ({
                 onClick={onOpenWalkthrough}
                 className="text-xs font-bold text-emerald-700 hover:text-emerald-800 flex items-center gap-1.5 group-hover:translate-x-1 transition-transform cursor-pointer"
               >
-                <span>Talk to a Home Manager</span>
+                <span>{config.header.ctaButtons.primaryText || 'Talk to a Home Manager'}</span>
                 <ArrowRight className="w-3.5 h-3.5" />
               </button>
             </div>

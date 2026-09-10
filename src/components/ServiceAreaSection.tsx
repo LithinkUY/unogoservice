@@ -8,7 +8,7 @@ import {
   ArrowRight,
   ShieldCheck
 } from 'lucide-react';
-import { SERVICE_AREAS } from '../data/mockData';
+import { useCms } from '../context/CmsContext';
 import { ServiceArea } from '../types';
 
 interface ServiceAreaSectionProps {
@@ -20,6 +20,10 @@ export const ServiceAreaSection: React.FC<ServiceAreaSectionProps> = ({
   onOpenWalkthrough,
   searchedZip 
 }) => {
+  const { config } = useCms();
+  const serviceAreasData = config.serviceAreas || [];
+  const areaContent = config.content.serviceAreas || {};
+  
   const [selectedStateIndex, setSelectedStateIndex] = useState<number>(0);
   const [zipQuery, setZipQuery] = useState<string>(searchedZip || '');
   const [lookupResult, setLookupResult] = useState<{
@@ -33,7 +37,7 @@ export const ServiceAreaSection: React.FC<ServiceAreaSectionProps> = ({
     const clean = zipQuery.trim();
     if (!clean) return;
 
-    const matchedArea = SERVICE_AREAS.find(area => 
+    const matchedArea = serviceAreasData.find(area => 
       area.zipPrefixes.some(prefix => clean.startsWith(prefix))
     );
 
@@ -41,19 +45,20 @@ export const ServiceAreaSection: React.FC<ServiceAreaSectionProps> = ({
       setLookupResult({
         found: true,
         area: matchedArea,
-        message: `Premier Home Services is active in ${clean}! Managed by our ${matchedArea.name} regional dispatch team.`
+        message: `We are active in ${clean}! Managed by our ${matchedArea.name} regional dispatch team.`
       });
-      const idx = SERVICE_AREAS.findIndex(a => a.state === matchedArea.state);
+      const idx = serviceAreasData.findIndex(a => a.state === matchedArea.state);
       if (idx !== -1) setSelectedStateIndex(idx);
     } else {
       setLookupResult({
         found: false,
-        message: `Zip code ${clean} is outside our current primary coverage. Contact us at (888) 555-CARE as we expand rapidly!`
+        message: `Zip code ${clean} is outside our current primary coverage. Contact us as we expand rapidly!`
       });
     }
   };
 
-  const activeArea = SERVICE_AREAS[selectedStateIndex];
+  if (serviceAreasData.length === 0) return null;
+  const activeArea = serviceAreasData[selectedStateIndex] || serviceAreasData[0];
 
   return (
     <section id="service-areas" className="py-20 bg-white border-b border-slate-200/80">
@@ -62,13 +67,13 @@ export const ServiceAreaSection: React.FC<ServiceAreaSectionProps> = ({
         {/* Section Header */}
         <div className="max-w-3xl mx-auto text-center mb-14 space-y-4">
           <span className="inline-flex items-center gap-1.5 px-3.5 py-1 rounded-full text-xs font-bold bg-emerald-50 text-emerald-800 border border-emerald-200 uppercase tracking-wider">
-            Coast to Coast Service
+            {areaContent.badge || 'Coast to Coast Service'}
           </span>
           <h2 className="text-3xl sm:text-4xl lg:text-5xl font-black text-[#0f2942] tracking-tight">
-            Our Regional Service Areas
+            {areaContent.title || 'Our Regional Service Areas'}
           </h2>
           <p className="text-slate-600 text-base sm:text-lg leading-relaxed">
-            Premier Home Services operates dedicated local field teams across 8 key metropolitan regions.
+            {areaContent.subtitle || 'Premier Home Services operates dedicated local field teams across key metropolitan regions.'}
           </p>
         </div>
 
@@ -116,7 +121,7 @@ export const ServiceAreaSection: React.FC<ServiceAreaSectionProps> = ({
             <span className="text-xs font-bold text-slate-400 uppercase tracking-wider px-3 py-1">
               Select Your Region
             </span>
-            {SERVICE_AREAS.map((area, idx) => (
+            {serviceAreasData.map((area, idx) => (
               <button
                 key={area.state}
                 onClick={() => {

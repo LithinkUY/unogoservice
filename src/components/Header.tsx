@@ -43,7 +43,16 @@ export const Header: React.FC<HeaderProps> = ({
   }, []);
 
   const handleNavClick = (sectionId: string) => {
-    onNavigateSection(sectionId);
+    if (sectionId.startsWith('page:')) {
+      const slug = sectionId.replace('page:', '');
+      if (typeof window !== 'undefined') {
+        window.history.pushState({}, '', `/page/${slug}`);
+        window.dispatchEvent(new PopStateEvent('popstate'));
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+      }
+    } else {
+      onNavigateSection(sectionId);
+    }
     setMobileMenuOpen(false);
   };
 

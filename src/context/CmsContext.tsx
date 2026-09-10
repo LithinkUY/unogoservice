@@ -14,7 +14,8 @@ import {
   Appointment,
   ClientRecord,
   FooterConfig,
-  PageSection
+  PageSection,
+  CmsPage
 } from '../types';
 import { DEFAULT_CMS_CONFIG, DEFAULT_PAGE_SECTIONS } from '../data/defaultCmsData';
 
@@ -54,6 +55,9 @@ interface CmsContextType {
   saveAndNotify: (sectionLabel?: string) => void;
   saveNotification: string | null;
   resetToDefaults: () => void;
+  addPage: (page: Omit<CmsPage, 'id' | 'createdAt'>) => void;
+  updatePage: (id: string, updates: Partial<CmsPage>) => void;
+  deletePage: (id: string) => void;
   exportConfigAsJson: () => void;
   importConfigFromJson: (jsonStr: string) => boolean;
 }
@@ -330,6 +334,32 @@ export const CmsProvider: React.FC<{ children: React.ReactNode }> = ({ children 
     }));
   };
 
+  const addPage = (page: Omit<CmsPage, 'id' | 'createdAt'>) => {
+    const newPage: CmsPage = {
+      ...page,
+      id: `page-${Date.now()}`,
+      createdAt: new Date().toISOString()
+    };
+    setConfig(prev => ({
+      ...prev,
+      pages: [...(prev.pages || []), newPage]
+    }));
+  };
+
+  const updatePage = (id: string, updates: Partial<CmsPage>) => {
+    setConfig(prev => ({
+      ...prev,
+      pages: (prev.pages || []).map(p => p.id === id ? { ...p, ...updates } : p)
+    }));
+  };
+
+  const deletePage = (id: string) => {
+    setConfig(prev => ({
+      ...prev,
+      pages: (prev.pages || []).filter(p => p.id !== id)
+    }));
+  };
+
   const updateFooter = (newFooter: Partial<FooterConfig>) => {
     setConfig(prev => ({
       ...prev,
@@ -406,6 +436,9 @@ export const CmsProvider: React.FC<{ children: React.ReactNode }> = ({ children 
         saveAndNotify,
         saveNotification,
         resetToDefaults,
+        addPage,
+        updatePage,
+        deletePage,
         exportConfigAsJson,
         importConfigFromJson
       }}

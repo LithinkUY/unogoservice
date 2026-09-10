@@ -76,7 +76,7 @@ export const FaqSection: React.FC<FaqSectionProps> = ({ onOpenWalkthrough }) => 
 
         {/* FAQ Accordion List */}
         <div className="space-y-4">
-          {filteredFaqs.map((faq, idx) => {
+          {filteredFaqs.filter(faq => !faq.hidden).map((faq, idx) => {
             const isOpen = openIndex === idx;
 
             return (
@@ -119,24 +119,24 @@ export const FaqSection: React.FC<FaqSectionProps> = ({ onOpenWalkthrough }) => 
         {/* Contact Us Box if Still Questions */}
         <div className="mt-14 p-8 rounded-3xl bg-slate-50 border border-slate-200 text-center space-y-4">
           <h4 className="text-xl font-black text-[#0f2942]">
-            Have a question specific to your property?
+            {faqContent.ctaTitle || 'Have a question specific to your property?'}
           </h4>
           <p className="text-sm text-slate-600 max-w-md mx-auto">
-            Our home care advisors are available to review your property quirks and answer any questions.
+            {faqContent.ctaSubtitle || 'Our home care advisors are available to review your property quirks and answer any questions.'}
           </p>
           <div className="flex flex-col sm:flex-row items-center justify-center gap-3 pt-2">
             <a
-              href="tel:8668842775"
+              href={faqContent.ctaPhoneNumber || 'tel:8885552273'}
               className="px-5 py-2.5 rounded-xl bg-[#0f2942] hover:bg-[#183a5e] text-white font-bold text-xs flex items-center gap-2 shadow-xs transition-colors"
             >
               <Phone className="w-4 h-4 text-emerald-400" />
-              <span>Call (888) 555-CARE</span>
+              <span>{faqContent.ctaPhoneText || 'Call (888) 555-CARE'}</span>
             </a>
             <button
               onClick={onOpenWalkthrough}
               className="px-5 py-2.5 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-xs flex items-center gap-2 shadow-xs transition-colors cursor-pointer"
             >
-              <span>Request Free Assessment</span>
+              <span>{faqContent.ctaButtonText || 'Request Free Assessment'}</span>
             </button>
           </div>
         </div>

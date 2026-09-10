@@ -151,63 +151,28 @@ export const Footer: React.FC<FooterProps> = ({
               Explore Services
             </h4>
             <ul className="space-y-2 text-xs text-slate-400">
-              <li>
-                <button
-                  onClick={() => onNavigateSection('how-it-works')}
-                  className="hover:text-emerald-400 transition-colors cursor-pointer"
-                >
-                  How It Works
-                </button>
-              </li>
-              <li>
-                <button
-                  onClick={() => onNavigateSection('pillars')}
-                  className="hover:text-emerald-400 transition-colors cursor-pointer"
-                >
-                  The Three Pillars of Care
-                </button>
-              </li>
-              <li>
-                <button
-                  onClick={() => onNavigateSection('checklist')}
-                  className="hover:text-emerald-400 transition-colors cursor-pointer"
-                >
-                  50-Point Checklist
-                </button>
-              </li>
-              <li>
-                <button
-                  onClick={() => onNavigateSection('pricing')}
-                  className="hover:text-emerald-400 transition-colors cursor-pointer"
-                >
-                  Memberships & Pricing
-                </button>
-              </li>
-              <li>
-                <button
-                  onClick={() => onNavigateSection('gallery')}
-                  className="hover:text-emerald-400 transition-colors cursor-pointer flex items-center gap-1.5"
-                >
-                  <span>Gallery & Projects</span>
-                  <span className="text-[10px] px-1 py-0.2 rounded bg-emerald-500/30 text-emerald-300 font-bold">NEW</span>
-                </button>
-              </li>
-              <li>
-                <button
-                  onClick={() => onNavigateSection('difference')}
-                  className="hover:text-emerald-400 transition-colors cursor-pointer"
-                >
-                  The Premier Advantage
-                </button>
-              </li>
-              <li>
-                <button
-                  onClick={() => onNavigateSection('reviews')}
-                  className="hover:text-emerald-400 transition-colors cursor-pointer"
-                >
-                  Homeowner Testimonials
-                </button>
-              </li>
+              {footerData.quickLinks && footerData.quickLinks.length > 0 ? (
+                footerData.quickLinks.map(link => (
+                  <li key={link.id}>
+                    <button
+                      onClick={() => onNavigateSection(link.url.replace('#', ''))}
+                      className="hover:text-emerald-400 transition-colors cursor-pointer"
+                    >
+                      {link.label}
+                    </button>
+                  </li>
+                ))
+              ) : (
+                <>
+                  <li><button onClick={() => onNavigateSection('how-it-works')} className="hover:text-emerald-400 transition-colors cursor-pointer">How It Works</button></li>
+                  <li><button onClick={() => onNavigateSection('pillars')} className="hover:text-emerald-400 transition-colors cursor-pointer">The Three Pillars of Care</button></li>
+                  <li><button onClick={() => onNavigateSection('checklist')} className="hover:text-emerald-400 transition-colors cursor-pointer">50-Point Checklist</button></li>
+                  <li><button onClick={() => onNavigateSection('pricing')} className="hover:text-emerald-400 transition-colors cursor-pointer">Memberships & Pricing</button></li>
+                  <li><button onClick={() => onNavigateSection('gallery')} className="hover:text-emerald-400 transition-colors cursor-pointer flex items-center gap-1.5"><span>Gallery & Projects</span><span className="text-[10px] px-1 py-0.2 rounded bg-emerald-500/30 text-emerald-300 font-bold">NEW</span></button></li>
+                  <li><button onClick={() => onNavigateSection('difference')} className="hover:text-emerald-400 transition-colors cursor-pointer">The Premier Advantage</button></li>
+                  <li><button onClick={() => onNavigateSection('reviews')} className="hover:text-emerald-400 transition-colors cursor-pointer">Homeowner Testimonials</button></li>
+                </>
+              )}
             </ul>
           </div>
 
@@ -217,14 +182,22 @@ export const Footer: React.FC<FooterProps> = ({
               Service Regions
             </h4>
             <ul className="space-y-2 text-xs text-slate-400">
-              <li>Maryland (Bethesda & Potomac)</li>
-              <li>Washington D.C. (NW & Capitol Hill)</li>
-              <li>Northern Virginia (McLean & Great Falls)</li>
-              <li>Connecticut (Fairfield County)</li>
-              <li>Georgia (Buckhead & Metro Atlanta)</li>
-              <li>Florida (Palm Beach & Broward)</li>
-              <li>Illinois (Chicago North Shore)</li>
-              <li>Massachusetts (Greater Boston)</li>
+              {footerData.serviceRegions && footerData.serviceRegions.length > 0 ? (
+                footerData.serviceRegions.map(region => (
+                  <li key={region.id}>{region.name}</li>
+                ))
+              ) : (
+                <>
+                  <li>Maryland (Bethesda & Potomac)</li>
+                  <li>Washington D.C. (NW & Capitol Hill)</li>
+                  <li>Northern Virginia (McLean & Great Falls)</li>
+                  <li>Connecticut (Fairfield County)</li>
+                  <li>Georgia (Buckhead & Metro Atlanta)</li>
+                  <li>Florida (Palm Beach & Broward)</li>
+                  <li>Illinois (Chicago North Shore)</li>
+                  <li>Massachusetts (Greater Boston)</li>
+                </>
+              )}
             </ul>
           </div>
 
@@ -255,10 +228,25 @@ export const Footer: React.FC<FooterProps> = ({
                   </button>
                 </li>
               )}
-              <li>Licensed, Bonded & Insured</li>
-              <li>100% W-2 Employed Craftsmen</li>
-              <li>Privacy Policy</li>
-              <li>Terms of Membership</li>
+              {footerData.trustLinks && footerData.trustLinks.length > 0 ? (
+                footerData.trustLinks.map(link => (
+                  <li key={link.id}>
+                    <button
+                      onClick={() => onNavigateSection(link.url.replace('#', ''))}
+                      className="hover:text-emerald-400 transition-colors cursor-pointer"
+                    >
+                      {link.label}
+                    </button>
+                  </li>
+                ))
+              ) : (
+                <>
+                  <li>Licensed, Bonded & Insured</li>
+                  <li>100% W-2 Employed Craftsmen</li>
+                  <li>Privacy Policy</li>
+                  <li>Terms of Membership</li>
+                </>
+              )}
             </ul>
           </div>
 

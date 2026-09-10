@@ -35,7 +35,8 @@ import {
   ArrowDown,
   Edit,
   MessageCircle,
-  User
+  User,
+  HelpCircle
 } from 'lucide-react';
 import { useCms } from '../context/CmsContext';
 import {
@@ -46,7 +47,8 @@ import {
   ClientRecord,
   SlideItem,
   NavItemConfig,
-  PageSection
+  PageSection,
+  FaqItem
 } from '../types';
 
 interface AdminCMSModalProps {
@@ -68,6 +70,8 @@ type TabType =
   | 'clients'
   | 'schedule'
   | 'footer'
+  | 'faqs'
+  | 'pages'
   | 'usuario'
   | 'whatsapp'
   | 'backup';
@@ -98,6 +102,10 @@ export const AdminCMSModal: React.FC<AdminCMSModalProps> = ({ isOpen, onClose, p
     deleteClient,
     updateAdminCredentials,
     updateFooter,
+    updateFaqs,
+    addPage,
+    updatePage,
+    deletePage,
     saveAndNotify,
     resetToDefaults,
     exportConfigAsJson,
@@ -139,6 +147,14 @@ export const AdminCMSModal: React.FC<AdminCMSModalProps> = ({ isOpen, onClose, p
 
   const [editGalleryModal, setEditGalleryModal] = useState(false);
   const [editGalleryDraft, setEditGalleryDraft] = useState<GalleryItem | null>(null);
+
+  const [newFaqModal, setNewFaqModal] = useState(false);
+  const [newFaqDraft, setNewFaqDraft] = useState<FaqItem>({
+    question: '',
+    answer: '',
+    category: 'general',
+    hidden: false
+  });
 
   const [newSectionModal, setNewSectionModal] = useState(false);
   const [newSectionDraft, setNewSectionDraft] = useState({
@@ -606,15 +622,12 @@ export const AdminCMSModal: React.FC<AdminCMSModalProps> = ({ isOpen, onClose, p
             <div>
               <div className="flex items-center gap-2">
                 <h3 className="text-base font-black text-white tracking-tight">
-                  Panel Administrador CMS • Premier Home Services
+                  Panel Administrador CMS
                 </h3>
                 <span className="px-2 py-0.5 rounded text-[10px] font-bold bg-emerald-500/20 text-emerald-400 border border-emerald-500/30 uppercase">
                   MODO EN VIVO
                 </span>
               </div>
-              <p className="text-xs text-slate-300">
-                Gestiona estilos, sliders, videos, textos, checklist, precios, galerías y calendario de citas.
-              </p>
             </div>
           </div>
 
@@ -666,18 +679,20 @@ export const AdminCMSModal: React.FC<AdminCMSModalProps> = ({ isOpen, onClose, p
             {[
               { id: 'styles', label: '1. Estilos y Colores', icon: Palette },
               { id: 'logo', label: '2. Logo e Identidad', icon: Sparkles },
-              { id: 'sections', label: '3. Secciones de la Página', icon: Layout },
-              { id: 'header', label: '4. Header y Menús', icon: Menu },
-              { id: 'slider', label: '5. Slider de Videos/Fotos', icon: Sliders },
-              { id: 'content', label: '6. Contenido de Páginas', icon: FileText },
-              { id: 'pricing', label: '7. Planes y Precios', icon: DollarSign },
-              { id: 'gallery', label: '8. Galería de Proyectos', icon: Images },
-              { id: 'clients', label: '9. Clientes', icon: UserCheck, badge: config.clients.length },
-              { id: 'schedule', label: '10. Schedule / Citas', icon: Calendar, badge: config.appointments.filter(a => a.status === 'pending').length },
-              { id: 'footer', label: '11. Footer y Contacto', icon: FileText },
-              { id: 'usuario', label: '12. Usuario Admin', icon: User },
-              { id: 'whatsapp', label: '13. WhatsApp', icon: MessageCircle },
-              { id: 'backup', label: '14. Backup & Restaurar', icon: RotateCcw }
+              { id: 'pages', label: '3. Páginas CMS', icon: FileText },
+              { id: 'sections', label: '4. Secciones de Inicio', icon: Layout },
+              { id: 'header', label: '5. Header y Menús', icon: Menu },
+              { id: 'slider', label: '6. Slider Principal', icon: Sliders },
+              { id: 'content', label: '7. Textos Globales', icon: FileText },
+              { id: 'faqs', label: '8. Preguntas FAQ', icon: HelpCircle },
+              { id: 'pricing', label: '9. Planes y Precios', icon: DollarSign },
+              { id: 'gallery', label: '10. Galería', icon: Images },
+              { id: 'clients', label: '11. Clientes', icon: UserCheck, badge: config.clients.length },
+              { id: 'schedule', label: '12. Schedule', icon: Calendar, badge: config.appointments.filter(a => a.status === 'pending').length },
+              { id: 'footer', label: '13. Footer y Contacto', icon: Layout },
+              { id: 'usuario', label: '14. Usuario Admin', icon: User },
+              { id: 'whatsapp', label: '15. WhatsApp', icon: MessageCircle },
+              { id: 'backup', label: '16. Backup', icon: RotateCcw }
             ].map(tab => {
               const Icon = tab.icon;
               const isActive = activeTab === tab.id;
@@ -2028,14 +2043,97 @@ export const AdminCMSModal: React.FC<AdminCMSModalProps> = ({ isOpen, onClose, p
                     </div>
 
                     <div className="p-3 bg-slate-50 rounded-xl border border-slate-200 space-y-2">
-                      <span className="text-[11px] font-bold text-slate-800 block">Sección: Cómo Funciona</span>
+                      <span className="text-[11px] font-bold text-slate-800 block">Sección: Cómo Funciona (Textos)</span>
                       <input
                         type="text"
                         value={config.content.howItWorks.title}
                         onChange={(e) => updateContent({
                           howItWorks: { ...config.content.howItWorks, title: e.target.value }
                         })}
+                        placeholder="Título"
                         className="w-full p-2 text-xs rounded-lg border border-slate-300 bg-white font-bold"
+                      />
+                      <input
+                        type="text"
+                        value={config.content.howItWorks.ctaTitle || ''}
+                        onChange={(e) => updateContent({
+                          howItWorks: { ...config.content.howItWorks, ctaTitle: e.target.value }
+                        })}
+                        placeholder="CTA Título"
+                        className="w-full p-2 text-xs rounded-lg border border-slate-300 bg-white"
+                      />
+                      <input
+                        type="text"
+                        value={config.content.howItWorks.ctaButtonText || ''}
+                        onChange={(e) => updateContent({
+                          howItWorks: { ...config.content.howItWorks, ctaButtonText: e.target.value }
+                        })}
+                        placeholder="CTA Texto Botón"
+                        className="w-full p-2 text-xs rounded-lg border border-slate-300 bg-white"
+                      />
+                    </div>
+                  </div>
+                </div>
+
+                <div className="bg-white p-5 rounded-2xl border border-slate-200 shadow-2xs space-y-4">
+                  <span className="text-xs font-bold text-slate-900 block border-b pb-2">Textos Auxiliares y CTAs Adicionales</span>
+
+                  <div className="space-y-3">
+                    <div className="p-3 bg-slate-50 rounded-xl border border-slate-200 grid grid-cols-1 sm:grid-cols-2 gap-3">
+                      <span className="col-span-full text-[11px] font-bold text-slate-800 block">Estadísticas de la Sección Reviews</span>
+                      <div>
+                        <label className="text-[10px] text-slate-500">Años</label>
+                        <input
+                          type="text"
+                          value={config.content.reviews.statsYears || ''}
+                          onChange={(e) => updateContent({ reviews: { ...config.content.reviews, statsYears: e.target.value } })}
+                          className="w-full p-2 text-xs rounded-lg border border-slate-300 bg-white"
+                        />
+                      </div>
+                      <div>
+                        <label className="text-[10px] text-slate-500">Reviews</label>
+                        <input
+                          type="text"
+                          value={config.content.reviews.statsReviews || ''}
+                          onChange={(e) => updateContent({ reviews: { ...config.content.reviews, statsReviews: e.target.value } })}
+                          className="w-full p-2 text-xs rounded-lg border border-slate-300 bg-white"
+                        />
+                      </div>
+                      <div>
+                        <label className="text-[10px] text-slate-500">Retención</label>
+                        <input
+                          type="text"
+                          value={config.content.reviews.statsRenewal || ''}
+                          onChange={(e) => updateContent({ reviews: { ...config.content.reviews, statsRenewal: e.target.value } })}
+                          className="w-full p-2 text-xs rounded-lg border border-slate-300 bg-white"
+                        />
+                      </div>
+                      <div>
+                        <label className="text-[10px] text-slate-500">Background Checked</label>
+                        <input
+                          type="text"
+                          value={config.content.reviews.statsBackground || ''}
+                          onChange={(e) => updateContent({ reviews: { ...config.content.reviews, statsBackground: e.target.value } })}
+                          className="w-full p-2 text-xs rounded-lg border border-slate-300 bg-white"
+                        />
+                      </div>
+                    </div>
+
+                    <div className="p-3 bg-slate-50 rounded-xl border border-slate-200 space-y-2">
+                      <span className="text-[11px] font-bold text-slate-800 block">CTA Inferior de FAQs</span>
+                      <input
+                        type="text"
+                        value={config.content.faq.ctaTitle || ''}
+                        onChange={(e) => updateContent({ faq: { ...config.content.faq, ctaTitle: e.target.value } })}
+                        placeholder="CTA Título"
+                        className="w-full p-2 text-xs rounded-lg border border-slate-300 bg-white font-bold"
+                      />
+                      <input
+                        type="text"
+                        value={config.content.faq.ctaButtonText || ''}
+                        onChange={(e) => updateContent({ faq: { ...config.content.faq, ctaButtonText: e.target.value } })}
+                        placeholder="Texto del botón"
+                        className="w-full p-2 text-xs rounded-lg border border-slate-300 bg-white"
                       />
                     </div>
                   </div>
@@ -2736,6 +2834,121 @@ export const AdminCMSModal: React.FC<AdminCMSModalProps> = ({ isOpen, onClose, p
                       className="w-full p-2 text-xs rounded-xl border border-slate-300 text-slate-600 text-xs"
                     />
                   </div>
+                  <div>
+                    <label className="text-[11px] font-bold text-slate-700 block mb-1">Descripción corta (debajo del logo en footer):</label>
+                    <textarea
+                      rows={2}
+                      value={config.footer.description || ''}
+                      onChange={(e) => updateFooter({ description: e.target.value })}
+                      className="w-full p-2 text-xs rounded-xl border border-slate-300"
+                    />
+                  </div>
+                </div>
+
+                <div className="bg-white p-5 rounded-2xl border border-slate-200 shadow-2xs space-y-4">
+                  <span className="text-xs font-bold text-slate-900 block border-b pb-2">Colores del Pie de Página</span>
+                  <div className="grid grid-cols-2 gap-3">
+                    <div>
+                      <label className="text-[11px] font-bold text-slate-700 block mb-1">Fondo:</label>
+                      <input
+                        type="color"
+                        value={config.footer.bgColor || '#0f2942'}
+                        onChange={(e) => updateFooter({ bgColor: e.target.value })}
+                        className="w-full h-8 rounded border border-slate-300 cursor-pointer"
+                      />
+                    </div>
+                    <div>
+                      <label className="text-[11px] font-bold text-slate-700 block mb-1">Texto Principal:</label>
+                      <input
+                        type="color"
+                        value={config.footer.textColor || '#ffffff'}
+                        onChange={(e) => updateFooter({ textColor: e.target.value })}
+                        className="w-full h-8 rounded border border-slate-300 cursor-pointer"
+                      />
+                    </div>
+                  </div>
+                </div>
+
+                <div className="bg-white p-5 rounded-2xl border border-slate-200 shadow-2xs space-y-4">
+                  <div className="flex items-center justify-between border-b pb-2">
+                    <span className="text-xs font-bold text-slate-900">Regiones de Servicio (Footer)</span>
+                    <button
+                      onClick={() => {
+                        const name = prompt('Nombre de la región');
+                        if (name) updateFooter({ serviceRegions: [...(config.footer.serviceRegions || []), { id: Date.now().toString(), name }] });
+                      }}
+                      className="text-xs font-bold text-emerald-600 cursor-pointer"
+                    >+ Añadir Región</button>
+                  </div>
+                  <div className="grid grid-cols-2 sm:grid-cols-3 gap-2">
+                    {(config.footer.serviceRegions || []).map((region, idx) => (
+                      <div key={region.id} className="flex items-center bg-slate-50 p-2 rounded-lg border border-slate-200">
+                        <input
+                          type="text"
+                          value={region.name}
+                          onChange={(e) => {
+                            const arr = [...config.footer.serviceRegions!];
+                            arr[idx].name = e.target.value;
+                            updateFooter({ serviceRegions: arr });
+                          }}
+                          className="w-full text-xs bg-transparent outline-none"
+                        />
+                        <button onClick={() => {
+                          const arr = [...config.footer.serviceRegions!];
+                          arr.splice(idx, 1);
+                          updateFooter({ serviceRegions: arr });
+                        }} className="text-red-500 ml-2">
+                          <Trash2 className="w-3 h-3" />
+                        </button>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+
+                <div className="bg-white p-5 rounded-2xl border border-slate-200 shadow-2xs space-y-4">
+                  <div className="flex items-center justify-between border-b pb-2">
+                    <span className="text-xs font-bold text-slate-900">Enlaces Rápidos (Quick Links)</span>
+                    <button
+                      onClick={() => {
+                        const label = prompt('Nombre del enlace');
+                        if (label) updateFooter({ quickLinks: [...(config.footer.quickLinks || []), { id: Date.now().toString(), label, url: '#' }] });
+                      }}
+                      className="text-xs font-bold text-emerald-600 cursor-pointer"
+                    >+ Añadir Enlace</button>
+                  </div>
+                  <div className="space-y-2">
+                    {(config.footer.quickLinks || []).map((link, idx) => (
+                      <div key={link.id} className="flex gap-2">
+                        <input
+                          type="text"
+                          value={link.label}
+                          onChange={(e) => {
+                            const arr = [...config.footer.quickLinks!];
+                            arr[idx].label = e.target.value;
+                            updateFooter({ quickLinks: arr });
+                          }}
+                          className="flex-1 p-2 text-xs rounded-lg border border-slate-300"
+                        />
+                        <input
+                          type="text"
+                          value={link.url}
+                          onChange={(e) => {
+                            const arr = [...config.footer.quickLinks!];
+                            arr[idx].url = e.target.value;
+                            updateFooter({ quickLinks: arr });
+                          }}
+                          className="flex-1 p-2 text-xs rounded-lg border border-slate-300"
+                        />
+                        <button onClick={() => {
+                          const arr = [...config.footer.quickLinks!];
+                          arr.splice(idx, 1);
+                          updateFooter({ quickLinks: arr });
+                        }} className="p-2 text-red-500">
+                          <Trash2 className="w-4 h-4" />
+                        </button>
+                      </div>
+                    ))}
+                  </div>
                 </div>
 
                 {/* Explicit Save Button for Footer */}
@@ -2973,11 +3186,268 @@ export const AdminCMSModal: React.FC<AdminCMSModalProps> = ({ isOpen, onClose, p
               </div>
             )}
 
+            {/* ================= TAB 3: PÁGINAS CMS ================= */}
+            {activeTab === 'pages' && (
+              <div className="space-y-6 max-w-5xl">
+                <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+                  <div>
+                    <h4 className="text-lg font-black text-[#0f2942]">Páginas Dinámicas</h4>
+                    <p className="text-xs text-slate-500">Crea páginas nuevas en el sitio con URLs únicas y agrégales secciones.</p>
+                  </div>
+                  <button
+                    onClick={() => {
+                      const title = prompt('Título de la nueva página (e.g. Sobre Nosotros)');
+                      if (title) {
+                        const slug = title.toLowerCase().replace(/[^a-z0-9]+/g, '-');
+                        addPage({
+                          title,
+                          slug,
+                          enabled: true,
+                          sections: []
+                        });
+                        showToast('Página creada exitosamente');
+                      }
+                    }}
+                    className="px-4 py-2 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-xs flex items-center gap-1.5 shadow-sm cursor-pointer"
+                  >
+                    <Plus className="w-4 h-4" />
+                    <span>Añadir Página</span>
+                  </button>
+                </div>
+
+                <div className="bg-white rounded-2xl border border-slate-200 overflow-hidden shadow-2xs">
+                  <div className="divide-y divide-slate-200">
+                    {config.pages?.length === 0 && (
+                      <div className="p-8 text-center text-slate-500 text-sm">
+                        No hay páginas personalizadas todavía. Crea una para empezar.
+                      </div>
+                    )}
+                    {config.pages?.map((page) => (
+                      <div key={page.id} className="p-4 flex flex-col lg:flex-row lg:items-center justify-between gap-4">
+                        <div className="space-y-1">
+                          <h5 className="font-bold text-slate-900 text-sm flex items-center gap-2">
+                            {page.title}
+                            <span className={`px-2 py-0.5 rounded text-[10px] font-black uppercase ${page.enabled ? 'bg-emerald-100 text-emerald-800' : 'bg-slate-200 text-slate-700'}`}>
+                              {page.enabled ? 'Pública' : 'Borrador'}
+                            </span>
+                          </h5>
+                          <div className="text-xs text-slate-500">
+                            <strong>URL:</strong> /{page.slug}
+                          </div>
+                        </div>
+
+                        <div className="flex items-center gap-2">
+                          <label className="flex items-center gap-1 text-xs font-semibold text-slate-600 cursor-pointer">
+                            <input
+                              type="checkbox"
+                              checked={page.enabled}
+                              onChange={(e) => updatePage(page.id, { enabled: e.target.checked })}
+                              className="w-4 h-4 accent-emerald-600"
+                            />
+                            <span>Activa</span>
+                          </label>
+                          <button
+                            onClick={() => {
+                              const newTitle = prompt('Editar título', page.title);
+                              if (newTitle) updatePage(page.id, { title: newTitle });
+                            }}
+                            className="p-1.5 text-slate-600 hover:bg-slate-100 rounded-lg cursor-pointer ml-2"
+                            title="Editar Título"
+                          >
+                            <Edit className="w-4 h-4" />
+                          </button>
+                          <button
+                            onClick={() => {
+                              if (confirm(`¿Eliminar la página ${page.title}?`)) {
+                                deletePage(page.id);
+                                showToast('Página eliminada');
+                              }
+                            }}
+                            className="p-1.5 text-red-500 hover:bg-red-50 rounded-lg cursor-pointer"
+                            title="Eliminar Página"
+                          >
+                            <Trash2 className="w-4 h-4" />
+                          </button>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+
+                <div className="pt-4 border-t border-slate-200 flex justify-end">
+                  <button
+                    onClick={() => {
+                      saveAndNotify('Páginas');
+                    }}
+                    className="px-6 py-2.5 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-xs flex items-center gap-2 cursor-pointer transition-all hover:scale-105"
+                  >
+                    <Save className="w-4 h-4" />
+                    <span>Guardar Páginas</span>
+                  </button>
+                </div>
+              </div>
+            )}
+
+            {/* ================= TAB 8: PREGUNTAS FRECUENTES (FAQ) ================= */}
+            {activeTab === 'faqs' && (
+              <div className="space-y-6 max-w-5xl">
+                <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+                  <div>
+                    <h4 className="text-lg font-black text-[#0f2942]">Preguntas Frecuentes (FAQ)</h4>
+                    <p className="text-xs text-slate-500">Administra las preguntas frecuentes, respuestas y categorías.</p>
+                  </div>
+                  <button
+                    onClick={() => {
+                      setNewFaqDraft({ question: '', answer: '', category: 'general', hidden: false });
+                      setNewFaqModal(true);
+                    }}
+                    className="px-4 py-2 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-xs flex items-center gap-1.5 shadow-sm cursor-pointer"
+                  >
+                    <Plus className="w-4 h-4" />
+                    <span>Añadir FAQ</span>
+                  </button>
+                </div>
+
+                <div className="bg-white rounded-2xl border border-slate-200 overflow-hidden shadow-2xs">
+                  <div className="divide-y divide-slate-200">
+                    {config.faqs?.map((faq, idx) => (
+                      <div key={idx} className="p-4 flex flex-col lg:flex-row lg:items-center justify-between gap-4">
+                        <div className="space-y-1 max-w-2xl">
+                          <h5 className="font-bold text-slate-900 text-sm flex items-center gap-2">
+                            {faq.question}
+                            <span className="px-2 py-0.5 rounded text-[10px] font-black uppercase bg-blue-100 text-blue-800">
+                              {faq.category}
+                            </span>
+                            {faq.hidden && (
+                              <span className="px-2 py-0.5 rounded text-[10px] font-black uppercase bg-slate-200 text-slate-700">
+                                Oculto
+                              </span>
+                            )}
+                          </h5>
+                          <p className="text-xs text-slate-600 line-clamp-2">{faq.answer}</p>
+                        </div>
+
+                        <div className="flex items-center gap-2">
+                          <label className="flex items-center gap-1 text-xs font-semibold text-slate-600 cursor-pointer">
+                            <input
+                              type="checkbox"
+                              checked={!faq.hidden}
+                              onChange={(e) => {
+                                const newFaqs = [...config.faqs];
+                                newFaqs[idx] = { ...faq, hidden: !e.target.checked };
+                                updateFaqs(newFaqs);
+                              }}
+                              className="w-4 h-4 accent-emerald-600"
+                            />
+                            <span>Visible</span>
+                          </label>
+                          <button
+                            onClick={() => {
+                              const newFaqs = [...config.faqs];
+                              newFaqs.splice(idx, 1);
+                              updateFaqs(newFaqs);
+                            }}
+                            className="p-1.5 text-red-500 hover:bg-red-50 rounded-lg cursor-pointer ml-2"
+                            title="Eliminar FAQ"
+                          >
+                            <Trash2 className="w-4 h-4" />
+                          </button>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+
+                <div className="pt-4 border-t border-slate-200 flex justify-end">
+                  <button
+                    onClick={() => {
+                      saveAndNotify('FAQs');
+                    }}
+                    className="px-6 py-2.5 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-xs flex items-center gap-2 cursor-pointer transition-all hover:scale-105"
+                  >
+                    <Save className="w-4 h-4" />
+                    <span>Guardar FAQs</span>
+                  </button>
+                </div>
+              </div>
+            )}
+
           </div>
 
         </div>
 
       </div >
+
+      {/* MODAL: NUEVA FAQ */}
+      {
+        newFaqModal && (
+          <div className="fixed inset-0 z-60 flex items-center justify-center p-4 bg-black/70 backdrop-blur-xs">
+            <div className="bg-white rounded-2xl max-w-lg w-full p-6 space-y-4 border border-slate-200 shadow-2xl">
+              <div className="flex items-center justify-between border-b pb-2">
+                <h5 className="font-bold text-[#0f2942] text-sm">Añadir Nueva Pregunta Frecuente</h5>
+                <button onClick={() => setNewFaqModal(false)} className="text-slate-400 hover:text-slate-600 cursor-pointer">
+                  <X className="w-4 h-4" />
+                </button>
+              </div>
+
+              <div>
+                <label className="text-xs font-bold text-slate-700 block mb-1">Pregunta:</label>
+                <input
+                  type="text"
+                  value={newFaqDraft.question}
+                  onChange={(e) => setNewFaqDraft({ ...newFaqDraft, question: e.target.value })}
+                  placeholder="Ej. ¿Qué incluye el mantenimiento?"
+                  className="w-full p-2 text-xs rounded-xl border border-slate-300"
+                />
+              </div>
+
+              <div>
+                <label className="text-xs font-bold text-slate-700 block mb-1">Respuesta:</label>
+                <textarea
+                  rows={3}
+                  value={newFaqDraft.answer}
+                  onChange={(e) => setNewFaqDraft({ ...newFaqDraft, answer: e.target.value })}
+                  placeholder="Detalla la respuesta a la pregunta..."
+                  className="w-full p-2 text-xs rounded-xl border border-slate-300"
+                />
+              </div>
+
+              <div>
+                <label className="text-xs font-bold text-slate-700 block mb-1">Categoría:</label>
+                <select
+                  value={newFaqDraft.category}
+                  onChange={(e) => setNewFaqDraft({ ...newFaqDraft, category: e.target.value })}
+                  className="w-full p-2 text-xs rounded-xl border border-slate-300 bg-white"
+                >
+                  <option value="general">General & Coverage</option>
+                  <option value="technicians">Technicians & Vetting</option>
+                  <option value="pricing">Pricing & Contracts</option>
+                  <option value="services">Handyman & Projects</option>
+                </select>
+              </div>
+
+              <div className="flex justify-end gap-2 pt-2">
+                <button
+                  onClick={() => setNewFaqModal(false)}
+                  className="px-4 py-2 rounded-xl text-slate-600 hover:bg-slate-100 text-xs font-bold cursor-pointer"
+                >
+                  Cancelar
+                </button>
+                <button
+                  onClick={() => {
+                    updateFaqs([...config.faqs, newFaqDraft]);
+                    setNewFaqModal(false);
+                    showToast('FAQ añadida exitosamente');
+                  }}
+                  className="px-4 py-2 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-bold cursor-pointer"
+                >
+                  Guardar FAQ
+                </button>
+              </div>
+            </div>
+          </div>
+        )
+      }
 
       {/* MODAL: NUEVO PUNTO DE CHECKLIST */}
       {
