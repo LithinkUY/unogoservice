@@ -1,4 +1,4 @@
-import { SiteCMSConfig, GalleryItem, Appointment, PageSection } from '../types';
+import { SiteCMSConfig, GalleryItem, Appointment, ClientRecord, PageSection } from '../types';
 import {
   CHECKLIST_ITEMS,
   PRICING_PLANS,
@@ -168,6 +168,60 @@ export const DEFAULT_APPOINTMENTS: Appointment[] = [
   }
 ];
 
+export const DEFAULT_CLIENTS: ClientRecord[] = [
+  {
+    id: 'client-101',
+    fullName: 'Robert & Elizabeth Vance',
+    phone: '(301) 840-1920',
+    email: 'rvance@vanceholdings.com',
+    address: '10820 River Road',
+    city: 'Potomac',
+    state: 'MD',
+    zip: '20854',
+    sqft: '6,200 sq ft',
+    homeType: 'Single Family Home',
+    serviceType: 'Premier Care',
+    priorities: ['Preventative Maintenance', 'Handyman Honey-Do Repairs'],
+    notes: 'Prefers morning visits and annual water heater flush.',
+    status: 'active',
+    createdAt: '2026-09-08'
+  },
+  {
+    id: 'client-102',
+    fullName: 'Victoria Montgomery',
+    phone: '(202) 641-0021',
+    email: 'vmontgomery@lawcapital.org',
+    address: '3245 S Street NW',
+    city: 'Washington',
+    state: 'DC',
+    zip: '20007',
+    sqft: '4,800 sq ft',
+    homeType: 'Historic Townhome',
+    serviceType: 'Bi-Monthly Care',
+    priorities: ['Preventative Maintenance'],
+    notes: 'Needs backup support during frequent business travel.',
+    status: 'active',
+    createdAt: '2026-09-09'
+  },
+  {
+    id: 'client-103',
+    fullName: 'Jonathan & Claire Sterling',
+    phone: '(703) 980-5541',
+    email: 'jsterling@sterlingpartners.net',
+    address: '1104 Langley Hill Dr',
+    city: 'McLean',
+    state: 'VA',
+    zip: '22101',
+    sqft: '8,400 sq ft (Estate)',
+    homeType: 'Luxury Estate',
+    serviceType: 'Monthly Concierge',
+    priorities: ['Major upcoming project', 'Hidden leak inspection'],
+    notes: 'Interested in a dedicated technician and renovation oversight.',
+    status: 'active',
+    createdAt: '2026-09-07'
+  }
+];
+
 export const DEFAULT_CMS_CONFIG: SiteCMSConfig = {
   theme: {
     primaryColor: '#059669', // Emerald 600
@@ -220,6 +274,9 @@ export const DEFAULT_CMS_CONFIG: SiteCMSConfig = {
     stickyHeader: true,
     transparentHeader: true,
     headerTransparency: 80,
+    whatsappEnabled: true,
+    whatsappPhone: '(888) 555-CARE',
+    whatsappMessage: 'Hola, me gustaría conocer más sobre sus servicios.',
     showAdminButton: true,
     showScheduleButton: true,
     scrolledHeaderBgColor: '#0f2942'
@@ -425,6 +482,7 @@ export const DEFAULT_CMS_CONFIG: SiteCMSConfig = {
   faqs: FAQS,
   gallery: DEFAULT_GALLERY_ITEMS,
   appointments: DEFAULT_APPOINTMENTS,
+  clients: DEFAULT_CLIENTS,
   footer: {
     newsletterTitle: 'Get Our Seasonal Home Care Guide',
     newsletterSubtitle: 'Discover the exact 50 checkpoints our master technicians inspect every quarter to protect home value and prevent expensive emergencies.',

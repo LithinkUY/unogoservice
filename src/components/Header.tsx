@@ -60,8 +60,10 @@ export const Header: React.FC<HeaderProps> = ({
   const transparency = Math.max(0, Math.min(100, config.header.headerTransparency ?? 80));
   const navTextColor = config.theme.navTextColor || '#0f2942';
   const navTextHoverColor = config.theme.navTextHoverColor || navTextColor;
-  const whatsappPhone = (config.header.topBar.emergencyPhone || '(888) 555-CARE').replace(/\D/g, '') || '8885552273';
-  const whatsappUrl = `https://wa.me/${whatsappPhone}?text=${encodeURIComponent('Hola, me gustaría conocer más sobre sus servicios.')}`;
+  const whatsappEnabled = config.header.whatsappEnabled !== false;
+  const whatsappPhone = (config.header.whatsappPhone || config.header.topBar.emergencyPhone || '(888) 555-CARE').replace(/\D/g, '') || '8885552273';
+  const whatsappMessage = config.header.whatsappMessage || 'Hola, me gustaría conocer más sobre sus servicios.';
+  const whatsappUrl = `https://wa.me/${whatsappPhone}?text=${encodeURIComponent(whatsappMessage)}`;
 
   const getSolidHeaderColor = (hex: string, alphaPercent: number) => {
     const normalized = hex.replace('#', '');
@@ -359,16 +361,18 @@ export const Header: React.FC<HeaderProps> = ({
         </div>
       </div>
 
-      <a
-        href={whatsappUrl}
-        target="_blank"
-        rel="noreferrer"
-        aria-label="Contactar por WhatsApp"
-        className="fixed bottom-5 right-5 z-50 flex h-14 w-14 items-center justify-center rounded-full text-white shadow-[0_20px_45px_rgba(37,211,102,0.4)] transition-all duration-300 hover:scale-105 hover:shadow-[0_24px_50px_rgba(37,211,102,0.5)]"
-        style={{ backgroundColor: '#25D366' }}
-      >
-        <MessageCircle className="h-7 w-7" />
-      </a>
+      {whatsappEnabled && (
+        <a
+          href={whatsappUrl}
+          target="_blank"
+          rel="noreferrer"
+          aria-label="Contactar por WhatsApp"
+          className="fixed bottom-5 right-5 z-50 flex h-14 w-14 items-center justify-center rounded-full text-white shadow-[0_20px_45px_rgba(37,211,102,0.4)] transition-all duration-300 hover:scale-105 hover:shadow-[0_24px_50px_rgba(37,211,102,0.5)]"
+          style={{ backgroundColor: '#25D366' }}
+        >
+          <MessageCircle className="h-7 w-7" />
+        </a>
+      )}
 
       {/* Mobile Drawer Menu */}
       {mobileMenuOpen && (

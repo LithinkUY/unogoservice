@@ -127,6 +127,9 @@ export interface HeaderConfig {
     portalBtnText: string;
     showEmergencyBadge: boolean;
   };
+  whatsappEnabled: boolean;
+  whatsappPhone: string;
+  whatsappMessage: string;
   branding: BrandingConfig;
   navItems: NavItemConfig[];
   ctaButtons: {
@@ -204,6 +207,24 @@ export interface Appointment {
   notes: string;
   status: 'pending' | 'confirmed' | 'in_progress' | 'completed' | 'cancelled';
   technicianAssigned?: string;
+  createdAt: string;
+}
+
+export interface ClientRecord {
+  id: string;
+  fullName: string;
+  phone: string;
+  email: string;
+  address: string;
+  city: string;
+  state: string;
+  zip: string;
+  sqft: string;
+  homeType: string;
+  serviceType?: string;
+  priorities: string[];
+  notes: string;
+  status: 'active' | 'inactive';
   createdAt: string;
 }
 
@@ -316,6 +337,7 @@ export interface SiteCMSConfig {
   faqs: FaqItem[];
   gallery: GalleryItem[];
   appointments: Appointment[];
+  clients: ClientRecord[];
   footer: FooterConfig;
 }
 

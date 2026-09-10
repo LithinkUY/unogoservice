@@ -41,6 +41,7 @@ import {
   PricingPlan,
   GalleryItem,
   Appointment,
+  ClientRecord,
   SlideItem,
   NavItemConfig,
   PageSection
@@ -62,6 +63,7 @@ type TabType =
   | 'checklist'
   | 'pricing'
   | 'gallery'
+  | 'clients'
   | 'schedule'
   | 'footer'
   | 'backup';
@@ -87,6 +89,9 @@ export const AdminCMSModal: React.FC<AdminCMSModalProps> = ({ isOpen, onClose, p
     updateAppointmentStatus,
     deleteAppointment,
     addAppointment,
+    addClient,
+    updateClient,
+    deleteClient,
     updateFooter,
     saveAndNotify,
     resetToDefaults,
@@ -158,6 +163,24 @@ export const AdminCMSModal: React.FC<AdminCMSModalProps> = ({ isOpen, onClose, p
     notes: '',
     status: 'pending' as Appointment['status'],
     technicianAssigned: 'Mark Jenkins (Sr. Lead)'
+  });
+
+  const [newClientModal, setNewClientModal] = useState(false);
+  const [editingClientId, setEditingClientId] = useState<string | null>(null);
+  const [newClientDraft, setNewClientDraft] = useState<Partial<ClientRecord>>({
+    fullName: '',
+    phone: '',
+    email: '',
+    address: '',
+    city: 'Bethesda',
+    state: 'MD',
+    zip: '20814',
+    sqft: '4,500 sq ft',
+    homeType: 'Single Family Home',
+    serviceType: 'Premier Care',
+    priorities: ['Preventative Maintenance'],
+    notes: '',
+    status: 'active'
   });
 
   if (!isOpen && !pageMode) return null;
@@ -316,7 +339,7 @@ export const AdminCMSModal: React.FC<AdminCMSModalProps> = ({ isOpen, onClose, p
     formData.append('file', file);
 
     try {
-      const response = await fetch('http://localhost:3001/api/upload', {
+      const response = await fetch('/api/upload', {
         method: 'POST',
         body: formData
       });
@@ -468,6 +491,54 @@ export const AdminCMSModal: React.FC<AdminCMSModalProps> = ({ isOpen, onClose, p
     showToast('Cita de walkthrough agregada con éxito');
   };
 
+  const handleSaveClientDraft = () => {
+    if (!newClientDraft.fullName?.trim() || !newClientDraft.phone?.trim()) return;
+
+    const normalizedClient = {
+      fullName: newClientDraft.fullName.trim(),
+      phone: newClientDraft.phone.trim(),
+      email: newClientDraft.email?.trim() || '',
+      address: newClientDraft.address?.trim() || '',
+      city: newClientDraft.city?.trim() || 'Bethesda',
+      state: newClientDraft.state?.trim() || 'MD',
+      zip: newClientDraft.zip?.trim() || '20814',
+      sqft: newClientDraft.sqft?.trim() || '4,500 sq ft',
+      homeType: newClientDraft.homeType?.trim() || 'Single Family Home',
+      serviceType: newClientDraft.serviceType?.trim() || 'Premier Care',
+      priorities: Array.isArray(newClientDraft.priorities) && newClientDraft.priorities.length > 0
+        ? newClientDraft.priorities
+        : ['Preventative Maintenance'],
+      notes: newClientDraft.notes?.trim() || '',
+      status: newClientDraft.status === 'inactive' ? 'inactive' : 'active'
+    };
+
+    if (editingClientId) {
+      updateClient(editingClientId, normalizedClient);
+      showToast('Cliente actualizado con éxito');
+    } else {
+      addClient(normalizedClient);
+      showToast('Cliente añadido con éxito');
+    }
+
+    setNewClientModal(false);
+    setEditingClientId(null);
+    setNewClientDraft({
+      fullName: '',
+      phone: '',
+      email: '',
+      address: '',
+      city: 'Bethesda',
+      state: 'MD',
+      zip: '20814',
+      sqft: '4,500 sq ft',
+      homeType: 'Single Family Home',
+      serviceType: 'Premier Care',
+      priorities: ['Preventative Maintenance'],
+      notes: '',
+      status: 'active'
+    });
+  };
+
   const handleExportCsv = () => {
     const headers = ['ID', 'Nombre', 'Telefono', 'Email', 'Direccion', 'Ciudad', 'Estado', 'Zip', 'Metros Cuadrados', 'Tipo Residencia', 'Prioridades', 'Fecha Preferida', 'Horario', 'Estado', 'Tecnico Asignado', 'Notas'];
     const rows = config.appointments.map(a => [
@@ -596,9 +667,10 @@ export const AdminCMSModal: React.FC<AdminCMSModalProps> = ({ isOpen, onClose, p
               { id: 'content', label: '6. Contenido de Páginas', icon: FileText },
               { id: 'pricing', label: '7. Planes y Precios', icon: DollarSign },
               { id: 'gallery', label: '8. Galería de Proyectos', icon: Images },
-              { id: 'schedule', label: '9. Schedule / Citas', icon: Calendar, badge: config.appointments.filter(a => a.status === 'pending').length },
-              { id: 'footer', label: '10. Footer y Contacto', icon: FileText },
-              { id: 'backup', label: '11. Backup & Restaurar', icon: RotateCcw }
+              { id: 'clients', label: '9. Clientes', icon: UserCheck, badge: config.clients.length },
+              { id: 'schedule', label: '10. Schedule / Citas', icon: Calendar, badge: config.appointments.filter(a => a.status === 'pending').length },
+              { id: 'footer', label: '11. Footer y Contacto', icon: FileText },
+              { id: 'backup', label: '12. Backup & Restaurar', icon: RotateCcw }
             ].map(tab => {
               const Icon = tab.icon;
               const isActive = activeTab === tab.id;
@@ -1513,6 +1585,55 @@ export const AdminCMSModal: React.FC<AdminCMSModalProps> = ({ isOpen, onClose, p
                   </div>
                 </div>
 
+                <div className="bg-white p-5 rounded-2xl border border-slate-200 shadow-2xs space-y-4">
+                  <div className="flex items-center justify-between">
+                    <span className="text-xs font-bold text-slate-900 block">Botón de WhatsApp</span>
+                    <input
+                      type="checkbox"
+                      checked={config.header.whatsappEnabled}
+                      onChange={(e) => updateHeader({ whatsappEnabled: e.target.checked })}
+                      className="w-4 h-4 accent-emerald-600"
+                    />
+                  </div>
+
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                    <div className="p-3 bg-slate-50 rounded-xl border border-slate-200 space-y-2">
+                      <label className="text-xs font-bold text-slate-800 block">Número de WhatsApp</label>
+                      <input
+                        type="text"
+                        value={config.header.whatsappPhone}
+                        onChange={(e) => updateHeader({ whatsappPhone: e.target.value })}
+                        className="w-full p-2 text-xs rounded-lg border border-slate-300 bg-white"
+                        placeholder="(888) 555-CARE"
+                      />
+                    </div>
+                    <div className="p-3 bg-slate-50 rounded-xl border border-slate-200 space-y-2">
+                      <label className="text-xs font-bold text-slate-800 block">Teléfono de emergencia</label>
+                      <input
+                        type="text"
+                        value={config.header.topBar.emergencyPhone}
+                        onChange={(e) => updateHeader({
+                          topBar: { ...config.header.topBar, emergencyPhone: e.target.value },
+                          whatsappPhone: e.target.value
+                        })}
+                        className="w-full p-2 text-xs rounded-lg border border-slate-300 bg-white"
+                        placeholder="(888) 555-CARE"
+                      />
+                    </div>
+                  </div>
+
+                  <div className="p-3 bg-slate-50 rounded-xl border border-slate-200 space-y-2">
+                    <label className="text-xs font-bold text-slate-800 block">Mensaje inicial</label>
+                    <textarea
+                      rows={3}
+                      value={config.header.whatsappMessage}
+                      onChange={(e) => updateHeader({ whatsappMessage: e.target.value })}
+                      className="w-full p-2 text-xs rounded-lg border border-slate-300 bg-white"
+                      placeholder="Hola, me gustaría conocer más sobre sus servicios."
+                    />
+                  </div>
+                </div>
+
                 <div className="pt-4 border-t border-slate-200 flex items-center justify-between">
                   <span className="text-xs text-slate-500 font-medium">Guarda permanentemente el header, avisos y enlaces de menú.</span>
                   <button
@@ -2166,7 +2287,130 @@ export const AdminCMSModal: React.FC<AdminCMSModalProps> = ({ isOpen, onClose, p
               </div>
             )}
 
-            {/* ================= TAB 8: SCHEDULE Y CITAS (WALKTHROUGHS) ================= */}
+            {/* ================= TAB 9: CLIENTES ================= */}
+            {activeTab === 'clients' && (
+              <div className="space-y-6 max-w-6xl">
+                <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+                  <div>
+                    <h4 className="text-lg font-black text-[#0f2942]">Clientes ({config.clients.length})</h4>
+                    <p className="text-xs text-slate-500">Administra los clientes activos, sus datos y la información que luego podrás reutilizar para generar schedule y seguimiento.</p>
+                  </div>
+                  <button
+                    onClick={() => {
+                      setEditingClientId(null);
+                      setNewClientDraft({
+                        fullName: '',
+                        phone: '',
+                        email: '',
+                        address: '',
+                        city: 'Bethesda',
+                        state: 'MD',
+                        zip: '20814',
+                        sqft: '4,500 sq ft',
+                        homeType: 'Single Family Home',
+                        serviceType: 'Premier Care',
+                        priorities: ['Preventative Maintenance'],
+                        notes: '',
+                        status: 'active'
+                      });
+                      setNewClientModal(true);
+                    }}
+                    className="px-4 py-2 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-xs flex items-center gap-1.5 shadow-sm cursor-pointer whitespace-nowrap"
+                  >
+                    <Plus className="w-4 h-4" />
+                    <span>Añadir Cliente</span>
+                  </button>
+                </div>
+
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
+                  <div className="bg-white p-4 rounded-2xl border border-slate-200 shadow-2xs">
+                    <div className="text-[11px] font-bold uppercase text-slate-500">Total</div>
+                    <div className="text-2xl font-black text-slate-900 mt-0.5">{config.clients.length}</div>
+                  </div>
+                  <div className="bg-emerald-50/70 p-4 rounded-2xl border border-emerald-200 shadow-2xs">
+                    <div className="text-[11px] font-bold uppercase text-emerald-800">Activos</div>
+                    <div className="text-2xl font-black text-emerald-900 mt-0.5">{config.clients.filter(client => client.status === 'active').length}</div>
+                  </div>
+                  <div className="bg-slate-100 p-4 rounded-2xl border border-slate-200 shadow-2xs">
+                    <div className="text-[11px] font-bold uppercase text-slate-700">Inactivos</div>
+                    <div className="text-2xl font-black text-slate-900 mt-0.5">{config.clients.filter(client => client.status === 'inactive').length}</div>
+                  </div>
+                </div>
+
+                <div className="bg-white rounded-2xl border border-slate-200 overflow-hidden shadow-2xs">
+                  <div className="divide-y divide-slate-200">
+                    {config.clients.map((client) => (
+                      <div key={client.id} className="p-4 flex flex-col lg:flex-row lg:items-center justify-between gap-4 hover:bg-slate-50 transition-colors">
+                        <div className="space-y-1.5 flex-1">
+                          <div className="flex items-center gap-2 flex-wrap">
+                            <span className="font-bold text-slate-900 text-sm">{client.fullName}</span>
+                            <span className={`px-2 py-0.5 rounded text-[10px] font-black uppercase ${client.status === 'active' ? 'bg-emerald-100 text-emerald-800' : 'bg-slate-200 text-slate-700'}`}>
+                              {client.status}
+                            </span>
+                            {client.serviceType && (
+                              <span className="text-xs font-semibold text-slate-500">• {client.serviceType}</span>
+                            )}
+                          </div>
+
+                          <div className="text-xs text-slate-600 flex items-center gap-3 flex-wrap">
+                            <span>📞 {client.phone}</span>
+                            <span>•</span>
+                            <span>✉️ {client.email || 'Sin email'}</span>
+                            <span>•</span>
+                            <span>📍 {client.address || 'Sin dirección'}, {client.city}, {client.state} {client.zip}</span>
+                          </div>
+
+                          <div className="text-xs text-slate-700 bg-slate-50 p-2.5 rounded-xl border border-slate-200/80">
+                            <strong>Propiedad:</strong> {client.sqft} ({client.homeType})
+                            {client.priorities?.length > 0 && (
+                              <div className="mt-1"><strong>Prioridades:</strong> {client.priorities.join(', ')}</div>
+                            )}
+                            {client.notes && <div className="text-slate-500 mt-1 italic">"{client.notes}"</div>}
+                          </div>
+                        </div>
+
+                        <div className="flex items-center gap-1.5 shrink-0">
+                          <button
+                            onClick={() => {
+                              setEditingClientId(client.id);
+                              setNewClientDraft({ ...client });
+                              setNewClientModal(true);
+                            }}
+                            className="text-emerald-700 hover:text-emerald-800 text-xs font-bold flex items-center gap-1 cursor-pointer bg-emerald-50 hover:bg-emerald-100 px-2.5 py-1 rounded-lg transition-colors"
+                          >
+                            <Edit className="w-3.5 h-3.5" />
+                            <span>Editar</span>
+                          </button>
+                          <button
+                            onClick={() => deleteClient(client.id)}
+                            className="text-red-500 hover:text-red-700 text-xs font-bold flex items-center gap-1 cursor-pointer hover:bg-red-50 px-2 py-1 rounded-lg transition-colors"
+                          >
+                            <Trash2 className="w-3.5 h-3.5" />
+                            <span>Eliminar</span>
+                          </button>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+
+                <div className="pt-4 border-t border-slate-200 flex items-center justify-between">
+                  <span className="text-xs text-slate-500 font-medium">Guarda permanentemente los clientes, su estado y el historial de contacto disponible para future schedules.</span>
+                  <button
+                    onClick={() => {
+                      saveAndNotify('Clientes');
+                      showToast('¡Clientes guardados exitosamente!');
+                    }}
+                    className="px-6 py-2.5 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-xs shadow-sm flex items-center gap-2 cursor-pointer transition-all hover:scale-105"
+                  >
+                    <Save className="w-4 h-4" />
+                    <span>Guardar Clientes</span>
+                  </button>
+                </div>
+              </div>
+            )}
+
+            {/* ================= TAB 10: SCHEDULE Y CITAS (WALKTHROUGHS) ================= */}
             {activeTab === 'schedule' && (
               <div className="space-y-6 max-w-5xl">
 
@@ -2801,6 +3045,189 @@ export const AdminCMSModal: React.FC<AdminCMSModalProps> = ({ isOpen, onClose, p
                   className="px-4 py-2 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-bold cursor-pointer"
                 >
                   Guardar en Galería
+                </button>
+              </div>
+            </div>
+          </div>
+        )
+      }
+
+      {/* MODAL: NUEVO CLIENTE */}
+      {
+        newClientModal && (
+          <div className="fixed inset-0 z-60 flex items-center justify-center p-4 bg-black/70 backdrop-blur-xs">
+            <div className="bg-white rounded-2xl max-w-2xl w-full p-6 space-y-4 border border-slate-200 shadow-2xl">
+              <div className="flex items-center justify-between border-b pb-2">
+                <h5 className="font-bold text-[#0f2942] text-sm flex items-center gap-2">
+                  <UserCheck className="w-4 h-4 text-emerald-600" />
+                  <span>{editingClientId ? 'Editar Cliente' : 'Añadir Cliente'}</span>
+                </h5>
+                <button onClick={() => setNewClientModal(false)} className="text-slate-400 hover:text-slate-600 cursor-pointer">
+                  <X className="w-4 h-4" />
+                </button>
+              </div>
+
+              <div className="grid grid-cols-2 gap-3">
+                <div>
+                  <label className="text-xs font-bold text-slate-700 block mb-1">Nombre Completo:</label>
+                  <input
+                    type="text"
+                    value={newClientDraft.fullName || ''}
+                    onChange={(e) => setNewClientDraft({ ...newClientDraft, fullName: e.target.value })}
+                    placeholder="Nombre y Apellido"
+                    className="w-full p-2 text-xs rounded-xl border border-slate-300"
+                  />
+                </div>
+                <div>
+                  <label className="text-xs font-bold text-slate-700 block mb-1">Teléfono:</label>
+                  <input
+                    type="text"
+                    value={newClientDraft.phone || ''}
+                    onChange={(e) => setNewClientDraft({ ...newClientDraft, phone: e.target.value })}
+                    placeholder="(301) 555-0199"
+                    className="w-full p-2 text-xs rounded-xl border border-slate-300"
+                  />
+                </div>
+              </div>
+
+              <div className="grid grid-cols-2 gap-3">
+                <div>
+                  <label className="text-xs font-bold text-slate-700 block mb-1">Email:</label>
+                  <input
+                    type="email"
+                    value={newClientDraft.email || ''}
+                    onChange={(e) => setNewClientDraft({ ...newClientDraft, email: e.target.value })}
+                    placeholder="cliente@email.com"
+                    className="w-full p-2 text-xs rounded-xl border border-slate-300"
+                  />
+                </div>
+                <div>
+                  <label className="text-xs font-bold text-slate-700 block mb-1">Tipo de Servicio:</label>
+                  <input
+                    type="text"
+                    value={newClientDraft.serviceType || ''}
+                    onChange={(e) => setNewClientDraft({ ...newClientDraft, serviceType: e.target.value })}
+                    placeholder="Premier Care"
+                    className="w-full p-2 text-xs rounded-xl border border-slate-300"
+                  />
+                </div>
+              </div>
+
+              <div className="grid grid-cols-3 gap-2">
+                <div className="col-span-2">
+                  <label className="text-xs font-bold text-slate-700 block mb-1">Dirección:</label>
+                  <input
+                    type="text"
+                    value={newClientDraft.address || ''}
+                    onChange={(e) => setNewClientDraft({ ...newClientDraft, address: e.target.value })}
+                    placeholder="10408 Highland Dr"
+                    className="w-full p-2 text-xs rounded-xl border border-slate-300"
+                  />
+                </div>
+                <div>
+                  <label className="text-xs font-bold text-slate-700 block mb-1">Zip:</label>
+                  <input
+                    type="text"
+                    value={newClientDraft.zip || ''}
+                    onChange={(e) => setNewClientDraft({ ...newClientDraft, zip: e.target.value })}
+                    placeholder="20854"
+                    className="w-full p-2 text-xs rounded-xl border border-slate-300"
+                  />
+                </div>
+              </div>
+
+              <div className="grid grid-cols-2 gap-3">
+                <div>
+                  <label className="text-xs font-bold text-slate-700 block mb-1">Ciudad:</label>
+                  <input
+                    type="text"
+                    value={newClientDraft.city || ''}
+                    onChange={(e) => setNewClientDraft({ ...newClientDraft, city: e.target.value })}
+                    placeholder="Bethesda"
+                    className="w-full p-2 text-xs rounded-xl border border-slate-300"
+                  />
+                </div>
+                <div>
+                  <label className="text-xs font-bold text-slate-700 block mb-1">Estado:</label>
+                  <input
+                    type="text"
+                    value={newClientDraft.state || ''}
+                    onChange={(e) => setNewClientDraft({ ...newClientDraft, state: e.target.value })}
+                    placeholder="MD"
+                    className="w-full p-2 text-xs rounded-xl border border-slate-300"
+                  />
+                </div>
+              </div>
+
+              <div className="grid grid-cols-2 gap-3">
+                <div>
+                  <label className="text-xs font-bold text-slate-700 block mb-1">Tamaño:</label>
+                  <input
+                    type="text"
+                    value={newClientDraft.sqft || ''}
+                    onChange={(e) => setNewClientDraft({ ...newClientDraft, sqft: e.target.value })}
+                    placeholder="4,500 sq ft"
+                    className="w-full p-2 text-xs rounded-xl border border-slate-300"
+                  />
+                </div>
+                <div>
+                  <label className="text-xs font-bold text-slate-700 block mb-1">Tipo de vivienda:</label>
+                  <input
+                    type="text"
+                    value={newClientDraft.homeType || ''}
+                    onChange={(e) => setNewClientDraft({ ...newClientDraft, homeType: e.target.value })}
+                    placeholder="Single Family Home"
+                    className="w-full p-2 text-xs rounded-xl border border-slate-300"
+                  />
+                </div>
+              </div>
+
+              <div>
+                <label className="text-xs font-bold text-slate-700 block mb-1">Prioridades / Servicios:</label>
+                <input
+                  type="text"
+                  value={Array.isArray(newClientDraft.priorities) ? newClientDraft.priorities.join(', ') : ''}
+                  onChange={(e) => setNewClientDraft({ ...newClientDraft, priorities: e.target.value.split(',').map(item => item.trim()).filter(Boolean) })}
+                  placeholder="Preventative Maintenance, Handyman, Hidden leak inspection"
+                  className="w-full p-2 text-xs rounded-xl border border-slate-300"
+                />
+              </div>
+
+              <div>
+                <label className="text-xs font-bold text-slate-700 block mb-1">Notas del cliente:</label>
+                <textarea
+                  rows={2}
+                  value={newClientDraft.notes || ''}
+                  onChange={(e) => setNewClientDraft({ ...newClientDraft, notes: e.target.value })}
+                  placeholder="Notas adicionales, preferencias, o comentarios importantes"
+                  className="w-full p-2 text-xs rounded-xl border border-slate-300"
+                />
+              </div>
+
+              <div>
+                <label className="text-xs font-bold text-slate-700 block mb-1">Estado:</label>
+                <select
+                  value={newClientDraft.status || 'active'}
+                  onChange={(e) => setNewClientDraft({ ...newClientDraft, status: e.target.value as 'active' | 'inactive' })}
+                  className="w-full p-2 text-xs rounded-xl border border-slate-300 bg-white"
+                >
+                  <option value="active">Activo</option>
+                  <option value="inactive">Inactivo</option>
+                </select>
+              </div>
+
+              <div className="flex justify-end gap-2 pt-2">
+                <button
+                  onClick={() => setNewClientModal(false)}
+                  className="px-4 py-2 rounded-xl text-slate-600 hover:bg-slate-100 text-xs font-bold cursor-pointer"
+                >
+                  Cancelar
+                </button>
+                <button
+                  onClick={handleSaveClientDraft}
+                  className="px-4 py-2 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-bold cursor-pointer"
+                >
+                  {editingClientId ? 'Guardar Cambios' : 'Crear Cliente'}
                 </button>
               </div>
             </div>

@@ -12,6 +12,7 @@ import {
   FaqItem,
   GalleryItem,
   Appointment,
+  ClientRecord,
   FooterConfig,
   PageSection
 } from '../types';
@@ -43,6 +44,10 @@ interface CmsContextType {
   addAppointment: (appointment: Omit<Appointment, 'id' | 'createdAt'>) => void;
   updateAppointmentStatus: (id: string, status: Appointment['status'], technician?: string) => void;
   deleteAppointment: (id: string) => void;
+  updateClients: (clients: ClientRecord[]) => void;
+  addClient: (client: Omit<ClientRecord, 'id' | 'createdAt'>) => void;
+  updateClient: (id: string, updates: Partial<ClientRecord>) => void;
+  deleteClient: (id: string) => void;
   updateFooter: (footer: Partial<FooterConfig>) => void;
   saveFullConfig: (newConfig: SiteCMSConfig) => void;
   saveAndNotify: (sectionLabel?: string) => void;
@@ -284,6 +289,38 @@ export const CmsProvider: React.FC<{ children: React.ReactNode }> = ({ children 
     }));
   };
 
+  const updateClients = (clients: ClientRecord[]) => {
+    setConfig(prev => ({ ...prev, clients }));
+  };
+
+  const addClient = (client: Omit<ClientRecord, 'id' | 'createdAt'>) => {
+    const newClient: ClientRecord = {
+      ...client,
+      id: `client-${Date.now()}`,
+      createdAt: new Date().toISOString().split('T')[0]
+    };
+    setConfig(prev => ({
+      ...prev,
+      clients: [newClient, ...prev.clients]
+    }));
+  };
+
+  const updateClient = (id: string, updates: Partial<ClientRecord>) => {
+    setConfig(prev => ({
+      ...prev,
+      clients: prev.clients.map(client =>
+        client.id === id ? { ...client, ...updates } : client
+      )
+    }));
+  };
+
+  const deleteClient = (id: string) => {
+    setConfig(prev => ({
+      ...prev,
+      clients: prev.clients.filter(client => client.id !== id)
+    }));
+  };
+
   const updateFooter = (newFooter: Partial<FooterConfig>) => {
     setConfig(prev => ({
       ...prev,
@@ -350,6 +387,10 @@ export const CmsProvider: React.FC<{ children: React.ReactNode }> = ({ children 
         addAppointment,
         updateAppointmentStatus,
         deleteAppointment,
+        updateClients,
+        addClient,
+        updateClient,
+        deleteClient,
         updateFooter,
         saveFullConfig,
         saveAndNotify,
