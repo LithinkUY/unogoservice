@@ -86,7 +86,7 @@ export const ServiceAreaSection: React.FC<ServiceAreaSectionProps> = ({
                 type="text"
                 value={zipQuery}
                 onChange={(e) => setZipQuery(e.target.value)}
-                placeholder="Check your 5-digit zip code..."
+                placeholder={areaContent.zipPlaceholder || 'Check your 5-digit zip code...'}
                 maxLength={5}
                 className="w-full pl-10 pr-3 py-2.5 text-sm rounded-xl border border-slate-300 focus:ring-2 focus:ring-emerald-500 outline-hidden font-medium text-slate-800 bg-white"
               />
@@ -95,7 +95,7 @@ export const ServiceAreaSection: React.FC<ServiceAreaSectionProps> = ({
               type="submit"
               className="px-6 py-2.5 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-sm transition-all shadow-xs cursor-pointer whitespace-nowrap"
             >
-              Verify Zip Code
+              {areaContent.zipButtonText || 'Verify Zip Code'}
             </button>
           </form>
 
@@ -119,7 +119,7 @@ export const ServiceAreaSection: React.FC<ServiceAreaSectionProps> = ({
           {/* State Navigation Tabs */}
           <div className="lg:col-span-4 flex flex-col space-y-2 bg-slate-50 p-3 rounded-2xl border border-slate-200">
             <span className="text-xs font-bold text-slate-400 uppercase tracking-wider px-3 py-1">
-              Select Your Region
+              {areaContent.regionSelectTitle || 'Select Your Region'}
             </span>
             {serviceAreasData.map((area, idx) => (
               <button
@@ -155,7 +155,7 @@ export const ServiceAreaSection: React.FC<ServiceAreaSectionProps> = ({
             <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-6 border-b border-slate-200">
               <div>
                 <span className="text-xs font-bold text-emerald-700 uppercase tracking-widest block mb-1">
-                  Active Regional Hub
+                  {areaContent.activeHubBadge || 'Active Regional Hub'}
                 </span>
                 <h3 className="text-2xl sm:text-3xl font-black text-[#0f2942] tracking-tight">
                   {activeArea.name} ({activeArea.state})
@@ -174,7 +174,7 @@ export const ServiceAreaSection: React.FC<ServiceAreaSectionProps> = ({
               
               <div className="space-y-3">
                 <span className="text-xs font-bold text-slate-500 uppercase tracking-wider block">
-                  Key Municipalities Served:
+                  {areaContent.municipalitiesLabel || 'Key Municipalities Served:'}
                 </span>
                 <div className="flex flex-wrap gap-2">
                   {activeArea.keyCities.map((city, cIdx) => (
@@ -190,7 +190,7 @@ export const ServiceAreaSection: React.FC<ServiceAreaSectionProps> = ({
 
               <div className="space-y-3">
                 <span className="text-xs font-bold text-slate-500 uppercase tracking-wider block">
-                  Counties & Districts:
+                  {areaContent.countiesLabel || 'Counties & Districts:'}
                 </span>
                 <div className="flex flex-wrap gap-2">
                   {activeArea.counties.map((county, cIdx) => (
@@ -209,7 +209,7 @@ export const ServiceAreaSection: React.FC<ServiceAreaSectionProps> = ({
             <div className="p-4 rounded-2xl bg-white border border-slate-200 flex items-start gap-3 text-xs text-slate-600">
               <Building2 className="w-4 h-4 text-slate-400 shrink-0 mt-0.5" />
               <div>
-                <strong className="text-slate-800 font-semibold block">Local Field Office & Dispatch:</strong>
+                <strong className="text-slate-800 font-semibold block">{areaContent.officeLabel || 'Local Field Office & Dispatch:'}</strong>
                 <span>{activeArea.officeAddress}</span>
               </div>
             </div>
@@ -217,13 +217,13 @@ export const ServiceAreaSection: React.FC<ServiceAreaSectionProps> = ({
             <div className="pt-2 flex flex-col sm:flex-row items-center justify-between gap-4">
               <div className="flex items-center gap-2 text-xs font-semibold text-emerald-800">
                 <ShieldCheck className="w-4 h-4 text-emerald-600" />
-                <span>Full local fleet with certified W-2 technicians</span>
+                <span>{areaContent.fleetBadgeText || 'Full local fleet with certified W-2 technicians'}</span>
               </div>
               <button
                 onClick={onOpenWalkthrough}
                 className="w-full sm:w-auto px-5 py-2.5 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-xs sm:text-sm shadow-sm flex items-center justify-center gap-2 cursor-pointer"
               >
-                <span>Schedule Walkthrough in {activeArea.state}</span>
+                <span>{areaContent.scheduleButtonText || 'Schedule Walkthrough in'} {activeArea.state}</span>
                 <ArrowRight className="w-4 h-4" />
               </button>
             </div>

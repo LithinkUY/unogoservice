@@ -342,6 +342,8 @@ export interface ContentConfig {
     statsRenewalLabel?: string;
     statsBackground?: string;
     statsBackgroundLabel?: string;
+    trustScore?: string;
+    trustReviewsCount?: string;
   };
   faq: {
     badge: string;
@@ -357,6 +359,15 @@ export interface ContentConfig {
     badge?: string;
     title?: string;
     subtitle?: string;
+    zipPlaceholder?: string;
+    zipButtonText?: string;
+    regionSelectTitle?: string;
+    activeHubBadge?: string;
+    municipalitiesLabel?: string;
+    countiesLabel?: string;
+    officeLabel?: string;
+    fleetBadgeText?: string;
+    scheduleButtonText?: string;
     areas?: ServiceArea[];
   };
 }

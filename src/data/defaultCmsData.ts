@@ -475,16 +475,22 @@ export const DEFAULT_CMS_CONFIG: SiteCMSConfig = {
       subtitle: 'Read authentic reviews from homeowners who reclaimed their weekends and protected their properties.',
       sliderType: 'grid',
       statsYears: '20+',
+      statsYearsLabel: 'Years Serving Homes',
       statsReviews: '350+',
+      statsReviewsLabel: '5-Star Google Reviews',
       statsRenewal: '98%',
-      statsBackground: '100%'
+      statsRenewalLabel: 'Annual Renewal Rate',
+      statsBackground: '100%',
+      statsBackgroundLabel: 'W-2 Background Checked',
+      trustScore: '4.9 out of 5.0',
+      trustReviewsCount: 'Over 350+ Verified Google Reviews'
     },
     faq: {
       badge: 'Clear Answers',
       title: 'Frequently Asked Questions',
       subtitle: 'Everything you need to know about our preventative maintenance protocol, dedicated technicians, and membership terms.',
       ctaTitle: 'Have a question specific to your property?',
-      ctaSubtitle: 'Our home care advisors are available to answer your property-specific questions any time.',
+      ctaSubtitle: 'Our home care advisors are available to review your property quirks and answer any questions.',
       ctaPhoneText: '(888) 555-CARE',
       ctaPhoneNumber: 'tel:8885552273',
       ctaButtonText: 'Request a Callback'
@@ -492,7 +498,16 @@ export const DEFAULT_CMS_CONFIG: SiteCMSConfig = {
     serviceAreas: {
       badge: 'Coast to Coast Service',
       title: 'Our Regional Service Areas',
-      subtitle: 'Premier Home Services operates dedicated local field teams across 8 key metropolitan regions.'
+      subtitle: 'Premier Home Services operates dedicated local field teams across 8 key metropolitan regions.',
+      zipPlaceholder: 'Check your 5-digit zip code...',
+      zipButtonText: 'Verify Zip Code',
+      regionSelectTitle: 'Select Your Region',
+      activeHubBadge: 'Active Regional Hub',
+      municipalitiesLabel: 'Key Municipalities Served:',
+      countiesLabel: 'Counties & Districts:',
+      officeLabel: 'Local Field Office & Dispatch:',
+      fleetBadgeText: 'Full local fleet with certified W-2 technicians',
+      scheduleButtonText: 'Schedule Walkthrough in'
     }
   },
   sections: DEFAULT_PAGE_SECTIONS,

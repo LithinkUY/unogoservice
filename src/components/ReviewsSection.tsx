@@ -35,9 +35,9 @@ export const ReviewsSection: React.FC = () => {
                 <Star key={i} className="w-3.5 h-3.5 fill-amber-400 text-amber-400" />
               ))}
             </div>
-            <span className="font-extrabold text-slate-900">4.9 out of 5.0</span>
+            <span className="font-extrabold text-slate-900">{reviewsContent.trustScore || '4.9 out of 5.0'}</span>
             <span className="text-slate-400">•</span>
-            <span>Over 350+ Verified Google Reviews</span>
+            <span>{reviewsContent.trustReviewsCount || 'Over 350+ Verified Google Reviews'}</span>
           </div>
 
           <h2 className="text-3xl sm:text-4xl lg:text-5xl font-black text-[#0f2942] tracking-tight">

@@ -2141,23 +2141,105 @@ export const AdminCMSModal: React.FC<AdminCMSModalProps> = ({ isOpen, onClose, p
                     </div>
 
                     {/* Sección: Áreas de Servicio */}
-                    <div className="p-3 bg-slate-50 rounded-xl border border-slate-200 space-y-2">
-                      <span className="text-[11px] font-bold text-slate-800 block">📍 Sección: Áreas de Servicio</span>
-                      <div>
-                        <label className="text-[10px] text-slate-500">Título</label>
-                        <input type="text" value={(config.content.serviceAreas as any)?.title || ''} onChange={(e) => updateContent({ serviceAreas: { ...(config.content.serviceAreas as any), title: e.target.value } } as any)} className="w-full p-2 text-xs rounded-lg border border-slate-300 bg-white font-bold" />
+                    <div className="p-3 bg-slate-50 rounded-xl border border-slate-200 space-y-3">
+                      <span className="text-[11px] font-bold text-slate-800 block">📍 Sección: Áreas de Servicio (Textos y Regiones)</span>
+                      <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
+                        <div>
+                          <label className="text-[10px] text-slate-500">Badge Superior</label>
+                          <input type="text" value={(config.content.serviceAreas as any)?.badge || ''} onChange={(e) => updateContent({ serviceAreas: { ...(config.content.serviceAreas as any), badge: e.target.value } } as any)} placeholder="Coast to Coast Service" className="w-full p-2 text-xs rounded-lg border border-slate-300 bg-white" />
+                        </div>
+                        <div>
+                          <label className="text-[10px] text-slate-500">Título Principal</label>
+                          <input type="text" value={(config.content.serviceAreas as any)?.title || ''} onChange={(e) => updateContent({ serviceAreas: { ...(config.content.serviceAreas as any), title: e.target.value } } as any)} placeholder="Our Regional Service Areas" className="w-full p-2 text-xs rounded-lg border border-slate-300 bg-white font-bold" />
+                        </div>
                       </div>
                       <div>
                         <label className="text-[10px] text-slate-500">Subtítulo</label>
-                        <input type="text" value={(config.content.serviceAreas as any)?.subtitle || ''} onChange={(e) => updateContent({ serviceAreas: { ...(config.content.serviceAreas as any), subtitle: e.target.value } } as any)} className="w-full p-2 text-xs rounded-lg border border-slate-300 bg-white" />
+                        <textarea rows={2} value={(config.content.serviceAreas as any)?.subtitle || ''} onChange={(e) => updateContent({ serviceAreas: { ...(config.content.serviceAreas as any), subtitle: e.target.value } } as any)} placeholder="Premier Home Services operates dedicated local field teams across 8 key metropolitan regions." className="w-full p-2 text-xs rounded-lg border border-slate-300 bg-white" />
                       </div>
+
+                      {/* Buscador de Zip */}
+                      <div className="p-2.5 bg-white rounded-lg border border-slate-200 grid grid-cols-1 sm:grid-cols-2 gap-2">
+                        <div>
+                          <label className="text-[10px] text-slate-500">Placeholder buscador de Código Postal</label>
+                          <input type="text" value={(config.content.serviceAreas as any)?.zipPlaceholder || ''} onChange={(e) => updateContent({ serviceAreas: { ...(config.content.serviceAreas as any), zipPlaceholder: e.target.value } } as any)} placeholder="Check your 5-digit zip code..." className="w-full p-1.5 text-xs rounded-lg border border-slate-300 bg-white" />
+                        </div>
+                        <div>
+                          <label className="text-[10px] text-slate-500">Texto botón verificar Zip</label>
+                          <input type="text" value={(config.content.serviceAreas as any)?.zipButtonText || ''} onChange={(e) => updateContent({ serviceAreas: { ...(config.content.serviceAreas as any), zipButtonText: e.target.value } } as any)} placeholder="Verify Zip Code" className="w-full p-1.5 text-xs rounded-lg border border-slate-300 bg-white font-bold" />
+                        </div>
+                        <div>
+                          <label className="text-[10px] text-slate-500">Título selector de regiones</label>
+                          <input type="text" value={(config.content.serviceAreas as any)?.regionSelectTitle || ''} onChange={(e) => updateContent({ serviceAreas: { ...(config.content.serviceAreas as any), regionSelectTitle: e.target.value } } as any)} placeholder="Select Your Region" className="w-full p-1.5 text-xs rounded-lg border border-slate-300 bg-white" />
+                        </div>
+                        <div>
+                          <label className="text-[10px] text-slate-500">Badge del Hub Activo</label>
+                          <input type="text" value={(config.content.serviceAreas as any)?.activeHubBadge || ''} onChange={(e) => updateContent({ serviceAreas: { ...(config.content.serviceAreas as any), activeHubBadge: e.target.value } } as any)} placeholder="Active Regional Hub" className="w-full p-1.5 text-xs rounded-lg border border-slate-300 bg-white" />
+                        </div>
+                        <div>
+                          <label className="text-[10px] text-slate-500">Etiqueta Ciudades</label>
+                          <input type="text" value={(config.content.serviceAreas as any)?.municipalitiesLabel || ''} onChange={(e) => updateContent({ serviceAreas: { ...(config.content.serviceAreas as any), municipalitiesLabel: e.target.value } } as any)} placeholder="Key Municipalities Served:" className="w-full p-1.5 text-xs rounded-lg border border-slate-300 bg-white" />
+                        </div>
+                        <div>
+                          <label className="text-[10px] text-slate-500">Etiqueta Condados / Distritos</label>
+                          <input type="text" value={(config.content.serviceAreas as any)?.countiesLabel || ''} onChange={(e) => updateContent({ serviceAreas: { ...(config.content.serviceAreas as any), countiesLabel: e.target.value } } as any)} placeholder="Counties & Districts:" className="w-full p-1.5 text-xs rounded-lg border border-slate-300 bg-white" />
+                        </div>
+                        <div>
+                          <label className="text-[10px] text-slate-500">Texto badge flota</label>
+                          <input type="text" value={(config.content.serviceAreas as any)?.fleetBadgeText || ''} onChange={(e) => updateContent({ serviceAreas: { ...(config.content.serviceAreas as any), fleetBadgeText: e.target.value } } as any)} placeholder="Full local fleet with certified W-2 technicians" className="w-full p-1.5 text-xs rounded-lg border border-slate-300 bg-white" />
+                        </div>
+                        <div>
+                          <label className="text-[10px] text-slate-500">Prefijo botón agendar cita</label>
+                          <input type="text" value={(config.content.serviceAreas as any)?.scheduleButtonText || ''} onChange={(e) => updateContent({ serviceAreas: { ...(config.content.serviceAreas as any), scheduleButtonText: e.target.value } } as any)} placeholder="Schedule Walkthrough in" className="w-full p-1.5 text-xs rounded-lg border border-slate-300 bg-white font-bold text-emerald-700" />
+                        </div>
+                      </div>
+
+                      {/* Regiones individuales */}
                       <div className="pt-2 border-t border-slate-200">
-                        <label className="text-[10px] font-bold text-slate-500 block mb-2 uppercase">Regiones / Hubs (Editar Nombre, Teléfono y Ciudades)</label>
+                        <div className="flex items-center justify-between mb-2">
+                          <label className="text-[10px] font-bold text-slate-500 uppercase">Regiones / Hubs ({config.serviceAreas?.length || 0})</label>
+                          <button
+                            type="button"
+                            onClick={() => {
+                              const newRegion = {
+                                state: 'Nueva Región',
+                                name: 'Centro Regional',
+                                phone: '(888) 555-CARE',
+                                officeAddress: 'Dirección oficina',
+                                keyCities: ['Ciudad 1', 'Ciudad 2'],
+                                counties: ['Condado 1'],
+                                zipPrefixes: ['000']
+                              };
+                              updateServiceAreas([...config.serviceAreas, newRegion]);
+                            }}
+                            className="text-xs font-bold text-emerald-600 hover:text-emerald-700 cursor-pointer"
+                          >
+                            + Agregar Región
+                          </button>
+                        </div>
+
                         {config.serviceAreas?.map((area: any, aIdx: number) => (
                           <div key={aIdx} className="bg-white p-3 rounded-lg border border-slate-200 space-y-2 mb-2">
+                            <div className="flex items-center justify-between">
+                              <span className="text-xs font-bold text-[#0f2942]">#{aIdx + 1}: {area.state}</span>
+                              <button
+                                type="button"
+                                onClick={() => {
+                                  if (confirm(`¿Eliminar la región ${area.state}?`)) {
+                                    const arr = [...config.serviceAreas];
+                                    arr.splice(aIdx, 1);
+                                    updateServiceAreas(arr);
+                                  }
+                                }}
+                                className="text-red-500 hover:text-red-700 p-1 cursor-pointer"
+                                title="Eliminar región"
+                              >
+                                <Trash2 className="w-3.5 h-3.5" />
+                              </button>
+                            </div>
                             <div className="flex gap-2">
                               <div className="flex-1">
-                                <label className="text-[10px] text-slate-500">Estado/Hub</label>
+                                <label className="text-[10px] text-slate-500">Estado / Nombre de pestaña</label>
                                 <input type="text" value={area.state || ''} onChange={(e) => {
                                   const arr = [...config.serviceAreas];
                                   arr[aIdx] = { ...arr[aIdx], state: e.target.value };
@@ -2165,7 +2247,7 @@ export const AdminCMSModal: React.FC<AdminCMSModalProps> = ({ isOpen, onClose, p
                                 }} className="w-full p-1.5 text-xs rounded-lg border border-slate-300 bg-white" />
                               </div>
                               <div className="flex-1">
-                                <label className="text-[10px] text-slate-500">Teléfono</label>
+                                <label className="text-[10px] text-slate-500">Teléfono directo</label>
                                 <input type="text" value={area.phone || ''} onChange={(e) => {
                                   const arr = [...config.serviceAreas];
                                   arr[aIdx] = { ...arr[aIdx], phone: e.target.value };
@@ -2189,6 +2271,32 @@ export const AdminCMSModal: React.FC<AdminCMSModalProps> = ({ isOpen, onClose, p
                                 updateServiceAreas(arr);
                               }} className="w-full p-1.5 text-xs rounded-lg border border-slate-300 bg-white" />
                             </div>
+                            <div>
+                              <label className="text-[10px] text-slate-500">Ciudades (separadas por comas)</label>
+                              <input
+                                type="text"
+                                value={Array.isArray(area.keyCities) ? area.keyCities.join(', ') : (area.keyCities || '')}
+                                onChange={(e) => {
+                                  const arr = [...config.serviceAreas];
+                                  arr[aIdx] = { ...arr[aIdx], keyCities: e.target.value.split(',').map((s: string) => s.trim()).filter(Boolean) };
+                                  updateServiceAreas(arr);
+                                }}
+                                className="w-full p-1.5 text-xs rounded-lg border border-slate-300 bg-white"
+                              />
+                            </div>
+                            <div>
+                              <label className="text-[10px] text-slate-500">Condados y Distritos (separados por comas)</label>
+                              <input
+                                type="text"
+                                value={Array.isArray(area.counties) ? area.counties.join(', ') : (area.counties || '')}
+                                onChange={(e) => {
+                                  const arr = [...config.serviceAreas];
+                                  arr[aIdx] = { ...arr[aIdx], counties: e.target.value.split(',').map((s: string) => s.trim()).filter(Boolean) };
+                                  updateServiceAreas(arr);
+                                }}
+                                className="w-full p-1.5 text-xs rounded-lg border border-slate-300 bg-white"
+                              />
+                            </div>
                           </div>
                         ))}
                       </div>
@@ -2198,9 +2306,35 @@ export const AdminCMSModal: React.FC<AdminCMSModalProps> = ({ isOpen, onClose, p
                 </div>
 
                 <div className="bg-white p-5 rounded-2xl border border-slate-200 shadow-2xs space-y-4">
-                  <span className="text-xs font-bold text-slate-900 block border-b pb-2">Estadísticas de Reseñas y CTAs Adicionales</span>
+                  <span className="text-xs font-bold text-slate-900 block border-b pb-2">Banner Superior de Google Reviews y Estadísticas</span>
 
                   <div className="space-y-3">
+                    {/* Trust Banner Superior */}
+                    <div className="p-3 bg-slate-50 rounded-xl border border-slate-200 space-y-2">
+                      <span className="text-[11px] font-bold text-slate-800 block">⭐ Banner de Confianza de Google Reviews (Puntaje y Reseñas Verificadas)</span>
+                      <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
+                        <div>
+                          <label className="text-[10px] text-slate-500">Puntaje (ej: "4.9 out of 5.0")</label>
+                          <input
+                            type="text"
+                            value={config.content.reviews.trustScore || ''}
+                            onChange={(e) => updateContent({ reviews: { ...config.content.reviews, trustScore: e.target.value } })}
+                            placeholder="4.9 out of 5.0"
+                            className="w-full p-2 text-xs rounded-lg border border-slate-300 bg-white font-bold"
+                          />
+                        </div>
+                        <div>
+                          <label className="text-[10px] text-slate-500">Texto de Reseñas (ej: "Over 350+ Verified Google Reviews")</label>
+                          <input
+                            type="text"
+                            value={config.content.reviews.trustReviewsCount || ''}
+                            onChange={(e) => updateContent({ reviews: { ...config.content.reviews, trustReviewsCount: e.target.value } })}
+                            placeholder="Over 350+ Verified Google Reviews"
+                            className="w-full p-2 text-xs rounded-lg border border-slate-300 bg-white font-bold"
+                          />
+                        </div>
+                      </div>
+                    </div>
                     <div className="p-3 bg-slate-50 rounded-xl border border-slate-200 grid grid-cols-1 sm:grid-cols-2 gap-3">
                       <span className="col-span-full text-[11px] font-bold text-slate-800 block">📊 Banner de 4 Estadísticas de Reseñas (Cifras y Textos)</span>
                       
