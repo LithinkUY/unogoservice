@@ -38,7 +38,9 @@ import {
   User,
   HelpCircle,
   Calculator,
-  MapPin
+  MapPin,
+  Globe,
+  Languages
 } from 'lucide-react';
 import { useCms } from '../context/CmsContext';
 import {
@@ -122,6 +124,21 @@ export const AdminCMSModal: React.FC<AdminCMSModalProps> = ({ isOpen, onClose, p
 
   const [activeTab, setActiveTab] = useState<TabType>('styles');
   const [saveToast, setSaveToast] = useState<string | null>(null);
+  const [adminLang, setAdminLang] = useState<'es' | 'en'>(() => {
+    if (typeof window !== 'undefined') {
+      return (localStorage.getItem('premier_admin_lang') as 'es' | 'en') || 'es';
+    }
+    return 'es';
+  });
+
+  const toggleLang = (lang: 'es' | 'en') => {
+    setAdminLang(lang);
+    if (typeof window !== 'undefined') {
+      localStorage.setItem('premier_admin_lang', lang);
+    }
+  };
+
+  const t = (es: string, en: string) => (adminLang === 'en' ? en : es);
 
   // Search & filter states
   const [checklistSearch, setChecklistSearch] = useState('');
@@ -630,36 +647,73 @@ export const AdminCMSModal: React.FC<AdminCMSModalProps> = ({ isOpen, onClose, p
             <div>
               <div className="flex items-center gap-2">
                 <h3 className="text-base font-black text-white tracking-tight">
-                  Panel Administrador CMS
+                  {t('Panel Administrador CMS', 'CMS Admin Dashboard')}
                 </h3>
                 <span className="px-2 py-0.5 rounded text-[10px] font-bold bg-emerald-500/20 text-emerald-400 border border-emerald-500/30 uppercase">
-                  MODO EN VIVO
+                  {t('MODO EN VIVO', 'LIVE MODE')}
                 </span>
               </div>
             </div>
           </div>
 
           <div className="flex items-center gap-2">
+            {/* Language Switcher Button Group */}
+            <div className="flex items-center bg-slate-800/90 rounded-xl p-0.5 border border-slate-700 mr-1">
+              <button
+                type="button"
+                onClick={() => {
+                  toggleLang('es');
+                  showToast('Idioma cambiado a Español');
+                }}
+                className={`px-2.5 py-1 rounded-lg text-xs font-bold transition-all cursor-pointer flex items-center gap-1.5 ${
+                  adminLang === 'es'
+                    ? 'bg-emerald-600 text-white shadow-sm'
+                    : 'text-slate-400 hover:text-white'
+                }`}
+                title="Cambiar idioma a Español"
+              >
+                <span>🇪🇸</span>
+                <span className="hidden sm:inline">ES</span>
+              </button>
+              <button
+                type="button"
+                onClick={() => {
+                  toggleLang('en');
+                  showToast('Language switched to English');
+                }}
+                className={`px-2.5 py-1 rounded-lg text-xs font-bold transition-all cursor-pointer flex items-center gap-1.5 ${
+                  adminLang === 'en'
+                    ? 'bg-emerald-600 text-white shadow-sm'
+                    : 'text-slate-400 hover:text-white'
+                }`}
+                title="Switch language to English"
+              >
+                <span>🇺🇸</span>
+                <span className="hidden sm:inline">EN</span>
+              </button>
+            </div>
+
             <button
               onClick={exportConfigAsJson}
-              title="Descargar Backup JSON"
+              title={t('Descargar Backup JSON', 'Download JSON Backup')}
               className="hidden sm:flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-slate-800 hover:bg-slate-700 text-xs font-bold text-slate-200 cursor-pointer"
             >
               <Download className="w-3.5 h-3.5 text-emerald-400" />
-              <span>Exportar</span>
+              <span>{t('Exportar', 'Export')}</span>
             </button>
             <button
               onClick={() => {
-                showToast('Cambios guardados en vivo');
+                showToast(t('Cambios guardados en vivo', 'Live changes saved'));
                 onClose();
               }}
               className="px-4 py-1.5 rounded-xl bg-emerald-600 hover:bg-emerald-500 text-white font-bold text-xs shadow-sm flex items-center gap-1.5 cursor-pointer"
             >
               <Eye className="w-3.5 h-3.5" />
-              <span>Ver Web</span>
+              <span>{t('Ver Web', 'View Site')}</span>
             </button>
             <button
               onClick={onClose}
+              title={t('Cerrar', 'Close')}
               className="p-1.5 rounded-xl text-slate-400 hover:text-white hover:bg-white/10 transition-colors cursor-pointer"
             >
               <X className="w-5 h-5" />
@@ -680,30 +734,33 @@ export const AdminCMSModal: React.FC<AdminCMSModalProps> = ({ isOpen, onClose, p
 
           {/* Sidebar Tabs */}
           <div className="w-56 sm:w-64 bg-slate-900 border-r border-slate-800 p-3 space-y-1 overflow-y-auto shrink-0 text-slate-300">
-            <div className="text-[10px] font-bold text-slate-400 uppercase tracking-widest px-3 py-2">
-              Módulos del CMS
+            <div className="text-[10px] font-bold text-slate-400 uppercase tracking-widest px-3 py-2 flex items-center justify-between">
+              <span>{t('Módulos del CMS', 'CMS Modules')}</span>
+              <span className="text-[9px] font-black text-emerald-400 bg-emerald-950/80 px-1.5 py-0.5 rounded border border-emerald-800 uppercase">
+                {adminLang.toUpperCase()}
+              </span>
             </div>
 
             {[
-              { id: 'styles', label: '1. Estilos y Colores', icon: Palette },
-              { id: 'logo', label: '2. Logo e Identidad', icon: Sparkles },
-              { id: 'pages', label: '3. Páginas CMS', icon: FileText },
-              { id: 'sections', label: '4. Secciones de Inicio', icon: Layout },
-              { id: 'header', label: '5. Header y Menús', icon: Menu },
-              { id: 'slider', label: '6. Slider Principal', icon: Sliders },
-              { id: 'content', label: '7. Textos Globales', icon: FileText },
-              { id: 'faqs', label: '8. Preguntas FAQ', icon: HelpCircle },
-              { id: 'pricing', label: '9. Tarjetas de Precios', icon: DollarSign },
-              { id: 'calculator', label: '10. Calculadora Estimadora', icon: Calculator },
-              { id: 'service-areas', label: '11. Zonas & Dispatch Regional', icon: MapPin },
-              { id: 'gallery', label: '12. Galería', icon: Images },
-              { id: 'clients', label: '13. Clientes', icon: UserCheck, badge: config.clients.length },
-              { id: 'schedule', label: '14. Citas Schedule', icon: Calendar, badge: config.appointments.filter(a => a.status === 'pending').length },
-              { id: 'schedule-config', label: '15. Config Modal Schedule', icon: Settings },
-              { id: 'footer', label: '16. Footer y Contacto', icon: Layout },
-              { id: 'usuario', label: '17. Usuario Admin', icon: User },
-              { id: 'whatsapp', label: '18. WhatsApp', icon: MessageCircle },
-              { id: 'backup', label: '19. Backup', icon: RotateCcw }
+              { id: 'styles', label: t('1. Estilos y Colores', '1. Styles & Colors'), icon: Palette },
+              { id: 'logo', label: t('2. Logo e Identidad', '2. Logo & Branding'), icon: Sparkles },
+              { id: 'pages', label: t('3. Páginas CMS', '3. CMS Pages'), icon: FileText },
+              { id: 'sections', label: t('4. Secciones de Inicio', '4. Homepage Sections'), icon: Layout },
+              { id: 'header', label: t('5. Header y Menús', '5. Header & Menus'), icon: Menu },
+              { id: 'slider', label: t('6. Slider Principal', '6. Hero Slider'), icon: Sliders },
+              { id: 'content', label: t('7. Textos Globales', '7. Global Content'), icon: FileText },
+              { id: 'faqs', label: t('8. Preguntas FAQ', '8. FAQ Items'), icon: HelpCircle },
+              { id: 'pricing', label: t('9. Tarjetas de Precios', '9. Pricing Plans'), icon: DollarSign },
+              { id: 'calculator', label: t('10. Calculadora Estimadora', '10. Cost Estimator'), icon: Calculator },
+              { id: 'service-areas', label: t('11. Zonas & Dispatch Regional', '11. Service Areas & Dispatch'), icon: MapPin },
+              { id: 'gallery', label: t('12. Galería', '12. Project Gallery'), icon: Images },
+              { id: 'clients', label: t('13. Clientes', '13. Client CRM'), icon: UserCheck, badge: config.clients.length },
+              { id: 'schedule', label: t('14. Citas Schedule', '14. Schedule Bookings'), icon: Calendar, badge: config.appointments.filter(a => a.status === 'pending').length },
+              { id: 'schedule-config', label: t('15. Config Modal Schedule', '15. Configure Schedule Modal'), icon: Settings },
+              { id: 'footer', label: t('16. Footer y Contacto', '16. Footer & Contact'), icon: Layout },
+              { id: 'usuario', label: t('17. Usuario Admin', '17. Admin User & Password'), icon: User },
+              { id: 'whatsapp', label: t('18. WhatsApp', '18. WhatsApp Widget'), icon: MessageCircle },
+              { id: 'backup', label: t('19. Backup', '19. Backup & Restore'), icon: RotateCcw }
             ].map(tab => {
               const Icon = tab.icon;
               const isActive = activeTab === tab.id;
@@ -731,10 +788,10 @@ export const AdminCMSModal: React.FC<AdminCMSModalProps> = ({ isOpen, onClose, p
 
             <div className="pt-6 border-t border-slate-800 mt-4 px-2 space-y-2">
               <div className="text-[11px] text-slate-400">
-                Estado: <span className="text-emerald-400 font-bold">Auto-guardado activo</span>
+                {t('Estado:', 'Status:')} <span className="text-emerald-400 font-bold">{t('Auto-guardado activo', 'Auto-save active')}</span>
               </div>
               <p className="text-[10px] text-slate-400 leading-tight">
-                Cada cambio modifica la web inmediatamente y se almacena en el navegador.
+                {t('Cada cambio modifica la web inmediatamente y se almacena en el navegador.', 'Every change immediately updates the live website and persists in the browser.')}
               </p>
             </div>
           </div>
@@ -4522,19 +4579,72 @@ export const AdminCMSModal: React.FC<AdminCMSModalProps> = ({ isOpen, onClose, p
               </div>
             )}
 
-            {/* ================= TAB: USUARIO ADMIN ================= */}
+            {/* ================= TAB: USUARIO ADMIN & IDIOMA ================= */}
             {activeTab === 'usuario' && (
               <div className="space-y-6 max-w-3xl">
                 <div>
-                  <h4 className="text-lg font-black text-[#0f2942]">Credenciales de Acceso del Administrador</h4>
-                  <p className="text-xs text-slate-500">Cambia el nombre de usuario y la contraseña usados para entrar al panel admin del sitio.</p>
+                  <h4 className="text-lg font-black text-[#0f2942]">
+                    {t('Credenciales de Acceso & Preferencias del Administrador', 'Admin Access Credentials & Language Preferences')}
+                  </h4>
+                  <p className="text-xs text-slate-500">
+                    {t('Cambia el nombre de usuario, la contraseña y el idioma de la interfaz del panel de control.', 'Change administrator username, password, and the dashboard interface language.')}
+                  </p>
+                </div>
+
+                {/* Idioma de la interfaz */}
+                <div className="bg-white p-5 rounded-2xl border border-slate-200 shadow-2xs space-y-3">
+                  <div className="flex items-center gap-2">
+                    <Globe className="w-4 h-4 text-emerald-600" />
+                    <span className="text-xs font-bold text-slate-900">
+                      {t('Idioma del Panel de Control', 'Admin Dashboard Language')}
+                    </span>
+                  </div>
+                  <p className="text-xs text-slate-500">
+                    {t('Selecciona el idioma con el que deseas trabajar en el panel CMS.', 'Select the language you want to use inside the CMS admin panel.')}
+                  </p>
+                  <div className="flex items-center gap-3 pt-1">
+                    <button
+                      type="button"
+                      onClick={() => {
+                        toggleLang('es');
+                        showToast('Idioma cambiado a Español');
+                      }}
+                      className={`px-4 py-2.5 rounded-xl text-xs font-bold flex items-center gap-2 cursor-pointer transition-all ${
+                        adminLang === 'es'
+                          ? 'bg-emerald-600 text-white shadow-sm ring-2 ring-emerald-500/30'
+                          : 'bg-slate-100 text-slate-700 hover:bg-slate-200'
+                      }`}
+                    >
+                      <span className="text-base">🇪🇸</span>
+                      <span>Español (ES)</span>
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => {
+                        toggleLang('en');
+                        showToast('Language switched to English');
+                      }}
+                      className={`px-4 py-2.5 rounded-xl text-xs font-bold flex items-center gap-2 cursor-pointer transition-all ${
+                        adminLang === 'en'
+                          ? 'bg-emerald-600 text-white shadow-sm ring-2 ring-emerald-500/30'
+                          : 'bg-slate-100 text-slate-700 hover:bg-slate-200'
+                      }`}
+                    >
+                      <span className="text-base">🇺🇸</span>
+                      <span>English (EN)</span>
+                    </button>
+                  </div>
                 </div>
 
                 <div className="bg-white p-5 rounded-2xl border border-slate-200 shadow-2xs space-y-4">
-                  <span className="text-xs font-bold text-slate-900 block">Usuario y Contraseña</span>
+                  <span className="text-xs font-bold text-slate-900 block">
+                    {t('Usuario y Contraseña de Acceso', 'Admin Username & Password')}
+                  </span>
                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                     <div className="p-3 bg-slate-50 rounded-xl border border-slate-200 space-y-2">
-                      <label className="text-xs font-bold text-slate-800 block">Nombre de usuario</label>
+                      <label className="text-xs font-bold text-slate-800 block">
+                        {t('Nombre de usuario', 'Username')}
+                      </label>
                       <input
                         type="text"
                         value={config.adminUsername}
@@ -4544,7 +4654,9 @@ export const AdminCMSModal: React.FC<AdminCMSModalProps> = ({ isOpen, onClose, p
                       />
                     </div>
                     <div className="p-3 bg-slate-50 rounded-xl border border-slate-200 space-y-2">
-                      <label className="text-xs font-bold text-slate-800 block">Contraseña</label>
+                      <label className="text-xs font-bold text-slate-800 block">
+                        {t('Contraseña', 'Password')}
+                      </label>
                       <input
                         type="text"
                         value={config.adminPassword}
@@ -4558,8 +4670,12 @@ export const AdminCMSModal: React.FC<AdminCMSModalProps> = ({ isOpen, onClose, p
 
                 <div className="bg-white p-5 rounded-2xl border border-slate-200 shadow-2xs flex items-center justify-between">
                   <div>
-                    <div className="text-xs font-bold text-slate-900">Mostrar botón Admin en el sitio</div>
-                    <p className="text-[11px] text-slate-500">Controla si el acceso al admin es visible para los visitantes.</p>
+                    <div className="text-xs font-bold text-slate-900">
+                      {t('Mostrar botón Admin en el sitio', 'Show Admin button on live site')}
+                    </div>
+                    <p className="text-[11px] text-slate-500">
+                      {t('Controla si el acceso al panel admin es visible para los visitantes.', 'Controls whether the admin login trigger is visible in the header for visitors.')}
+                    </p>
                   </div>
                   <input
                     type="checkbox"
