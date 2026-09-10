@@ -33,7 +33,9 @@ import {
   Image,
   ArrowUp,
   ArrowDown,
-  Edit
+  Edit,
+  MessageCircle,
+  User
 } from 'lucide-react';
 import { useCms } from '../context/CmsContext';
 import {
@@ -66,6 +68,8 @@ type TabType =
   | 'clients'
   | 'schedule'
   | 'footer'
+  | 'usuario'
+  | 'whatsapp'
   | 'backup';
 
 export const AdminCMSModal: React.FC<AdminCMSModalProps> = ({ isOpen, onClose, pageMode = false }) => {
@@ -671,7 +675,9 @@ export const AdminCMSModal: React.FC<AdminCMSModalProps> = ({ isOpen, onClose, p
               { id: 'clients', label: '9. Clientes', icon: UserCheck, badge: config.clients.length },
               { id: 'schedule', label: '10. Schedule / Citas', icon: Calendar, badge: config.appointments.filter(a => a.status === 'pending').length },
               { id: 'footer', label: '11. Footer y Contacto', icon: FileText },
-              { id: 'backup', label: '12. Backup & Restaurar', icon: RotateCcw }
+              { id: 'usuario', label: '12. Usuario Admin', icon: User },
+              { id: 'whatsapp', label: '13. WhatsApp', icon: MessageCircle },
+              { id: 'backup', label: '14. Backup & Restaurar', icon: RotateCcw }
             ].map(tab => {
               const Icon = tab.icon;
               const isActive = activeTab === tab.id;
@@ -1608,33 +1614,6 @@ export const AdminCMSModal: React.FC<AdminCMSModalProps> = ({ isOpen, onClose, p
                   </div>
                 </div>
 
-                <div className="bg-white p-5 rounded-2xl border border-slate-200 shadow-2xs space-y-4">
-                  <span className="text-xs font-bold text-slate-900 block">Credenciales de Acceso del Administrador</span>
-                  <p className="text-[11px] text-slate-500">Cambia el usuario y la contraseña usados para entrar al panel admin del sitio.</p>
-
-                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                    <div className="p-3 bg-slate-50 rounded-xl border border-slate-200 space-y-2">
-                      <label className="text-xs font-bold text-slate-800 block">Nombre de usuario</label>
-                      <input
-                        type="text"
-                        value={config.adminUsername}
-                        onChange={(e) => updateAdminCredentials({ adminUsername: e.target.value })}
-                        className="w-full p-2 text-xs rounded-lg border border-slate-300 bg-white"
-                        placeholder="admin"
-                      />
-                    </div>
-                    <div className="p-3 bg-slate-50 rounded-xl border border-slate-200 space-y-2">
-                      <label className="text-xs font-bold text-slate-800 block">Contraseña</label>
-                      <input
-                        type="text"
-                        value={config.adminPassword}
-                        onChange={(e) => updateAdminCredentials({ adminPassword: e.target.value })}
-                        className="w-full p-2 text-xs rounded-lg border border-slate-300 bg-white"
-                        placeholder="admin"
-                      />
-                    </div>
-                  </div>
-                </div>
 
                 <div className="bg-white p-5 rounded-2xl border border-slate-200 shadow-2xs space-y-4">
                   <span className="text-xs font-bold text-slate-900 block">Botones de Acción del Header (CTA)</span>
@@ -1664,54 +1643,6 @@ export const AdminCMSModal: React.FC<AdminCMSModalProps> = ({ isOpen, onClose, p
                   </div>
                 </div>
 
-                <div className="bg-white p-5 rounded-2xl border border-slate-200 shadow-2xs space-y-4">
-                  <div className="flex items-center justify-between">
-                    <span className="text-xs font-bold text-slate-900 block">Botón de WhatsApp</span>
-                    <input
-                      type="checkbox"
-                      checked={config.header.whatsappEnabled}
-                      onChange={(e) => updateHeader({ whatsappEnabled: e.target.checked })}
-                      className="w-4 h-4 accent-emerald-600"
-                    />
-                  </div>
-
-                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                    <div className="p-3 bg-slate-50 rounded-xl border border-slate-200 space-y-2">
-                      <label className="text-xs font-bold text-slate-800 block">Número de WhatsApp</label>
-                      <input
-                        type="text"
-                        value={config.header.whatsappPhone}
-                        onChange={(e) => updateHeader({ whatsappPhone: e.target.value })}
-                        className="w-full p-2 text-xs rounded-lg border border-slate-300 bg-white"
-                        placeholder="(888) 555-CARE"
-                      />
-                    </div>
-                    <div className="p-3 bg-slate-50 rounded-xl border border-slate-200 space-y-2">
-                      <label className="text-xs font-bold text-slate-800 block">Teléfono de emergencia</label>
-                      <input
-                        type="text"
-                        value={config.header.topBar.emergencyPhone}
-                        onChange={(e) => updateHeader({
-                          topBar: { ...config.header.topBar, emergencyPhone: e.target.value },
-                          whatsappPhone: e.target.value
-                        })}
-                        className="w-full p-2 text-xs rounded-lg border border-slate-300 bg-white"
-                        placeholder="(888) 555-CARE"
-                      />
-                    </div>
-                  </div>
-
-                  <div className="p-3 bg-slate-50 rounded-xl border border-slate-200 space-y-2">
-                    <label className="text-xs font-bold text-slate-800 block">Mensaje inicial</label>
-                    <textarea
-                      rows={3}
-                      value={config.header.whatsappMessage}
-                      onChange={(e) => updateHeader({ whatsappMessage: e.target.value })}
-                      className="w-full p-2 text-xs rounded-lg border border-slate-300 bg-white"
-                      placeholder="Hola, me gustaría conocer más sobre sus servicios."
-                    />
-                  </div>
-                </div>
 
                 <div className="pt-4 border-t border-slate-200 flex items-center justify-between">
                   <span className="text-xs text-slate-500 font-medium">Guarda permanentemente el header, avisos y enlaces de menú.</span>
@@ -2822,6 +2753,150 @@ export const AdminCMSModal: React.FC<AdminCMSModalProps> = ({ isOpen, onClose, p
                   </button>
                 </div>
 
+              </div>
+            )}
+
+            {/* ================= TAB: USUARIO ADMIN ================= */}
+            {activeTab === 'usuario' && (
+              <div className="space-y-6 max-w-3xl">
+                <div>
+                  <h4 className="text-lg font-black text-[#0f2942]">Credenciales de Acceso del Administrador</h4>
+                  <p className="text-xs text-slate-500">Cambia el nombre de usuario y la contraseña usados para entrar al panel admin del sitio.</p>
+                </div>
+
+                <div className="bg-white p-5 rounded-2xl border border-slate-200 shadow-2xs space-y-4">
+                  <span className="text-xs font-bold text-slate-900 block">Usuario y Contraseña</span>
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                    <div className="p-3 bg-slate-50 rounded-xl border border-slate-200 space-y-2">
+                      <label className="text-xs font-bold text-slate-800 block">Nombre de usuario</label>
+                      <input
+                        type="text"
+                        value={config.adminUsername}
+                        onChange={(e) => updateAdminCredentials({ adminUsername: e.target.value })}
+                        className="w-full p-2 text-xs rounded-lg border border-slate-300 bg-white"
+                        placeholder="admin"
+                      />
+                    </div>
+                    <div className="p-3 bg-slate-50 rounded-xl border border-slate-200 space-y-2">
+                      <label className="text-xs font-bold text-slate-800 block">Contraseña</label>
+                      <input
+                        type="text"
+                        value={config.adminPassword}
+                        onChange={(e) => updateAdminCredentials({ adminPassword: e.target.value })}
+                        className="w-full p-2 text-xs rounded-lg border border-slate-300 bg-white"
+                        placeholder="admin"
+                      />
+                    </div>
+                  </div>
+                </div>
+
+                <div className="bg-white p-5 rounded-2xl border border-slate-200 shadow-2xs flex items-center justify-between">
+                  <div>
+                    <div className="text-xs font-bold text-slate-900">Mostrar botón Admin en el sitio</div>
+                    <p className="text-[11px] text-slate-500">Controla si el acceso al admin es visible para los visitantes.</p>
+                  </div>
+                  <input
+                    type="checkbox"
+                    checked={config.header.showAdminButton}
+                    onChange={(e) => updateHeader({ showAdminButton: e.target.checked })}
+                    className="w-5 h-5 accent-emerald-600 cursor-pointer"
+                  />
+                </div>
+
+                <div className="pt-4 border-t border-slate-200 flex items-center justify-between">
+                  <span className="text-xs text-slate-500 font-medium">Guarda los datos del usuario administrador.</span>
+                  <button
+                    onClick={() => {
+                      saveAndNotify('Credenciales de Usuario');
+                      showToast('¡Credenciales guardadas exitosamente!');
+                    }}
+                    className="px-6 py-2.5 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-xs shadow-sm flex items-center gap-2 cursor-pointer transition-all hover:scale-105"
+                  >
+                    <Save className="w-4 h-4" />
+                    <span>Guardar Credenciales</span>
+                  </button>
+                </div>
+              </div>
+            )}
+
+            {/* ================= TAB: WHATSAPP ================= */}
+            {activeTab === 'whatsapp' && (
+              <div className="space-y-6 max-w-3xl">
+                <div>
+                  <h4 className="text-lg font-black text-[#0f2942]">Botón Flotante de WhatsApp</h4>
+                  <p className="text-xs text-slate-500">Configura el botón flotante de WhatsApp que aparece en la esquina inferior derecha de tu sitio web.</p>
+                </div>
+
+                <div className="bg-white p-5 rounded-2xl border border-slate-200 shadow-2xs space-y-4">
+                  <div className="flex items-center justify-between">
+                    <div>
+                      <span className="text-xs font-bold text-slate-900 block">Activar Botón de WhatsApp</span>
+                      <p className="text-[11px] text-slate-500">Muestra u oculta el botón flotante verde en la esquina inferior derecha.</p>
+                    </div>
+                    <input
+                      type="checkbox"
+                      checked={config.header.whatsappEnabled}
+                      onChange={(e) => updateHeader({ whatsappEnabled: e.target.checked })}
+                      className="w-5 h-5 accent-emerald-600 cursor-pointer"
+                    />
+                  </div>
+                </div>
+
+                <div className="bg-white p-5 rounded-2xl border border-slate-200 shadow-2xs space-y-4">
+                  <span className="text-xs font-bold text-slate-900 block">Número y Mensaje</span>
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                    <div className="p-3 bg-slate-50 rounded-xl border border-slate-200 space-y-2">
+                      <label className="text-xs font-bold text-slate-800 block">Número de WhatsApp</label>
+                      <input
+                        type="text"
+                        value={config.header.whatsappPhone}
+                        onChange={(e) => updateHeader({ whatsappPhone: e.target.value })}
+                        className="w-full p-2 text-xs rounded-lg border border-slate-300 bg-white"
+                        placeholder="+1 (888) 555-2273"
+                      />
+                      <p className="text-[10px] text-slate-400">Incluye código de país. Ej: +1 para USA, +598 para Uruguay.</p>
+                    </div>
+                    <div className="p-3 bg-slate-50 rounded-xl border border-slate-200 space-y-2">
+                      <label className="text-xs font-bold text-slate-800 block">Teléfono de emergencia</label>
+                      <input
+                        type="text"
+                        value={config.header.topBar.emergencyPhone}
+                        onChange={(e) => updateHeader({
+                          topBar: { ...config.header.topBar, emergencyPhone: e.target.value },
+                          whatsappPhone: e.target.value
+                        })}
+                        className="w-full p-2 text-xs rounded-lg border border-slate-300 bg-white"
+                        placeholder="(888) 555-CARE"
+                      />
+                    </div>
+                  </div>
+
+                  <div className="p-3 bg-slate-50 rounded-xl border border-slate-200 space-y-2">
+                    <label className="text-xs font-bold text-slate-800 block">Mensaje personalizado inicial</label>
+                    <textarea
+                      rows={3}
+                      value={config.header.whatsappMessage}
+                      onChange={(e) => updateHeader({ whatsappMessage: e.target.value })}
+                      className="w-full p-2 text-xs rounded-lg border border-slate-300 bg-white"
+                      placeholder="Hola, me gustaría conocer más sobre sus servicios."
+                    />
+                    <p className="text-[10px] text-slate-400">Este mensaje se pre-carga automáticamente cuando el visitante hace clic en el botón.</p>
+                  </div>
+                </div>
+
+                <div className="pt-4 border-t border-slate-200 flex items-center justify-between">
+                  <span className="text-xs text-slate-500 font-medium">Guarda la configuración del botón de WhatsApp.</span>
+                  <button
+                    onClick={() => {
+                      saveAndNotify('Configuración de WhatsApp');
+                      showToast('¡Configuración de WhatsApp guardada!');
+                    }}
+                    className="px-6 py-2.5 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-xs shadow-sm flex items-center gap-2 cursor-pointer transition-all hover:scale-105"
+                  >
+                    <Save className="w-4 h-4" />
+                    <span>Guardar WhatsApp</span>
+                  </button>
+                </div>
               </div>
             )}
 
