@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useRef } from 'react';
 import {
   X,
   Settings,
@@ -55,6 +55,7 @@ import {
   FaqItem
 } from '../types';
 import { DEFAULT_SCHEDULE_MODAL_CONFIG } from '../data/defaultCmsData';
+import { getAdminText, useAdminAutoTranslation } from '../utils/adminTranslations';
 
 interface AdminCMSModalProps {
   isOpen: boolean;
@@ -140,7 +141,11 @@ export const AdminCMSModal: React.FC<AdminCMSModalProps> = ({ isOpen, onClose, p
 
   const t = (es: string, en: string) => (adminLang === 'en' ? en : es);
 
-  // Search & filter states
+  // Auto-translate the entire modal body DOM when language changes
+  const adminBodyRef = useRef<HTMLDivElement>(null);
+  useAdminAutoTranslation(adminBodyRef, adminLang, activeTab);
+
+
   const [checklistSearch, setChecklistSearch] = useState('');
   const [appointmentStatusFilter, setAppointmentStatusFilter] = useState<string>('all');
   const [selectedAppointment, setSelectedAppointment] = useState<Appointment | null>(null);
@@ -730,7 +735,7 @@ export const AdminCMSModal: React.FC<AdminCMSModalProps> = ({ isOpen, onClose, p
         )}
 
         {/* Main Body with Sidebar Tabs and Content Panel */}
-        <div className="flex-1 flex overflow-hidden">
+        <div ref={adminBodyRef} className="flex-1 flex overflow-hidden">
 
           {/* Sidebar Tabs */}
           <div className="w-56 sm:w-64 bg-slate-900 border-r border-slate-800 p-3 space-y-1 overflow-y-auto shrink-0 text-slate-300">
