@@ -1375,6 +1375,56 @@ export const AdminCMSModal: React.FC<AdminCMSModalProps> = ({ isOpen, onClose, p
                   </div>
 
                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                    <div>
+                      <label className="text-[11px] font-bold text-slate-700 block mb-1">Texto del Badge:</label>
+                      <input
+                        type="text"
+                        value={config.header.topBar.badgeText}
+                        onChange={(e) => updateHeader({
+                          topBar: { ...config.header.topBar, badgeText: e.target.value }
+                        })}
+                        className="w-full p-2 text-xs rounded-xl border border-slate-300 font-bold"
+                      />
+                    </div>
+                    <div>
+                      <label className="text-[11px] font-bold text-slate-700 block mb-1">Texto de Regiones:</label>
+                      <input
+                        type="text"
+                        value={config.header.topBar.regionsText}
+                        onChange={(e) => updateHeader({
+                          topBar: { ...config.header.topBar, regionsText: e.target.value }
+                        })}
+                        className="w-full p-2 text-xs rounded-xl border border-slate-300 font-bold"
+                      />
+                    </div>
+                  </div>
+
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                    <div>
+                      <label className="text-[11px] font-bold text-slate-700 block mb-1">Puntuación:</label>
+                      <input
+                        type="text"
+                        value={config.header.topBar.ratingScore}
+                        onChange={(e) => updateHeader({
+                          topBar: { ...config.header.topBar, ratingScore: e.target.value }
+                        })}
+                        className="w-full p-2 text-xs rounded-xl border border-slate-300 font-bold"
+                      />
+                    </div>
+                    <div>
+                      <label className="text-[11px] font-bold text-slate-700 block mb-1">Texto de Reseñas:</label>
+                      <input
+                        type="text"
+                        value={config.header.topBar.ratingReviewsCount}
+                        onChange={(e) => updateHeader({
+                          topBar: { ...config.header.topBar, ratingReviewsCount: e.target.value }
+                        })}
+                        className="w-full p-2 text-xs rounded-xl border border-slate-300 font-bold"
+                      />
+                    </div>
+                  </div>
+
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                     <div className="p-3 rounded-xl border border-slate-200 bg-slate-50">
                       <div className="flex items-center justify-between gap-3">
                         <div>
@@ -1950,6 +2000,62 @@ export const AdminCMSModal: React.FC<AdminCMSModalProps> = ({ isOpen, onClose, p
                       })}
                       className="w-full p-2 text-xs rounded-xl border border-slate-300"
                     />
+                  </div>
+
+                  {/* Micro Pillars Editor */}
+                  <div className="pt-4 border-t border-slate-200">
+                    <span className="text-[11px] font-bold text-slate-700 block mb-3">Micro Pilares (Debajo del Hero)</span>
+                    <div className="space-y-3">
+                      {config.content.hero.microPillars.map((pillar, idx) => (
+                        <div key={idx} className="p-3 bg-slate-50 rounded-xl border border-slate-200 space-y-2 relative">
+                          <button
+                            onClick={() => {
+                              const newPillars = [...config.content.hero.microPillars];
+                              newPillars.splice(idx, 1);
+                              updateContent({ hero: { ...config.content.hero, microPillars: newPillars } });
+                            }}
+                            className="absolute top-2 right-2 p-1 text-red-500 hover:bg-red-50 rounded-lg cursor-pointer"
+                            title="Eliminar pilar"
+                          >
+                            <Trash2 className="w-3.5 h-3.5" />
+                          </button>
+                          <label className="text-[10px] font-bold text-slate-500 uppercase">Pilar {idx + 1}</label>
+                          <input
+                            type="text"
+                            value={pillar.title}
+                            onChange={(e) => {
+                              const newPillars = [...config.content.hero.microPillars];
+                              newPillars[idx] = { ...pillar, title: e.target.value };
+                              updateContent({ hero: { ...config.content.hero, microPillars: newPillars } });
+                            }}
+                            placeholder="Título"
+                            className="w-full p-2 text-xs rounded-lg border border-slate-300 bg-white font-bold"
+                          />
+                          <input
+                            type="text"
+                            value={pillar.subtitle}
+                            onChange={(e) => {
+                              const newPillars = [...config.content.hero.microPillars];
+                              newPillars[idx] = { ...pillar, subtitle: e.target.value };
+                              updateContent({ hero: { ...config.content.hero, microPillars: newPillars } });
+                            }}
+                            placeholder="Subtítulo"
+                            className="w-full p-2 text-xs rounded-lg border border-slate-300 bg-white text-slate-600"
+                          />
+                        </div>
+                      ))}
+                      {config.content.hero.microPillars.length < 3 && (
+                        <button
+                          onClick={() => {
+                            const newPillars = [...config.content.hero.microPillars, { title: 'Nuevo Pilar', subtitle: 'Descripción' }];
+                            updateContent({ hero: { ...config.content.hero, microPillars: newPillars } });
+                          }}
+                          className="w-full p-2 rounded-xl border border-dashed border-slate-300 text-slate-500 hover:text-emerald-600 hover:border-emerald-300 text-xs font-bold transition-colors cursor-pointer"
+                        >
+                          + Añadir Micro Pilar
+                        </button>
+                      )}
+                    </div>
                   </div>
                 </div>
 
