@@ -2198,65 +2198,138 @@ export const AdminCMSModal: React.FC<AdminCMSModalProps> = ({ isOpen, onClose, p
                 </div>
 
                 <div className="bg-white p-5 rounded-2xl border border-slate-200 shadow-2xs space-y-4">
-                  <span className="text-xs font-bold text-slate-900 block border-b pb-2">Textos Auxiliares y CTAs Adicionales</span>
+                  <span className="text-xs font-bold text-slate-900 block border-b pb-2">Estadísticas de Reseñas y CTAs Adicionales</span>
 
                   <div className="space-y-3">
                     <div className="p-3 bg-slate-50 rounded-xl border border-slate-200 grid grid-cols-1 sm:grid-cols-2 gap-3">
-                      <span className="col-span-full text-[11px] font-bold text-slate-800 block">Estadísticas de la Sección Reviews</span>
-                      <div>
-                        <label className="text-[10px] text-slate-500">Años</label>
+                      <span className="col-span-full text-[11px] font-bold text-slate-800 block">📊 Banner de 4 Estadísticas de Reseñas (Cifras y Textos)</span>
+                      
+                      {/* Stat 1 */}
+                      <div className="p-2.5 bg-white rounded-lg border border-slate-200 space-y-1">
+                        <label className="text-[10px] font-bold text-slate-600 block">Dato 1 - Cifra</label>
                         <input
                           type="text"
                           value={config.content.reviews.statsYears || ''}
                           onChange={(e) => updateContent({ reviews: { ...config.content.reviews, statsYears: e.target.value } })}
-                          className="w-full p-2 text-xs rounded-lg border border-slate-300 bg-white"
+                          placeholder="20+"
+                          className="w-full p-1.5 text-xs rounded-lg border border-slate-300 bg-white font-bold text-[#0f2942]"
+                        />
+                        <label className="text-[10px] text-slate-500 block">Texto debajo</label>
+                        <input
+                          type="text"
+                          value={config.content.reviews.statsYearsLabel || ''}
+                          onChange={(e) => updateContent({ reviews: { ...config.content.reviews, statsYearsLabel: e.target.value } })}
+                          placeholder="Years Serving Homes"
+                          className="w-full p-1.5 text-xs rounded-lg border border-slate-300 bg-white"
                         />
                       </div>
-                      <div>
-                        <label className="text-[10px] text-slate-500">Reviews</label>
+
+                      {/* Stat 2 */}
+                      <div className="p-2.5 bg-white rounded-lg border border-slate-200 space-y-1">
+                        <label className="text-[10px] font-bold text-slate-600 block">Dato 2 - Cifra</label>
                         <input
                           type="text"
                           value={config.content.reviews.statsReviews || ''}
                           onChange={(e) => updateContent({ reviews: { ...config.content.reviews, statsReviews: e.target.value } })}
-                          className="w-full p-2 text-xs rounded-lg border border-slate-300 bg-white"
+                          placeholder="350+"
+                          className="w-full p-1.5 text-xs rounded-lg border border-slate-300 bg-white font-bold text-emerald-600"
+                        />
+                        <label className="text-[10px] text-slate-500 block">Texto debajo</label>
+                        <input
+                          type="text"
+                          value={config.content.reviews.statsReviewsLabel || ''}
+                          onChange={(e) => updateContent({ reviews: { ...config.content.reviews, statsReviewsLabel: e.target.value } })}
+                          placeholder="5-Star Google Reviews"
+                          className="w-full p-1.5 text-xs rounded-lg border border-slate-300 bg-white"
                         />
                       </div>
-                      <div>
-                        <label className="text-[10px] text-slate-500">Retención</label>
+
+                      {/* Stat 3 */}
+                      <div className="p-2.5 bg-white rounded-lg border border-slate-200 space-y-1">
+                        <label className="text-[10px] font-bold text-slate-600 block">Dato 3 - Cifra</label>
                         <input
                           type="text"
                           value={config.content.reviews.statsRenewal || ''}
                           onChange={(e) => updateContent({ reviews: { ...config.content.reviews, statsRenewal: e.target.value } })}
-                          className="w-full p-2 text-xs rounded-lg border border-slate-300 bg-white"
+                          placeholder="98%"
+                          className="w-full p-1.5 text-xs rounded-lg border border-slate-300 bg-white font-bold text-[#0f2942]"
+                        />
+                        <label className="text-[10px] text-slate-500 block">Texto debajo</label>
+                        <input
+                          type="text"
+                          value={config.content.reviews.statsRenewalLabel || ''}
+                          onChange={(e) => updateContent({ reviews: { ...config.content.reviews, statsRenewalLabel: e.target.value } })}
+                          placeholder="Annual Renewal Rate"
+                          className="w-full p-1.5 text-xs rounded-lg border border-slate-300 bg-white"
                         />
                       </div>
-                      <div>
-                        <label className="text-[10px] text-slate-500">Background Checked</label>
+
+                      {/* Stat 4 */}
+                      <div className="p-2.5 bg-white rounded-lg border border-slate-200 space-y-1">
+                        <label className="text-[10px] font-bold text-slate-600 block">Dato 4 - Cifra</label>
                         <input
                           type="text"
                           value={config.content.reviews.statsBackground || ''}
                           onChange={(e) => updateContent({ reviews: { ...config.content.reviews, statsBackground: e.target.value } })}
-                          className="w-full p-2 text-xs rounded-lg border border-slate-300 bg-white"
+                          placeholder="100%"
+                          className="w-full p-1.5 text-xs rounded-lg border border-slate-300 bg-white font-bold text-emerald-600"
+                        />
+                        <label className="text-[10px] text-slate-500 block">Texto debajo</label>
+                        <input
+                          type="text"
+                          value={config.content.reviews.statsBackgroundLabel || ''}
+                          onChange={(e) => updateContent({ reviews: { ...config.content.reviews, statsBackgroundLabel: e.target.value } })}
+                          placeholder="W-2 Background Checked"
+                          className="w-full p-1.5 text-xs rounded-lg border border-slate-300 bg-white"
                         />
                       </div>
                     </div>
 
+                    {/* CTA Inferior de FAQs */}
                     <div className="p-3 bg-slate-50 rounded-xl border border-slate-200 space-y-2">
-                      <span className="text-[11px] font-bold text-slate-800 block">CTA Inferior de FAQs</span>
-                      <input
-                        type="text"
-                        value={config.content.faq.ctaTitle || ''}
-                        onChange={(e) => updateContent({ faq: { ...config.content.faq, ctaTitle: e.target.value } })}
-                        placeholder="CTA Título"
-                        className="w-full p-2 text-xs rounded-lg border border-slate-300 bg-white font-bold"
-                      />
-                      <input
-                        type="text"
-                        value={config.content.faq.ctaButtonText || ''}
-                        onChange={(e) => updateContent({ faq: { ...config.content.faq, ctaButtonText: e.target.value } })}
-                        placeholder="Texto del botón"
-                        className="w-full p-2 text-xs rounded-lg border border-slate-300 bg-white"
-                      />
+                      <span className="text-[11px] font-bold text-slate-800 block">📞 Caja de Contacto Inferior de FAQs ("Have a question specific to your property?")</span>
+                      <div>
+                        <label className="text-[10px] text-slate-500 block mb-1">Título de la caja</label>
+                        <input
+                          type="text"
+                          value={config.content.faq.ctaTitle || ''}
+                          onChange={(e) => updateContent({ faq: { ...config.content.faq, ctaTitle: e.target.value } })}
+                          placeholder="Have a question specific to your property?"
+                          className="w-full p-2 text-xs rounded-lg border border-slate-300 bg-white font-bold"
+                        />
+                      </div>
+                      <div>
+                        <label className="text-[10px] text-slate-500 block mb-1">Subtítulo explicativo</label>
+                        <textarea
+                          rows={2}
+                          value={config.content.faq.ctaSubtitle || ''}
+                          onChange={(e) => updateContent({ faq: { ...config.content.faq, ctaSubtitle: e.target.value } })}
+                          placeholder="Our home care advisors are available to review your property quirks and answer any questions."
+                          className="w-full p-2 text-xs rounded-lg border border-slate-300 bg-white"
+                        />
+                      </div>
+                      <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
+                        <div>
+                          <label className="text-[10px] text-slate-500 block mb-1">Texto del botón de llamada</label>
+                          <input
+                            type="text"
+                            value={config.content.faq.ctaPhoneText || ''}
+                            onChange={(e) => updateContent({ faq: { ...config.content.faq, ctaPhoneText: e.target.value } })}
+                            placeholder="Call (888) 555-CARE"
+                            className="w-full p-2 text-xs rounded-lg border border-slate-300 bg-white"
+                          />
+                        </div>
+                        <div>
+                          <label className="text-[10px] text-slate-500 block mb-1">Texto del botón verde (Walkthrough)</label>
+                          <input
+                            type="text"
+                            value={config.content.faq.ctaButtonText || ''}
+                            onChange={(e) => updateContent({ faq: { ...config.content.faq, ctaButtonText: e.target.value } })}
+                            placeholder="Request Free Assessment"
+                            className="w-full p-2 text-xs rounded-lg border border-slate-300 bg-white font-bold text-emerald-700"
+                          />
+                        </div>
+                      </div>
                     </div>
                   </div>
                 </div>
@@ -2894,6 +2967,16 @@ export const AdminCMSModal: React.FC<AdminCMSModalProps> = ({ isOpen, onClose, p
 
                 <div className="bg-white p-5 rounded-2xl border border-slate-200 shadow-2xs space-y-4">
                   <span className="text-xs font-bold text-slate-900 block border-b pb-2">Boletín de Guía Estacional</span>
+                  <div>
+                    <label className="text-[11px] font-bold text-slate-700 block mb-1">Badge del Boletín (ej: "Free Homeowner Resource"):</label>
+                    <input
+                      type="text"
+                      value={config.footer.newsletterBadge || ''}
+                      onChange={(e) => updateFooter({ newsletterBadge: e.target.value })}
+                      placeholder="Free Homeowner Resource"
+                      className="w-full p-2 text-xs rounded-xl border border-slate-300 font-bold text-emerald-700"
+                    />
+                  </div>
                   <div>
                     <label className="text-[11px] font-bold text-slate-700 block mb-1">Título del Banner del Boletín:</label>
                     <input

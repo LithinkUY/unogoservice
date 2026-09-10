@@ -335,9 +335,13 @@ export interface ContentConfig {
     subtitle: string;
     sliderType?: 'grid' | 'carousel';
     statsYears?: string;
+    statsYearsLabel?: string;
     statsReviews?: string;
+    statsReviewsLabel?: string;
     statsRenewal?: string;
+    statsRenewalLabel?: string;
     statsBackground?: string;
+    statsBackgroundLabel?: string;
   };
   faq: {
     badge: string;

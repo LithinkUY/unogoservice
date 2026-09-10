@@ -146,19 +146,19 @@ export const ReviewsSection: React.FC = () => {
         <div className="mt-14 grid grid-cols-2 md:grid-cols-4 gap-6 bg-white p-8 rounded-3xl border border-slate-200 shadow-sm text-center">
           <div>
             <div className="text-3xl sm:text-4xl font-black text-[#0f2942]">{reviewsContent.statsYears || '20+'}</div>
-            <div className="text-xs font-semibold text-slate-500 mt-1 uppercase tracking-wider">Years Serving Homes</div>
+            <div className="text-xs font-semibold text-slate-500 mt-1 uppercase tracking-wider">{reviewsContent.statsYearsLabel || 'Years Serving Homes'}</div>
           </div>
           <div>
             <div className="text-3xl sm:text-4xl font-black text-emerald-600">{reviewsContent.statsReviews || '350+'}</div>
-            <div className="text-xs font-semibold text-slate-500 mt-1 uppercase tracking-wider">5-Star Google Reviews</div>
+            <div className="text-xs font-semibold text-slate-500 mt-1 uppercase tracking-wider">{reviewsContent.statsReviewsLabel || '5-Star Google Reviews'}</div>
           </div>
           <div>
             <div className="text-3xl sm:text-4xl font-black text-[#0f2942]">{reviewsContent.statsRenewal || '98%'}</div>
-            <div className="text-xs font-semibold text-slate-500 mt-1 uppercase tracking-wider">Annual Renewal Rate</div>
+            <div className="text-xs font-semibold text-slate-500 mt-1 uppercase tracking-wider">{reviewsContent.statsRenewalLabel || 'Annual Renewal Rate'}</div>
           </div>
           <div>
             <div className="text-3xl sm:text-4xl font-black text-emerald-600">{reviewsContent.statsBackground || '100%'}</div>
-            <div className="text-xs font-semibold text-slate-500 mt-1 uppercase tracking-wider">W-2 Background Checked</div>
+            <div className="text-xs font-semibold text-slate-500 mt-1 uppercase tracking-wider">{reviewsContent.statsBackgroundLabel || 'W-2 Background Checked'}</div>
           </div>
         </div>
 
