@@ -183,76 +183,22 @@ export const PRICING_PLANS: PricingPlan[] = [
 
 export const SERVICE_AREAS: ServiceArea[] = [
   {
-    state: 'Maryland',
-    name: 'Montgomery County & Greater Bethesda',
-    counties: ['Montgomery County', 'Chevy Chase', 'Bethesda', 'Potomac', 'Rockville', 'Silver Spring', 'Gaithersburg', 'Olney'],
-    keyCities: ['Bethesda', 'Potomac', 'Chevy Chase', 'Kensington', 'Rockville', 'North Bethesda'],
-    zipPrefixes: ['208', '209'],
-    phone: '(301) 949-8080',
-    officeAddress: '15915 Somerville Rd, Rockville, MD 20855'
-  },
-  {
-    state: 'Washington D.C.',
-    name: 'District of Columbia',
-    counties: ['Northwest D.C.', 'Georgetown', 'Dupont Circle', 'Cleveland Park', 'Spring Valley', 'Capitol Hill'],
-    keyCities: ['Georgetown', 'Kalorama', 'Wesley Heights', 'Foxhall', 'Palisades', 'Logan Circle'],
-    zipPrefixes: ['200'],
-    phone: '(202) 559-8800',
-    officeAddress: 'Serving all NW and Capitol Hill neighborhoods'
-  },
-  {
-    state: 'Virginia',
-    name: 'Northern Virginia & Loudoun',
-    counties: ['Fairfax County', 'Loudoun County', 'Arlington', 'Alexandria'],
-    keyCities: ['McLean', 'Great Falls', 'Vienna', 'Arlington', 'Alexandria', 'Reston', 'Oakton', 'Ashburn', 'Leesburg'],
-    zipPrefixes: ['220', '221', '222', '223', '201'],
-    phone: '(703) 759-4080',
-    officeAddress: '6849 Old Dominion Dr, McLean, VA 22101'
-  },
-  {
-    state: 'Connecticut',
-    name: 'Fairfield County',
-    counties: ['Fairfield County'],
-    keyCities: ['Greenwich', 'Westport', 'Darien', 'New Canaan', 'Fairfield', 'Wilton', 'Ridgefield', 'Stamford'],
+    state: 'Fairfield County, CT',
+    name: 'Fairfield County Regional Dispatch',
+    counties: ['Fairfield County', 'Coastal Fairfield', 'Gold Coast Area'],
+    keyCities: ['Greenwich', 'Stamford', 'Westport', 'Darien', 'New Canaan', 'Fairfield', 'Norwalk', 'Wilton', 'Ridgefield', 'Trumbull'],
     zipPrefixes: ['068', '069'],
     phone: '(203) 658-8870',
-    officeAddress: 'Westport & Greenwich Field Dispatch'
+    officeAddress: '100 West Putnam Ave, Greenwich, CT 06830'
   },
   {
-    state: 'Georgia',
-    name: 'Metro Atlanta',
-    counties: ['Fulton County', 'Cobb County', 'DeKalb County'],
-    keyCities: ['Buckhead', 'Sandy Springs', 'Alpharetta', 'Roswell', 'Brookhaven', 'Dunwoody', 'Milton', 'Johns Creek'],
-    zipPrefixes: ['303', '300'],
-    phone: '(404) 937-6400',
-    officeAddress: 'Peachtree Rd, Buckhead, Atlanta, GA'
-  },
-  {
-    state: 'Florida',
-    name: 'Palm Beach & Broward',
-    counties: ['Palm Beach County', 'Broward County'],
-    keyCities: ['Boca Raton', 'Delray Beach', 'Palm Beach', 'Jupiter', 'Fort Lauderdale', 'Highland Beach', 'Manalapan'],
-    zipPrefixes: ['334', '333'],
-    phone: '(561) 408-7200',
-    officeAddress: 'Serving coastal Palm Beach & Broward'
-  },
-  {
-    state: 'Illinois',
-    name: 'Chicago North Shore & Cook/Lake',
-    counties: ['Cook County', 'Lake County'],
-    keyCities: ['Winnetka', 'Glencoe', 'Highland Park', 'Lake Forest', 'Wilmette', 'Evanston', 'Kenilworth', 'Hinsdale'],
-    zipPrefixes: ['600', '601', '602', '605'],
-    phone: '(847) 748-8100',
-    officeAddress: 'North Shore Operations Center, Wilmette, IL'
-  },
-  {
-    state: 'Massachusetts',
-    name: 'Greater Boston & MetroWest',
-    counties: ['Norfolk County', 'Middlesex County', 'Worcester County'],
-    keyCities: ['Newton', 'Wellesley', 'Weston', 'Needham', 'Brookline', 'Concord', 'Lexington', 'Dover', 'Sudbury'],
-    zipPrefixes: ['024', '017', '021'],
-    phone: '(617) 934-2900',
-    officeAddress: 'MetroWest Regional Hub, Wellesley, MA'
+    state: 'Westchester County, NY',
+    name: 'Westchester County Regional Dispatch',
+    counties: ['Westchester County', 'Sound Shore', 'Central & North Westchester'],
+    keyCities: ['White Plains', 'Scarsdale', 'Rye', 'New Rochelle', 'Bedford', 'Chappaqua', 'Mamaroneck', 'Bronxville', 'Larchmont', 'Yonkers'],
+    zipPrefixes: ['105', '106', '107', '108'],
+    phone: '(914) 205-4420',
+    officeAddress: '50 Main St, White Plains, NY 10606'
   }
 ];
 

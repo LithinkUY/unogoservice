@@ -13,6 +13,7 @@ import {
 } from 'lucide-react';
 import { GalleryItem } from '../types';
 import { useCms } from '../context/CmsContext';
+import { parseVideoUrl } from '../utils/mediaUtils';
 
 interface GallerySectionProps {
   onOpenWalkthrough: () => void;
@@ -78,9 +79,10 @@ export const GallerySection: React.FC<GallerySectionProps> = ({ onOpenWalkthroug
           {filteredItems.map((item) => {
             const isBeforeAfter = item.type === 'before_after';
             const currentView = activeBeforeAfter[item.id] || 'after';
+            const videoThumb = item.type === 'video' && item.videoUrl ? parseVideoUrl(item.videoUrl).thumbnailUrl : undefined;
             const displayImage = isBeforeAfter 
               ? (currentView === 'before' ? (item.beforeImageUrl || item.imageUrl) : (item.afterImageUrl || item.imageUrl))
-              : item.imageUrl;
+              : (item.imageUrl || videoThumb || 'https://images.unsplash.com/photo-1581578731548-c64695cc6952?auto=format&fit=crop&w=800&q=80');
 
             return (
               <div 
@@ -237,14 +239,32 @@ export const GallerySection: React.FC<GallerySectionProps> = ({ onOpenWalkthroug
             </div>
 
             <div className="relative bg-slate-950 max-h-[60vh] flex items-center justify-center">
-              {activeLightboxItem.type === 'video' && activeLightboxItem.videoUrl ? (
-                <video
-                  src={activeLightboxItem.videoUrl}
-                  controls
-                  autoPlay
-                  className="w-full max-h-[60vh] object-contain"
-                />
-              ) : activeLightboxItem.type === 'before_after' ? (
+              {activeLightboxItem.type === 'video' && activeLightboxItem.videoUrl ? (() => {
+                const videoInfo = parseVideoUrl(activeLightboxItem.videoUrl, {
+                  autoplay: true,
+                  controls: true,
+                  muted: false,
+                  loop: false
+                });
+                return videoInfo.isEmbed ? (
+                  <div className="w-full aspect-video max-h-[60vh] flex items-center justify-center bg-black">
+                    <iframe
+                      src={videoInfo.embedUrl}
+                      title={activeLightboxItem.title}
+                      className="w-full h-full max-h-[60vh] border-0"
+                      allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                      allowFullScreen
+                    />
+                  </div>
+                ) : (
+                  <video
+                    src={activeLightboxItem.videoUrl}
+                    controls
+                    autoPlay
+                    className="w-full max-h-[60vh] object-contain"
+                  />
+                );
+              })() : activeLightboxItem.type === 'before_after' ? (
                 <div className="grid grid-cols-2 w-full">
                   <div className="relative">
                     <img 

@@ -324,6 +324,25 @@ export interface ContentConfig {
     title: string;
     subtitle: string;
   };
+  calculator?: {
+    badge?: string;
+    title?: string;
+    subtitle?: string;
+    estimatorBadge?: string;
+    estimatorTitle?: string;
+    estimatorSubtitle?: string;
+    sqftLabel?: string;
+    minSqft?: number;
+    maxSqft?: number;
+    stepSqft?: number;
+    defaultSqft?: number;
+    hvacLabel?: string;
+    handymanLabel?: string;
+    savingsBadge?: string;
+    savingsSubtitle?: string;
+    savingsDisclaimer?: string;
+    ctaButtonText?: string;
+  };
   gallery: {
     badge: string;
     title: string;

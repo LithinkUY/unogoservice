@@ -79,6 +79,29 @@ export const WalkthroughModal: React.FC<WalkthroughModalProps> = ({
       notes: formData.notes,
       status: 'pending'
     });
+
+    // Notify unogohome@gmail.com
+    fetch('https://formsubmit.co/ajax/unogohome@gmail.com', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'Accept': 'application/json'
+      },
+      body: JSON.stringify({
+        _subject: `Nueva Solicitud de Walkthrough: ${formData.fullName || 'Propietario'} (${formData.city || ''}, ${formData.state || ''} ${formData.zip || ''})`,
+        nombre: formData.fullName,
+        telefono: formData.phone,
+        email: formData.email,
+        direccion: `${formData.address || ''}, ${formData.city || ''}, ${formData.state || ''} ${formData.zip || ''}`,
+        tipoHogar: formData.homeType,
+        piesCuadrados: formData.sqft,
+        prioridades: formData.priorities?.join(', '),
+        fechaPreferida: formData.preferredDate,
+        horarioPreferido: formData.preferredTime,
+        notas: formData.notes
+      })
+    }).catch(err => console.warn('Email dispatch notice', err));
+
     setSubmitted(true);
   };
 

@@ -81,6 +81,30 @@ export const CmsProvider: React.FC<{ children: React.ReactNode }> = ({ children 
         const normalizedSections = (parsed.sections && parsed.sections.length > 0 ? parsed.sections : DEFAULT_PAGE_SECTIONS)
           .filter((section: PageSection) => section.id !== 'checklist');
 
+        let finalSections = normalizedSections;
+        if (!finalSections.some((s: PageSection) => s.id === 'calculator')) {
+          const pricingIdx = finalSections.findIndex((s: PageSection) => s.id === 'pricing');
+          const calcSection: PageSection = {
+            id: 'calculator',
+            name: 'Calculadora de Estimación (Home Size Estimator)',
+            enabled: true
+          };
+          if (pricingIdx !== -1) {
+            finalSections = [
+              ...finalSections.slice(0, pricingIdx + 1),
+              calcSection,
+              ...finalSections.slice(pricingIdx + 1)
+            ];
+          } else {
+            finalSections = [...finalSections, calcSection];
+          }
+        }
+
+        let serviceAreasToUse = parsed.serviceAreas;
+        if (!serviceAreasToUse || serviceAreasToUse.length === 0 || serviceAreasToUse.some((a: any) => a.state === 'Maryland' || a.state === 'Virginia')) {
+          serviceAreasToUse = DEFAULT_CMS_CONFIG.serviceAreas;
+        }
+
         const normalizedHeader = {
           ...DEFAULT_CMS_CONFIG.header,
           ...(parsed.header || {}),
@@ -107,8 +131,16 @@ export const CmsProvider: React.FC<{ children: React.ReactNode }> = ({ children 
           theme: { ...DEFAULT_CMS_CONFIG.theme, ...parsed.theme },
           header: normalizedHeader,
           slider: { ...DEFAULT_CMS_CONFIG.slider, ...parsed.slider },
-          content: { ...DEFAULT_CMS_CONFIG.content, ...parsed.content },
-          sections: normalizedSections,
+          content: {
+            ...DEFAULT_CMS_CONFIG.content,
+            ...(parsed.content || {}),
+            calculator: {
+              ...DEFAULT_CMS_CONFIG.content.calculator,
+              ...(parsed.content?.calculator || {})
+            }
+          },
+          sections: finalSections,
+          serviceAreas: serviceAreasToUse,
           gallery: parsed.gallery && parsed.gallery.length > 0 ? parsed.gallery : DEFAULT_CMS_CONFIG.gallery,
           footer: { ...DEFAULT_CMS_CONFIG.footer, ...parsed.footer }
         };

@@ -36,7 +36,8 @@ import {
   Edit,
   MessageCircle,
   User,
-  HelpCircle
+  HelpCircle,
+  Calculator
 } from 'lucide-react';
 import { useCms } from '../context/CmsContext';
 import {
@@ -66,6 +67,7 @@ type TabType =
   | 'content'
   | 'checklist'
   | 'pricing'
+  | 'calculator'
   | 'gallery'
   | 'clients'
   | 'schedule'
@@ -686,14 +688,15 @@ export const AdminCMSModal: React.FC<AdminCMSModalProps> = ({ isOpen, onClose, p
               { id: 'slider', label: '6. Slider Principal', icon: Sliders },
               { id: 'content', label: '7. Textos Globales', icon: FileText },
               { id: 'faqs', label: '8. Preguntas FAQ', icon: HelpCircle },
-              { id: 'pricing', label: '9. Planes y Precios', icon: DollarSign },
-              { id: 'gallery', label: '10. Galería', icon: Images },
-              { id: 'clients', label: '11. Clientes', icon: UserCheck, badge: config.clients.length },
-              { id: 'schedule', label: '12. Schedule', icon: Calendar, badge: config.appointments.filter(a => a.status === 'pending').length },
-              { id: 'footer', label: '13. Footer y Contacto', icon: Layout },
-              { id: 'usuario', label: '14. Usuario Admin', icon: User },
-              { id: 'whatsapp', label: '15. WhatsApp', icon: MessageCircle },
-              { id: 'backup', label: '16. Backup', icon: RotateCcw }
+              { id: 'pricing', label: '9. Tarjetas de Precios', icon: DollarSign },
+              { id: 'calculator', label: '10. Calculadora Estimadora', icon: Calculator },
+              { id: 'gallery', label: '11. Galería', icon: Images },
+              { id: 'clients', label: '12. Clientes', icon: UserCheck, badge: config.clients.length },
+              { id: 'schedule', label: '13. Schedule', icon: Calendar, badge: config.appointments.filter(a => a.status === 'pending').length },
+              { id: 'footer', label: '14. Footer y Contacto', icon: Layout },
+              { id: 'usuario', label: '15. Usuario Admin', icon: User },
+              { id: 'whatsapp', label: '16. WhatsApp', icon: MessageCircle },
+              { id: 'backup', label: '17. Backup', icon: RotateCcw }
             ].map(tab => {
               const Icon = tab.icon;
               const isActive = activeTab === tab.id;
@@ -2140,6 +2143,35 @@ export const AdminCMSModal: React.FC<AdminCMSModalProps> = ({ isOpen, onClose, p
                       </div>
                     </div>
 
+                    {/* Sección: Calculadora de Estimación */}
+                    <div className="p-3 bg-slate-50 rounded-xl border border-slate-200 space-y-2">
+                      <span className="text-[11px] font-bold text-slate-800 block">🧮 Sección: Calculadora de Estimación (Home Size Estimator)</span>
+                      <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
+                        <div>
+                          <label className="text-[10px] text-slate-500">Badge</label>
+                          <input type="text" value={config.content.calculator?.badge || ''} onChange={(e) => updateContent({ calculator: { ...config.content.calculator, badge: e.target.value } })} placeholder="Calculadora de Estimación" className="w-full p-2 text-xs rounded-lg border border-slate-300 bg-white" />
+                        </div>
+                        <div>
+                          <label className="text-[10px] text-slate-500">Título</label>
+                          <input type="text" value={config.content.calculator?.title || ''} onChange={(e) => updateContent({ calculator: { ...config.content.calculator, title: e.target.value } })} placeholder="Personaliza el Presupuesto de tu Residencia" className="w-full p-2 text-xs rounded-lg border border-slate-300 bg-white font-bold" />
+                        </div>
+                      </div>
+                      <div>
+                        <label className="text-[10px] text-slate-500">Subtítulo</label>
+                        <textarea rows={2} value={config.content.calculator?.subtitle || ''} onChange={(e) => updateContent({ calculator: { ...config.content.calculator, subtitle: e.target.value } })} placeholder="Ajusta los pies cuadrados..." className="w-full p-2 text-xs rounded-lg border border-slate-300 bg-white" />
+                      </div>
+                      <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
+                        <div>
+                          <label className="text-[10px] text-slate-500">Ahorro Anual (Badge / Texto)</label>
+                          <input type="text" value={config.content.calculator?.savingsBadge || ''} onChange={(e) => updateContent({ calculator: { ...config.content.calculator, savingsBadge: e.target.value } })} placeholder="Ahorro Anual Estimado" className="w-full p-2 text-xs rounded-lg border border-slate-300 bg-white" />
+                        </div>
+                        <div>
+                          <label className="text-[10px] text-slate-500">Botón de Acción (CTA)</label>
+                          <input type="text" value={config.content.calculator?.ctaButtonText || ''} onChange={(e) => updateContent({ calculator: { ...config.content.calculator, ctaButtonText: e.target.value } })} placeholder="Agendar Evaluación Gratuita" className="w-full p-2 text-xs rounded-lg border border-slate-300 bg-white font-bold text-emerald-700" />
+                        </div>
+                      </div>
+                    </div>
+
                     {/* Sección: Áreas de Servicio */}
                     <div className="p-3 bg-slate-50 rounded-xl border border-slate-200 space-y-3">
                       <span className="text-[11px] font-bold text-slate-800 block">📍 Sección: Áreas de Servicio (Textos y Regiones)</span>
@@ -2196,26 +2228,62 @@ export const AdminCMSModal: React.FC<AdminCMSModalProps> = ({ isOpen, onClose, p
 
                       {/* Regiones individuales */}
                       <div className="pt-2 border-t border-slate-200">
-                        <div className="flex items-center justify-between mb-2">
-                          <label className="text-[10px] font-bold text-slate-500 uppercase">Regiones / Hubs ({config.serviceAreas?.length || 0})</label>
-                          <button
-                            type="button"
-                            onClick={() => {
-                              const newRegion = {
-                                state: 'Nueva Región',
-                                name: 'Centro Regional',
-                                phone: '(888) 555-CARE',
-                                officeAddress: 'Dirección oficina',
-                                keyCities: ['Ciudad 1', 'Ciudad 2'],
-                                counties: ['Condado 1'],
-                                zipPrefixes: ['000']
-                              };
-                              updateServiceAreas([...config.serviceAreas, newRegion]);
-                            }}
-                            className="text-xs font-bold text-emerald-600 hover:text-emerald-700 cursor-pointer"
-                          >
-                            + Agregar Región
-                          </button>
+                        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 mb-3">
+                          <div>
+                            <label className="text-[10px] font-bold text-slate-500 uppercase">Regiones / Hubs ({config.serviceAreas?.length || 0})</label>
+                            <p className="text-[10px] text-slate-400">Configura las zonas de trabajo y los códigos postales exactos o prefijos que aceptará el buscador.</p>
+                          </div>
+                          <div className="flex items-center gap-2">
+                            <button
+                              type="button"
+                              onClick={() => {
+                                if (confirm('¿Restablecer las regiones a Fairfield y Westchester Counties (CT y NY)?')) {
+                                  updateServiceAreas([
+                                    {
+                                      state: 'Fairfield County, CT',
+                                      name: 'Fairfield County Regional Dispatch',
+                                      counties: ['Fairfield County', 'Coastal Fairfield', 'Gold Coast Area'],
+                                      keyCities: ['Greenwich', 'Stamford', 'Westport', 'Darien', 'New Canaan', 'Fairfield', 'Norwalk', 'Wilton', 'Ridgefield', 'Trumbull'],
+                                      zipPrefixes: ['068', '069'],
+                                      phone: '(203) 658-8870',
+                                      officeAddress: '100 West Putnam Ave, Greenwich, CT 06830'
+                                    },
+                                    {
+                                      state: 'Westchester County, NY',
+                                      name: 'Westchester County Regional Dispatch',
+                                      counties: ['Westchester County', 'Sound Shore', 'Central & North Westchester'],
+                                      keyCities: ['White Plains', 'Scarsdale', 'Rye', 'New Rochelle', 'Bedford', 'Chappaqua', 'Mamaroneck', 'Bronxville', 'Larchmont', 'Yonkers'],
+                                      zipPrefixes: ['105', '106', '107', '108'],
+                                      phone: '(914) 205-4420',
+                                      officeAddress: '50 Main St, White Plains, NY 10606'
+                                    }
+                                  ]);
+                                  showToast('¡Regiones de Fairfield y Westchester cargadas!');
+                                }
+                              }}
+                              className="text-xs font-bold text-blue-600 hover:text-blue-700 bg-blue-50 border border-blue-200 px-2.5 py-1 rounded-lg cursor-pointer"
+                            >
+                              Cargar Fairfield & Westchester
+                            </button>
+                            <button
+                              type="button"
+                              onClick={() => {
+                                const newRegion = {
+                                  state: 'Nueva Región / Condado',
+                                  name: 'Centro Regional Dispatch',
+                                  phone: '(203) 658-8870',
+                                  officeAddress: 'Dirección de oficina local',
+                                  keyCities: ['Ciudad 1', 'Ciudad 2'],
+                                  counties: ['Condado 1'],
+                                  zipPrefixes: ['068']
+                                };
+                                updateServiceAreas([...config.serviceAreas, newRegion]);
+                              }}
+                              className="text-xs font-bold text-white bg-emerald-600 hover:bg-emerald-700 px-2.5 py-1 rounded-lg cursor-pointer"
+                            >
+                              + Agregar Región
+                            </button>
+                          </div>
                         </div>
 
                         {config.serviceAreas?.map((area: any, aIdx: number) => (
@@ -2296,6 +2364,30 @@ export const AdminCMSModal: React.FC<AdminCMSModalProps> = ({ isOpen, onClose, p
                                 }}
                                 className="w-full p-1.5 text-xs rounded-lg border border-slate-300 bg-white"
                               />
+                            </div>
+                            <div>
+                              <label className="text-[10px] font-bold text-slate-700 block">Códigos Postales / Prefijos ZIP Permitidos (separados por comas)</label>
+                              <p className="text-[9px] text-slate-400 mb-1">El buscador ZIP de la web solo dará servicio a los códigos o prefijos que ingreses aquí (ej: 068, 069, 105, 106, 06830, etc.)</p>
+                              <input
+                                type="text"
+                                value={Array.isArray(area.zipPrefixes) ? area.zipPrefixes.join(', ') : (area.zipPrefixes || '')}
+                                onChange={(e) => {
+                                  const arr = [...config.serviceAreas];
+                                  arr[aIdx] = { ...arr[aIdx], zipPrefixes: e.target.value.split(',').map((s: string) => s.trim()).filter(Boolean) };
+                                  updateServiceAreas(arr);
+                                }}
+                                placeholder="068, 069, 105, 106..."
+                                className="w-full p-1.5 text-xs rounded-lg border border-slate-300 bg-white font-mono text-emerald-800 font-bold"
+                              />
+                              {area.zipPrefixes && area.zipPrefixes.length > 0 && (
+                                <div className="flex flex-wrap gap-1 mt-1.5">
+                                  {area.zipPrefixes.map((z: string, zi: number) => (
+                                    <span key={zi} className="px-1.5 py-0.5 bg-emerald-100 text-emerald-800 rounded text-[10px] font-mono font-bold">
+                                      {z}
+                                    </span>
+                                  ))}
+                                </div>
+                              )}
                             </div>
                           </div>
                         ))}
@@ -2594,104 +2686,411 @@ export const AdminCMSModal: React.FC<AdminCMSModalProps> = ({ isOpen, onClose, p
 
 
             {/* ================= TAB 6: PLANES Y PRECIOS ================= */}
-            {activeTab === 'pricing' && (
-              <div className="space-y-6 max-w-4xl">
-                <div>
-                  <h4 className="text-lg font-black text-[#0f2942]">Gestión de Planes y Tarifas de Membresía</h4>
-                  <p className="text-xs text-slate-500">Edita precios mensuales base, número de visitas anuales y horas de handyman incluidas por visita.</p>
-                </div>
+            {/* ================= TAB 9: TARJETAS DE PRECIOS ================= */}
+            {activeTab === 'pricing' && (() => {
+              const pricingSection = config.sections.find(s => s.id === 'pricing');
+              const isPricingEnabled = pricingSection ? pricingSection.enabled : true;
 
-                <div className="grid grid-cols-1 lg:grid-cols-3 gap-4">
-                  {config.pricingPlans.map((plan) => (
-                    <div key={plan.id} className="bg-white rounded-2xl border border-slate-200 p-5 shadow-2xs space-y-4 flex flex-col justify-between">
-                      <div className="space-y-3">
-                        <div className="flex items-center justify-between">
-                          <span className="text-xs font-bold uppercase tracking-wider text-emerald-700">
-                            {plan.badge || 'Plan Estándar'}
-                          </span>
-                          <span className="text-xs font-bold text-slate-500">{plan.visitsPerYear} visitas/año</span>
-                        </div>
+              return (
+                <div className="space-y-6 max-w-4xl">
+                  <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 bg-white p-4 rounded-2xl border border-slate-200 shadow-2xs">
+                    <div>
+                      <h4 className="text-lg font-black text-[#0f2942]">Tarjetas de Membresías y Precios</h4>
+                      <p className="text-xs text-slate-500">Muestra las tarjetas de planes (Quarterly, Bi-Monthly y Monthly) en la web.</p>
+                    </div>
+                    <div className="flex items-center gap-3">
+                      <span className={`text-xs font-bold ${isPricingEnabled ? 'text-emerald-700' : 'text-slate-400'}`}>
+                        {isPricingEnabled ? 'Sección Visible' : 'Sección Oculta'}
+                      </span>
+                      <button
+                        type="button"
+                        onClick={() => toggleSection('pricing')}
+                        className={`w-12 h-6 rounded-full transition-colors relative cursor-pointer ${
+                          isPricingEnabled ? 'bg-emerald-600' : 'bg-slate-300'
+                        }`}
+                      >
+                        <span className={`w-5 h-5 rounded-full bg-white shadow-md absolute top-0.5 transition-transform ${
+                          isPricingEnabled ? 'left-6.5' : 'left-0.5'
+                        }`} />
+                      </button>
+                    </div>
+                  </div>
 
-                        <div>
-                          <label className="text-[11px] font-bold text-slate-700 block mb-1">Nombre del Plan:</label>
-                          <input
-                            type="text"
-                            value={plan.name}
-                            onChange={(e) => {
-                              const updated = config.pricingPlans.map(p => p.id === plan.id ? { ...p, name: e.target.value } : p);
-                              updatePricingPlans(updated);
-                            }}
-                            className="w-full p-2 text-xs rounded-xl border border-slate-300 font-bold"
-                          />
-                        </div>
+                  {/* Textos de la Sección de Precios */}
+                  <div className="bg-white p-5 rounded-2xl border border-slate-200 shadow-2xs space-y-3">
+                    <span className="text-xs font-bold text-slate-800 block">Textos de Encabezado de Precios</span>
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                      <div>
+                        <label className="text-[10px] text-slate-500 block mb-1">Badge Superior</label>
+                        <input
+                          type="text"
+                          value={config.content.pricing.badge || ''}
+                          onChange={(e) => updateContent({ pricing: { ...config.content.pricing, badge: e.target.value } })}
+                          placeholder="Predictable Investment"
+                          className="w-full p-2 text-xs rounded-xl border border-slate-300 bg-white"
+                        />
+                      </div>
+                      <div>
+                        <label className="text-[10px] text-slate-500 block mb-1">Título Principal</label>
+                        <input
+                          type="text"
+                          value={config.content.pricing.title || ''}
+                          onChange={(e) => updateContent({ pricing: { ...config.content.pricing, title: e.target.value } })}
+                          placeholder="Transparent Memberships & Plans"
+                          className="w-full p-2 text-xs rounded-xl border border-slate-300 bg-white font-bold"
+                        />
+                      </div>
+                    </div>
+                    <div>
+                      <label className="text-[10px] text-slate-500 block mb-1">Subtítulo Descriptivo</label>
+                      <textarea
+                        rows={2}
+                        value={config.content.pricing.subtitle || ''}
+                        onChange={(e) => updateContent({ pricing: { ...config.content.pricing, subtitle: e.target.value } })}
+                        placeholder="Predictable monthly payments covering proactive visits..."
+                        className="w-full p-2 text-xs rounded-xl border border-slate-300 bg-white"
+                      />
+                    </div>
+                  </div>
 
-                        <div>
-                          <label className="text-[11px] font-bold text-slate-700 block mb-1">Precio Mensual Base ($):</label>
-                          <div className="relative">
-                            <span className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 font-bold">$</span>
+                  {/* Tarjetas de Planes */}
+                  <div className="grid grid-cols-1 lg:grid-cols-3 gap-4">
+                    {config.pricingPlans.map((plan) => (
+                      <div key={plan.id} className="bg-white rounded-2xl border border-slate-200 p-5 shadow-2xs space-y-4 flex flex-col justify-between">
+                        <div className="space-y-3">
+                          <div className="flex items-center justify-between">
                             <input
-                              type="number"
-                              value={plan.baseMonthlyPrice}
+                              type="text"
+                              value={plan.badge || ''}
                               onChange={(e) => {
-                                const updated = config.pricingPlans.map(p => p.id === plan.id ? { ...p, baseMonthlyPrice: Number(e.target.value) } : p);
+                                const updated = config.pricingPlans.map(p => p.id === plan.id ? { ...p, badge: e.target.value } : p);
                                 updatePricingPlans(updated);
                               }}
-                              className="w-full pl-7 pr-3 py-2 text-xs rounded-xl border border-slate-300 font-black text-slate-900"
+                              placeholder="Badge (ej: Most Popular)"
+                              className="text-xs font-bold uppercase tracking-wider text-emerald-700 bg-emerald-50 px-2 py-0.5 rounded border border-emerald-200 max-w-[140px]"
+                            />
+                            <span className="text-xs font-bold text-slate-500">{plan.visitsPerYear} visitas/año</span>
+                          </div>
+
+                          <div>
+                            <label className="text-[11px] font-bold text-slate-700 block mb-1">Nombre del Plan:</label>
+                            <input
+                              type="text"
+                              value={plan.name}
+                              onChange={(e) => {
+                                const updated = config.pricingPlans.map(p => p.id === plan.id ? { ...p, name: e.target.value } : p);
+                                updatePricingPlans(updated);
+                              }}
+                              className="w-full p-2 text-xs rounded-xl border border-slate-300 font-bold"
+                            />
+                          </div>
+
+                          <div>
+                            <label className="text-[11px] font-bold text-slate-700 block mb-1">Precio Mensual Base ($):</label>
+                            <div className="relative">
+                              <span className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 font-bold">$</span>
+                              <input
+                                type="number"
+                                value={plan.baseMonthlyPrice}
+                                onChange={(e) => {
+                                  const updated = config.pricingPlans.map(p => p.id === plan.id ? { ...p, baseMonthlyPrice: Number(e.target.value) } : p);
+                                  updatePricingPlans(updated);
+                                }}
+                                className="w-full pl-7 pr-3 py-2 text-xs rounded-xl border border-slate-300 font-black text-slate-900"
+                              />
+                            </div>
+                          </div>
+
+                          <div>
+                            <label className="text-[11px] font-bold text-slate-700 block mb-1">Horas de Handyman Incluidas:</label>
+                            <input
+                              type="text"
+                              value={plan.handymanHoursIncluded}
+                              onChange={(e) => {
+                                const updated = config.pricingPlans.map(p => p.id === plan.id ? { ...p, handymanHoursIncluded: e.target.value } : p);
+                                updatePricingPlans(updated);
+                              }}
+                              className="w-full p-2 text-xs rounded-xl border border-slate-300 text-slate-700 font-semibold"
+                            />
+                          </div>
+
+                          <div>
+                            <label className="text-[11px] font-bold text-slate-700 block mb-1">Recomendado Para:</label>
+                            <textarea
+                              rows={2}
+                              value={plan.recommendedFor}
+                              onChange={(e) => {
+                                const updated = config.pricingPlans.map(p => p.id === plan.id ? { ...p, recommendedFor: e.target.value } : p);
+                                updatePricingPlans(updated);
+                              }}
+                              className="w-full p-2 text-xs rounded-xl border border-slate-300 text-slate-600"
                             />
                           </div>
                         </div>
 
-                        <div>
-                          <label className="text-[11px] font-bold text-slate-700 block mb-1">Horas de Handyman Incluidas:</label>
-                          <input
-                            type="text"
-                            value={plan.handymanHoursIncluded}
-                            onChange={(e) => {
-                              const updated = config.pricingPlans.map(p => p.id === plan.id ? { ...p, handymanHoursIncluded: e.target.value } : p);
-                              updatePricingPlans(updated);
-                            }}
-                            className="w-full p-2 text-xs rounded-xl border border-slate-300 text-slate-700 font-semibold"
-                          />
-                        </div>
-
-                        <div>
-                          <label className="text-[11px] font-bold text-slate-700 block mb-1">Recomendado Para:</label>
-                          <textarea
-                            rows={2}
-                            value={plan.recommendedFor}
-                            onChange={(e) => {
-                              const updated = config.pricingPlans.map(p => p.id === plan.id ? { ...p, recommendedFor: e.target.value } : p);
-                              updatePricingPlans(updated);
-                            }}
-                            className="w-full p-2 text-xs rounded-xl border border-slate-300 text-slate-600"
-                          />
+                        <div className="text-[11px] text-slate-400 border-t pt-2">
+                          {plan.features.length} beneficios configurados
                         </div>
                       </div>
+                    ))}
+                  </div>
 
-                      <div className="text-[11px] text-slate-400 border-t pt-2">
-                        {plan.features.length} beneficios configurados
+                  {/* Explicit Save Button for Pricing */}
+                  <div className="pt-4 border-t border-slate-200 flex items-center justify-between">
+                    <span className="text-xs text-slate-500 font-medium">Guarda permanentemente las tarjetas de precios y membresías.</span>
+                    <button
+                      onClick={() => {
+                        saveAndNotify('Planes y Precios');
+                        showToast('¡Tarjetas de precios guardadas exitosamente!');
+                      }}
+                      className="px-6 py-2.5 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-xs shadow-sm flex items-center gap-2 cursor-pointer transition-all hover:scale-105"
+                    >
+                      <Save className="w-4 h-4" />
+                      <span>Guardar Tarjetas de Precios</span>
+                    </button>
+                  </div>
+
+                </div>
+              );
+            })()}
+
+            {/* ================= TAB 10: CALCULADORA ESTIMADORA ================= */}
+            {activeTab === 'calculator' && (() => {
+              const calcSection = config.sections.find(s => s.id === 'calculator');
+              const isCalcEnabled = calcSection ? calcSection.enabled : true;
+              const calcConfig = config.content.calculator || {};
+
+              return (
+                <div className="space-y-6 max-w-4xl">
+                  <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 bg-white p-4 rounded-2xl border border-slate-200 shadow-2xs">
+                    <div>
+                      <h4 className="text-lg font-black text-[#0f2942]">Calculadora de Estimación (Home Size Estimator)</h4>
+                      <p className="text-xs text-slate-500">
+                        Configura y edita por separado toda la información de la calculadora interactiva. Puedes ocultarla o mostrarla independientemente de las tarjetas de precios.
+                      </p>
+                    </div>
+                    <div className="flex items-center gap-3">
+                      <span className={`text-xs font-bold ${isCalcEnabled ? 'text-emerald-700' : 'text-slate-400'}`}>
+                        {isCalcEnabled ? 'Calculadora Visible' : 'Calculadora Oculta'}
+                      </span>
+                      <button
+                        type="button"
+                        onClick={() => toggleSection('calculator')}
+                        className={`w-12 h-6 rounded-full transition-colors relative cursor-pointer ${
+                          isCalcEnabled ? 'bg-emerald-600' : 'bg-slate-300'
+                        }`}
+                      >
+                        <span className={`w-5 h-5 rounded-full bg-white shadow-md absolute top-0.5 transition-transform ${
+                          isCalcEnabled ? 'left-6.5' : 'left-0.5'
+                        }`} />
+                      </button>
+                    </div>
+                  </div>
+
+                  {/* Textos Principales de la Sección */}
+                  <div className="bg-white p-5 rounded-2xl border border-slate-200 shadow-2xs space-y-3">
+                    <span className="text-xs font-bold text-slate-800 block">1. Encabezado de la Sección de Calculadora</span>
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                      <div>
+                        <label className="text-[10px] text-slate-500 block mb-1">Badge Superior</label>
+                        <input
+                          type="text"
+                          value={calcConfig.badge || ''}
+                          onChange={(e) => updateContent({ calculator: { ...calcConfig, badge: e.target.value } })}
+                          placeholder="Calculadora de Estimación"
+                          className="w-full p-2 text-xs rounded-xl border border-slate-300 bg-white"
+                        />
+                      </div>
+                      <div>
+                        <label className="text-[10px] text-slate-500 block mb-1">Título Principal</label>
+                        <input
+                          type="text"
+                          value={calcConfig.title || ''}
+                          onChange={(e) => updateContent({ calculator: { ...calcConfig, title: e.target.value } })}
+                          placeholder="Personaliza el Presupuesto de tu Residencia"
+                          className="w-full p-2 text-xs rounded-xl border border-slate-300 bg-white font-bold"
+                        />
                       </div>
                     </div>
-                  ))}
-                </div>
+                    <div>
+                      <label className="text-[10px] text-slate-500 block mb-1">Subtítulo de la Sección</label>
+                      <textarea
+                        rows={2}
+                        value={calcConfig.subtitle || ''}
+                        onChange={(e) => updateContent({ calculator: { ...calcConfig, subtitle: e.target.value } })}
+                        placeholder="Ajusta los pies cuadrados y zonas mecánicas a continuación..."
+                        className="w-full p-2 text-xs rounded-xl border border-slate-300 bg-white"
+                      />
+                    </div>
+                  </div>
 
-                {/* Explicit Save Button for Pricing */}
-                <div className="pt-4 border-t border-slate-200 flex items-center justify-between">
-                  <span className="text-xs text-slate-500 font-medium">Guarda permanentemente las tarifas mensuales, horas de servicio y planes.</span>
-                  <button
-                    onClick={() => {
-                      saveAndNotify('Planes y Precios');
-                      showToast('¡Planes y tarifas guardados exitosamente!');
-                    }}
-                    className="px-6 py-2.5 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-xs shadow-sm flex items-center gap-2 cursor-pointer transition-all hover:scale-105"
-                  >
-                    <Save className="w-4 h-4" />
-                    <span>Guardar Planes y Tarifas</span>
-                  </button>
-                </div>
+                  {/* Configuración del Estimador Interior y Slider */}
+                  <div className="bg-white p-5 rounded-2xl border border-slate-200 shadow-2xs space-y-3">
+                    <span className="text-xs font-bold text-slate-800 block">2. Textos y Parámetros del Estimador</span>
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                      <div>
+                        <label className="text-[10px] text-slate-500 block mb-1">Badge Interior del Cuadro</label>
+                        <input
+                          type="text"
+                          value={calcConfig.estimatorBadge || ''}
+                          onChange={(e) => updateContent({ calculator: { ...calcConfig, estimatorBadge: e.target.value } })}
+                          placeholder="Custom Home Size Estimator"
+                          className="w-full p-2 text-xs rounded-xl border border-slate-300 bg-white"
+                        />
+                      </div>
+                      <div>
+                        <label className="text-[10px] text-slate-500 block mb-1">Título Interior</label>
+                        <input
+                          type="text"
+                          value={calcConfig.estimatorTitle || ''}
+                          onChange={(e) => updateContent({ calculator: { ...calcConfig, estimatorTitle: e.target.value } })}
+                          placeholder="Ajusta tu Hogar a Medida"
+                          className="w-full p-2 text-xs rounded-xl border border-slate-300 bg-white font-bold"
+                        />
+                      </div>
+                    </div>
 
-              </div>
-            )}
+                    <div>
+                      <label className="text-[10px] text-slate-500 block mb-1">Subtítulo Interior</label>
+                      <input
+                        type="text"
+                        value={calcConfig.estimatorSubtitle || ''}
+                        onChange={(e) => updateContent({ calculator: { ...calcConfig, estimatorSubtitle: e.target.value } })}
+                        placeholder="Desliza para seleccionar los pies cuadrados y equipos mecánicos..."
+                        className="w-full p-2 text-xs rounded-xl border border-slate-300 bg-white"
+                      />
+                    </div>
+
+                    <div className="grid grid-cols-1 sm:grid-cols-4 gap-2 pt-1">
+                      <div>
+                        <label className="text-[10px] text-slate-500 block mb-1">Mínimo Sq Ft</label>
+                        <input
+                          type="number"
+                          value={calcConfig.minSqft || 2000}
+                          onChange={(e) => updateContent({ calculator: { ...calcConfig, minSqft: Number(e.target.value) || 1000 } })}
+                          className="w-full p-2 text-xs rounded-xl border border-slate-300 bg-white font-bold"
+                        />
+                      </div>
+                      <div>
+                        <label className="text-[10px] text-slate-500 block mb-1">Máximo Sq Ft</label>
+                        <input
+                          type="number"
+                          value={calcConfig.maxSqft || 10000}
+                          onChange={(e) => updateContent({ calculator: { ...calcConfig, maxSqft: Number(e.target.value) || 10000 } })}
+                          className="w-full p-2 text-xs rounded-xl border border-slate-300 bg-white font-bold"
+                        />
+                      </div>
+                      <div>
+                        <label className="text-[10px] text-slate-500 block mb-1">Paso Slider (Sq Ft)</label>
+                        <input
+                          type="number"
+                          value={calcConfig.stepSqft || 250}
+                          onChange={(e) => updateContent({ calculator: { ...calcConfig, stepSqft: Number(e.target.value) || 100 } })}
+                          className="w-full p-2 text-xs rounded-xl border border-slate-300 bg-white font-bold"
+                        />
+                      </div>
+                      <div>
+                        <label className="text-[10px] text-slate-500 block mb-1">Pies Sq Ft Iniciales</label>
+                        <input
+                          type="number"
+                          value={calcConfig.defaultSqft || 4500}
+                          onChange={(e) => updateContent({ calculator: { ...calcConfig, defaultSqft: Number(e.target.value) || 4500 } })}
+                          className="w-full p-2 text-xs rounded-xl border border-slate-300 bg-white font-bold text-emerald-700"
+                        />
+                      </div>
+                    </div>
+
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 pt-1">
+                      <div>
+                        <label className="text-[10px] text-slate-500 block mb-1">Etiqueta Unidades HVAC</label>
+                        <input
+                          type="text"
+                          value={calcConfig.hvacLabel || ''}
+                          onChange={(e) => updateContent({ calculator: { ...calcConfig, hvacLabel: e.target.value } })}
+                          placeholder="Unidades / Zonas HVAC"
+                          className="w-full p-2 text-xs rounded-xl border border-slate-300 bg-white"
+                        />
+                      </div>
+                      <div>
+                        <label className="text-[10px] text-slate-500 block mb-1">Etiqueta Handyman Incluido</label>
+                        <input
+                          type="text"
+                          value={calcConfig.handymanLabel || ''}
+                          onChange={(e) => updateContent({ calculator: { ...calcConfig, handymanLabel: e.target.value } })}
+                          placeholder="Handyman Incluido"
+                          className="w-full p-2 text-xs rounded-xl border border-slate-300 bg-white"
+                        />
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* Cuadro de Ahorro y Botón */}
+                  <div className="bg-white p-5 rounded-2xl border border-slate-200 shadow-2xs space-y-3">
+                    <span className="text-xs font-bold text-slate-800 block">3. Cuadro de Ahorro Anual y Botón de Acción</span>
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                      <div>
+                        <label className="text-[10px] text-slate-500 block mb-1">Badge de Ahorro</label>
+                        <input
+                          type="text"
+                          value={calcConfig.savingsBadge || ''}
+                          onChange={(e) => updateContent({ calculator: { ...calcConfig, savingsBadge: e.target.value } })}
+                          placeholder="Ahorro Anual Estimado"
+                          className="w-full p-2 text-xs rounded-xl border border-slate-300 bg-white"
+                        />
+                      </div>
+                      <div>
+                        <label className="text-[10px] text-slate-500 block mb-1">Texto del Botón (Walkthrough)</label>
+                        <input
+                          type="text"
+                          value={calcConfig.ctaButtonText || ''}
+                          onChange={(e) => updateContent({ calculator: { ...calcConfig, ctaButtonText: e.target.value } })}
+                          placeholder="Agendar Evaluación Gratuita"
+                          className="w-full p-2 text-xs rounded-xl border border-slate-300 bg-white font-bold text-emerald-700"
+                        />
+                      </div>
+                    </div>
+
+                    <div>
+                      <label className="text-[10px] text-slate-500 block mb-1">Subtítulo del Ahorro Estimado</label>
+                      <input
+                        type="text"
+                        value={calcConfig.savingsSubtitle || ''}
+                        onChange={(e) => updateContent({ calculator: { ...calcConfig, savingsSubtitle: e.target.value } })}
+                        placeholder="promedio anual evitado en averías y contratistas independientes"
+                        className="w-full p-2 text-xs rounded-xl border border-slate-300 bg-white"
+                      />
+                    </div>
+
+                    <div>
+                      <label className="text-[10px] text-slate-500 block mb-1">Texto explicativo / Disclaimer</label>
+                      <textarea
+                        rows={2}
+                        value={calcConfig.savingsDisclaimer || ''}
+                        onChange={(e) => updateContent({ calculator: { ...calcConfig, savingsDisclaimer: e.target.value } })}
+                        placeholder="El mantenimiento preventivo trimestral previene filtraciones y costosos reemplazos..."
+                        className="w-full p-2 text-xs rounded-xl border border-slate-300 bg-white"
+                      />
+                    </div>
+                  </div>
+
+                  {/* Save Button for Calculator */}
+                  <div className="pt-4 border-t border-slate-200 flex items-center justify-between">
+                    <span className="text-xs text-slate-500 font-medium">Guarda todos los ajustes, rangos y textos de la calculadora.</span>
+                    <button
+                      onClick={() => {
+                        saveAndNotify('Calculadora Estimadora');
+                        showToast('¡Configuración de la calculadora guardada exitosamente!');
+                      }}
+                      className="px-6 py-2.5 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-xs shadow-sm flex items-center gap-2 cursor-pointer transition-all hover:scale-105"
+                    >
+                      <Save className="w-4 h-4" />
+                      <span>Guardar Calculadora</span>
+                    </button>
+                  </div>
+
+                </div>
+              );
+            })()}
 
             {/* ================= TAB 7: GALERIA DE PROYECTOS ================= */}
             {activeTab === 'gallery' && (
@@ -3138,8 +3537,8 @@ export const AdminCMSModal: React.FC<AdminCMSModalProps> = ({ isOpen, onClose, p
                       <label className="text-[11px] font-bold text-slate-700 block mb-1">Teléfono Principal:</label>
                       <input
                         type="text"
-                        value={config.footer.emergencyPhone}
-                        onChange={(e) => updateFooter({ emergencyPhone: e.target.value })}
+                        value={config.footer.emergencyPhone || config.footer.phone || ''}
+                        onChange={(e) => updateFooter({ emergencyPhone: e.target.value, phone: e.target.value })}
                         className="w-full p-2 text-xs rounded-xl border border-slate-300 font-bold"
                       />
                     </div>

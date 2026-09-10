@@ -12,7 +12,8 @@ export const DEFAULT_PAGE_SECTIONS: PageSection[] = [
   { id: 'difference', name: 'La Diferencia & Ventajas', enabled: true },
   { id: 'pillars', name: 'Los 3 Pilares del Cuidado', enabled: true },
   { id: 'gallery', name: 'Galería de Proyectos & Antes y Después', enabled: true },
-  { id: 'pricing', name: 'Planes de Membresía & Precios', enabled: true },
+  { id: 'pricing', name: 'Tarjetas de Planes & Precios', enabled: true },
+  { id: 'calculator', name: 'Calculadora de Estimación (Home Size Estimator)', enabled: true },
   { id: 'how-it-works', name: 'Cómo Funciona (4 Pasos)', enabled: true },
   { id: 'service-areas', name: 'Áreas de Servicio & Cobertura', enabled: true },
   { id: 'reviews', name: 'Testimonios & Reseñas de Clientes', enabled: true },
@@ -462,7 +463,26 @@ export const DEFAULT_CMS_CONFIG: SiteCMSConfig = {
     pricing: {
       badge: 'Transparent Memberships',
       title: 'Simple, Predictable Monthly Care Plans',
-      subtitle: 'Choose the cadence that fits your residence. Adjust square footage below to see real-time estimated pricing.'
+      subtitle: 'Choose the cadence that fits your residence. Predictable monthly payments covering proactive visits, 50-point maintenance, your dedicated W-2 technician, and included handyman repair hours.'
+    },
+    calculator: {
+      badge: 'Interactive Estimator',
+      title: 'Custom Home Size & Rate Estimator',
+      subtitle: 'Adjust your residence square footage and mechanical zones to calculate your estimated monthly investment and annual repair savings.',
+      estimatorBadge: 'Custom Home Size Estimator',
+      estimatorTitle: 'Tailor the plan to your residence.',
+      estimatorSubtitle: 'Adjust your home\'s square footage and mechanical zones below to view your personalized monthly membership rate.',
+      sqftLabel: 'Home Square Footage:',
+      minSqft: 2000,
+      maxSqft: 10000,
+      stepSqft: 250,
+      defaultSqft: 4500,
+      hvacLabel: 'HVAC Units / Zones',
+      handymanLabel: 'Included Handyman',
+      savingsBadge: 'Estimated Annual Value',
+      savingsSubtitle: 'avg. estimated annual contractor & repair savings',
+      savingsDisclaimer: 'Based on industry data: routine water heater draining, regular filter swaps, coil vacuuming, and prompt caulking averts major mold remediation and unexpected emergency replacements.',
+      ctaButtonText: 'Book Free On-Site Assessment'
     },
     gallery: {
       badge: 'Craftsmanship In Action',
@@ -496,9 +516,9 @@ export const DEFAULT_CMS_CONFIG: SiteCMSConfig = {
       ctaButtonText: 'Request a Callback'
     },
     serviceAreas: {
-      badge: 'Coast to Coast Service',
+      badge: 'Fairfield & Westchester Coverage',
       title: 'Our Regional Service Areas',
-      subtitle: 'Premier Home Services operates dedicated local field teams across 8 key metropolitan regions.',
+      subtitle: 'Premier Home Services operates dedicated local field teams across Fairfield and Westchester counties.',
       zipPlaceholder: 'Check your 5-digit zip code...',
       zipButtonText: 'Verify Zip Code',
       regionSelectTitle: 'Select Your Region',
@@ -531,7 +551,7 @@ export const DEFAULT_CMS_CONFIG: SiteCMSConfig = {
     emergencyDispatchText: '24/7/365 Dedicated Member Emergency Dispatch Hotline',
     ratingText: '4.9 / 5.0 (350+ Verified Google Reviews)',
     licenseText: 'MHIC #91288 • VA Class A Contractor • CT HIC #0634192 • GA Residential',
-    copyrightText: 'Premier Home Services, Inc. All rights reserved. Licensed in MD, DC, VA, CT, GA, FL, IL & MA.',
+    copyrightText: 'Premier Home Services, Inc. All rights reserved. Serving Fairfield and Westchester Counties.',
     companyName: 'Premier Home Services',
     establishedYear: '2003',
     showNewsletter: true,
@@ -541,19 +561,20 @@ export const DEFAULT_CMS_CONFIG: SiteCMSConfig = {
     quickLinks: [
       { label: 'How It Works', sectionId: 'how-it-works', enabled: true },
       { label: 'Pricing Plans', sectionId: 'pricing', enabled: true },
+      { label: 'Calculator', sectionId: 'calculator', enabled: true },
       { label: 'Project Gallery', sectionId: 'gallery', enabled: true },
       { label: 'Client Reviews', sectionId: 'reviews', enabled: true },
       { label: 'FAQ', sectionId: 'faqs', enabled: true }
     ],
     serviceRegions: [
-      { label: 'Maryland', enabled: true },
-      { label: 'Washington D.C.', enabled: true },
-      { label: 'Virginia', enabled: true },
-      { label: 'Connecticut', enabled: true },
-      { label: 'Georgia', enabled: true },
-      { label: 'Florida', enabled: true },
-      { label: 'Illinois', enabled: true },
-      { label: 'Massachusetts', enabled: true }
+      { label: 'Fairfield County (CT)', enabled: true },
+      { label: 'Westchester County (NY)', enabled: true },
+      { label: 'Greenwich, CT', enabled: true },
+      { label: 'Stamford, CT', enabled: true },
+      { label: 'Westport, CT', enabled: true },
+      { label: 'White Plains, NY', enabled: true },
+      { label: 'Scarsdale, NY', enabled: true },
+      { label: 'New Rochelle, NY', enabled: true }
     ],
     trustLinks: [
       { label: 'Schedule Walkthrough', type: 'link', action: 'walkthrough', enabled: true },

@@ -34,25 +34,29 @@ export const ServiceAreaSection: React.FC<ServiceAreaSectionProps> = ({
 
   const handleZipSearch = (e: React.FormEvent) => {
     e.preventDefault();
-    const clean = zipQuery.trim();
+    const clean = zipQuery.trim().replace(/[^\d]/g, '');
     if (!clean) return;
 
     const matchedArea = serviceAreasData.find(area => 
-      area.zipPrefixes.some(prefix => clean.startsWith(prefix))
+      area.zipPrefixes && area.zipPrefixes.some(prefix => {
+        const cleanP = String(prefix).trim().replace(/[^\d]/g, '');
+        if (!cleanP) return false;
+        return clean.startsWith(cleanP) || clean === cleanP;
+      })
     );
 
     if (matchedArea) {
       setLookupResult({
         found: true,
         area: matchedArea,
-        message: `We are active in ${clean}! Managed by our ${matchedArea.name} regional dispatch team.`
+        message: `¡Servicio disponible en ${clean}! Cobertura activa por nuestro equipo regional de ${matchedArea.name}.`
       });
-      const idx = serviceAreasData.findIndex(a => a.state === matchedArea.state);
+      const idx = serviceAreasData.findIndex(a => a.name === matchedArea.name || a.state === matchedArea.state);
       if (idx !== -1) setSelectedStateIndex(idx);
     } else {
       setLookupResult({
         found: false,
-        message: `Zip code ${clean} is outside our current primary coverage. Contact us as we expand rapidly!`
+        message: `El código postal ${clean} no está en nuestra zona de cobertura actual (Fairfield y Westchester Counties). Contáctanos para consultar disponibilidad en tu zona.`
       });
     }
   };
@@ -205,6 +209,24 @@ export const ServiceAreaSection: React.FC<ServiceAreaSectionProps> = ({
               </div>
 
             </div>
+
+            {activeArea.zipPrefixes && activeArea.zipPrefixes.length > 0 && (
+              <div className="p-3.5 rounded-2xl bg-white border border-slate-200 space-y-1.5">
+                <span className="text-xs font-bold text-slate-500 uppercase tracking-wider block">
+                  Códigos Postales / Prefijos ZIP Cubiertos:
+                </span>
+                <div className="flex flex-wrap gap-1.5">
+                  {activeArea.zipPrefixes.map((prefix, pIdx) => (
+                    <span 
+                      key={pIdx}
+                      className="px-2.5 py-0.5 rounded-md bg-emerald-50 text-emerald-800 border border-emerald-200 text-xs font-mono font-bold"
+                    >
+                      {prefix}
+                    </span>
+                  ))}
+                </div>
+              </div>
+            )}
 
             <div className="p-4 rounded-2xl bg-white border border-slate-200 flex items-start gap-3 text-xs text-slate-600">
               <Building2 className="w-4 h-4 text-slate-400 shrink-0 mt-0.5" />

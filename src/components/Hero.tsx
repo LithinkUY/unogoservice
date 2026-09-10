@@ -19,6 +19,7 @@ import {
   X
 } from 'lucide-react';
 import { useCms } from '../context/CmsContext';
+import { parseVideoUrl } from '../utils/mediaUtils';
 
 interface HeroProps {
   onOpenWalkthrough: () => void;
@@ -190,18 +191,37 @@ export const Hero: React.FC<HeroProps> = ({
 
           {/* Slide Background (Image or Video) */}
           <div className="absolute inset-0 z-0 overflow-hidden">
-            {currentSlide.type === 'video' && currentSlide.mediaUrl ? (
-              <video
-                key={currentSlide.mediaUrl}
-                src={currentSlide.mediaUrl}
-                poster={currentSlide.posterUrl}
-                autoPlay
-                muted
-                loop
-                playsInline
-                className="w-full h-full object-cover scale-105 transition-all duration-1000"
-              />
-            ) : (
+            {currentSlide.type === 'video' && currentSlide.mediaUrl ? (() => {
+              const videoInfo = parseVideoUrl(currentSlide.mediaUrl, {
+                autoplay: true,
+                muted: true,
+                loop: true,
+                controls: false
+              });
+              return videoInfo.isEmbed ? (
+                <div className="absolute inset-0 w-full h-full pointer-events-none overflow-hidden flex items-center justify-center">
+                  <iframe
+                    key={videoInfo.embedUrl}
+                    src={videoInfo.embedUrl}
+                    title={currentSlide.title || 'Hero Video Background'}
+                    className="w-[140%] h-[140%] min-w-[100%] min-h-[100%] object-cover pointer-events-none"
+                    allow="autoplay; encrypted-media; picture-in-picture"
+                    tabIndex={-1}
+                  />
+                </div>
+              ) : (
+                <video
+                  key={currentSlide.mediaUrl}
+                  src={currentSlide.mediaUrl}
+                  poster={currentSlide.posterUrl}
+                  autoPlay
+                  muted
+                  loop
+                  playsInline
+                  className="w-full h-full object-cover scale-105 transition-all duration-1000"
+                />
+              );
+            })() : (
               <img
                 key={currentSlide.mediaUrl}
                 src={currentSlide.mediaUrl}

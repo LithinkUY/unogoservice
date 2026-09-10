@@ -7,6 +7,7 @@ import { ThreePillars } from './components/ThreePillars';
 import { ChecklistSection } from './components/ChecklistSection';
 import { GallerySection } from './components/GallerySection';
 import { PricingCalculator } from './components/PricingCalculator';
+import { HomeCalculator } from './components/HomeCalculator';
 import { HowItWorks } from './components/HowItWorks';
 import { ServiceAreaSection } from './components/ServiceAreaSection';
 import { ReviewsSection } from './components/ReviewsSection';
@@ -261,6 +262,13 @@ function AppContent() {
             onOpenWalkthrough={() => setWalkthroughOpen(true)}
           />
         );
+      case 'calculator':
+        return (
+          <HomeCalculator
+            key={section.id}
+            onOpenWalkthrough={() => setWalkthroughOpen(true)}
+          />
+        );
       case 'how-it-works':
         return (
           <HowItWorks
@@ -327,12 +335,16 @@ function AppContent() {
       { id: 'difference', name: 'The Difference', title: 'The Difference', enabled: true },
       { id: 'three-pillars', name: 'Three Pillars', title: 'Three Pillars', enabled: true },
       { id: 'gallery', name: 'Gallery', title: 'Gallery', enabled: true },
-      { id: 'pricing', name: 'Pricing Calculator', title: 'Pricing Calculator', enabled: true },
+      { id: 'pricing', name: 'Pricing Plans', title: 'Pricing Plans', enabled: true },
+      { id: 'calculator', name: 'Home Size Calculator', title: 'Home Size Calculator', enabled: true },
       { id: 'how-it-works', name: 'How It Works', title: 'How It Works', enabled: true },
       { id: 'service-areas', name: 'Service Areas', title: 'Service Areas', enabled: true },
       { id: 'reviews', name: 'Reviews', title: 'Reviews', enabled: true },
       { id: 'faq', name: 'FAQ', title: 'FAQ', enabled: true }
     ];
+
+  const mobilePhone = config.footer?.emergencyPhone || config.footer?.phone || config.header?.topBar?.emergencyPhone || '(888) 555-CARE';
+  const mobilePhoneClean = mobilePhone.replace(/[^0-9]/g, '');
 
   return (
     <div className="min-h-screen bg-white text-slate-900 flex flex-col selection:bg-emerald-500 selection:text-white font-sans antialiased">
@@ -379,11 +391,11 @@ function AppContent() {
 
       <div className="md:hidden fixed bottom-3 left-3 right-3 z-30 bg-[#0f2942]/95 backdrop-blur-md p-2 rounded-2xl border border-slate-700 shadow-2xl flex items-center justify-between gap-2">
         <a
-          href="tel:8885552273"
+          href={`tel:${mobilePhoneClean}`}
           className="flex-1 py-2.5 px-3 rounded-xl bg-slate-800 text-white font-bold text-xs flex items-center justify-center gap-1.5 active:bg-slate-700"
         >
           <Phone className="w-3.5 h-3.5 text-emerald-400" />
-          <span>(888) 555-CARE</span>
+          <span>{mobilePhone}</span>
         </a>
 
         <button

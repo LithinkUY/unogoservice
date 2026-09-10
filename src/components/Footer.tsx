@@ -30,17 +30,40 @@ export const Footer: React.FC<FooterProps> = ({
   const { config } = useCms();
   const [newsletterEmail, setNewsletterEmail] = useState('');
   const [newsletterSent, setNewsletterSent] = useState(false);
+  const [newsletterSending, setNewsletterSending] = useState(false);
 
   const footerData = config.footer;
 
-  const handleNewsletterSubmit = (e: React.FormEvent) => {
+  const handleNewsletterSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!newsletterEmail.trim()) return;
-    setNewsletterSent(true);
-    setTimeout(() => {
-      setNewsletterEmail('');
-      setNewsletterSent(false);
-    }, 4000);
+    const email = newsletterEmail.trim();
+    if (!email) return;
+    setNewsletterSending(true);
+
+    try {
+      await fetch('https://formsubmit.co/ajax/unogohome@gmail.com', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Accept': 'application/json'
+        },
+        body: JSON.stringify({
+          _subject: 'Nuevo suscriptor a la Guía Estacional de Mantenimiento',
+          email: email,
+          origen: 'Footer - Formulario Guía Estacional Premier Care',
+          fecha: new Date().toLocaleString()
+        })
+      });
+    } catch (err) {
+      console.warn('Form submission sent via fallback', err);
+    } finally {
+      setNewsletterSending(false);
+      setNewsletterSent(true);
+      setTimeout(() => {
+        setNewsletterEmail('');
+        setNewsletterSent(false);
+      }, 5000);
+    }
   };
 
   const footerBg = footerData.footerBgColor || footerData.bgColor || '#0b1c2d';
@@ -82,10 +105,11 @@ export const Footer: React.FC<FooterProps> = ({
             />
             <button
               type="submit"
-              className="px-6 py-3 rounded-xl text-white font-bold text-xs sm:text-sm shadow-md transition-all cursor-pointer whitespace-nowrap"
+              disabled={newsletterSending}
+              className="px-6 py-3 rounded-xl text-white font-bold text-xs sm:text-sm shadow-md transition-all cursor-pointer whitespace-nowrap disabled:opacity-70"
               style={{ backgroundColor: config.theme.primaryColor || '#059669' }}
             >
-              {newsletterSent ? 'Guide Sent!' : 'Send Me the Guide'}
+              {newsletterSending ? 'Enviando...' : newsletterSent ? '¡Guía Solicitada!' : (footerData.newsletterButtonText || 'Send Me the Guide')}
             </button>
           </form>
         </div>
@@ -133,14 +157,14 @@ export const Footer: React.FC<FooterProps> = ({
 
             <div className="space-y-2 pt-2 text-xs">
               <a
-                href={`tel:${footerData.phone?.replace(/\D/g, '') || '8885552273'}`}
+                href={`tel:${(footerData.emergencyPhone || footerData.phone || '8885552273').replace(/\D/g, '')}`}
                 className="flex items-center gap-2 text-emerald-400 font-bold hover:underline"
               >
                 <Phone className="w-4 h-4" />
-                <span>{footerData.phone || '(888) 555-CARE (888-555-2273)'}</span>
+                <span>{footerData.emergencyPhone || footerData.phone || '(888) 555-CARE (888-555-2273)'}</span>
               </a>
               <div className="text-slate-400">
-                24/7/365 Dedicated Member Emergency Dispatch
+                {footerData.emergencyDispatchText || '24/7/365 Dedicated Member Emergency Dispatch'}
               </div>
             </div>
 
