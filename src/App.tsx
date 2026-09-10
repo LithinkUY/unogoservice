@@ -43,7 +43,7 @@ function AdminPage({ onBackToSite }: { onBackToSite: () => void }) {
       return;
     }
 
-    setError('Usuario o contraseña incorrectos. Usa admin / admin');
+    setError('Usuario o contraseña incorrectos.');
   };
 
   const handleLogout = () => {
