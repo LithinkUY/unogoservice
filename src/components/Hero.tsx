@@ -322,7 +322,8 @@ export const Hero: React.FC<HeroProps> = ({
                 >
                   {isPlaying ? <Pause className="w-3.5 h-3.5" /> : <Play className="w-3.5 h-3.5" />}
                 </button>
-                            </>
+              </div>
+            </>
             )}
 
             {/* Admin Quick-Edit Buttons for Current Slide */}
@@ -349,8 +350,8 @@ export const Hero: React.FC<HeroProps> = ({
 
           </div>
       ) : (
-        {/* ================= STATIC HERO MODE ================= */}
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16 sm:py-24 relative z-10">
+          {/* ================= STATIC HERO MODE ================= */}
           <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 items-center">
 
             <div className="lg:col-span-7 space-y-6">
