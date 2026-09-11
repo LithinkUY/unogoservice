@@ -120,7 +120,8 @@ export const AdminCMSModal: React.FC<AdminCMSModalProps> = ({ isOpen, onClose, p
     resetToDefaults,
     exportConfigAsJson,
     importConfigFromJson,
-    updateScheduleModal
+    updateScheduleModal,
+    dbSyncStatus
   } = useCms();
 
   const [activeTab, setActiveTab] = useState<TabType>('styles');
@@ -656,6 +657,20 @@ export const AdminCMSModal: React.FC<AdminCMSModalProps> = ({ isOpen, onClose, p
                 </h3>
                 <span className="px-2 py-0.5 rounded text-[10px] font-bold bg-emerald-500/20 text-emerald-400 border border-emerald-500/30 uppercase">
                   {t('MODO EN VIVO', 'LIVE MODE')}
+                </span>
+                {/* Cloud sync status */}
+                <span className={`px-2 py-0.5 rounded text-[10px] font-bold uppercase border ${
+                  dbSyncStatus === 'synced'
+                    ? 'bg-sky-500/20 text-sky-400 border-sky-500/30'
+                    : dbSyncStatus === 'syncing'
+                    ? 'bg-yellow-500/20 text-yellow-400 border-yellow-500/30 animate-pulse'
+                    : 'bg-slate-600/40 text-slate-400 border-slate-600/40'
+                }`} title={
+                  dbSyncStatus === 'synced' ? 'Config synced to cloud (Supabase)'
+                  : dbSyncStatus === 'syncing' ? 'Saving to cloud...'
+                  : 'Offline — saved locally only'
+                }>
+                  {dbSyncStatus === 'synced' ? '☁️ Synced' : dbSyncStatus === 'syncing' ? '⏳ Saving...' : '💾 Local'}
                 </span>
               </div>
             </div>

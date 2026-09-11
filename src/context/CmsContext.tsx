@@ -1,4 +1,5 @@
-import React, { createContext, useContext, useState, useEffect } from 'react';
+import React, { createContext, useContext, useState, useEffect, useRef } from 'react';
+import { supabase } from '../lib/supabaseClient';
 import {
   SiteCMSConfig,
   ThemeConfig,
@@ -62,6 +63,7 @@ interface CmsContextType {
   deletePage: (id: string) => void;
   exportConfigAsJson: () => void;
   importConfigFromJson: (jsonStr: string) => boolean;
+  dbSyncStatus: 'synced' | 'local' | 'syncing';
 }
 
 const CmsContext = createContext<CmsContextType | undefined>(undefined);
@@ -156,14 +158,83 @@ export const CmsProvider: React.FC<{ children: React.ReactNode }> = ({ children 
 
   const [isAdminOpen, setIsAdminOpen] = useState<boolean>(false);
   const [saveNotification, setSaveNotification] = useState<string | null>(null);
+  const [dbSyncStatus, setDbSyncStatus] = useState<'synced' | 'local' | 'syncing'>('local');
 
-  // Auto-save to localStorage whenever config changes
+  // Refs for Supabase sync
+  const syncTimeoutRef = useRef<any>(null);
+  const isLoadingFromSupabaseRef = useRef(false);
+
+  // Merge remote Supabase config with local defaults (safe merge)
+  const normalizeRemoteConfig = (parsed: any): SiteCMSConfig => ({
+    ...DEFAULT_CMS_CONFIG,
+    ...parsed,
+    theme: { ...DEFAULT_CMS_CONFIG.theme, ...(parsed.theme || {}) },
+    header: { ...DEFAULT_CMS_CONFIG.header, ...(parsed.header || {}) },
+    slider: { ...DEFAULT_CMS_CONFIG.slider, ...(parsed.slider || {}) },
+    content: {
+      ...DEFAULT_CMS_CONFIG.content,
+      ...(parsed.content || {}),
+      calculator: { ...DEFAULT_CMS_CONFIG.content.calculator, ...(parsed.content?.calculator || {}) }
+    },
+    footer: { ...DEFAULT_CMS_CONFIG.footer, ...(parsed.footer || {}) },
+    scheduleModal: { ...DEFAULT_CMS_CONFIG.scheduleModal, ...(parsed.scheduleModal || {}) }
+  });
+
+  // On mount: load config from Supabase (overrides localStorage if remote is available)
+  useEffect(() => {
+    const loadFromSupabase = async () => {
+      try {
+        const { data, error } = await supabase
+          .from('cms_config')
+          .select('config')
+          .eq('id', 'main')
+          .single();
+
+        if (data?.config && !error) {
+          isLoadingFromSupabaseRef.current = true;
+          setConfig(normalizeRemoteConfig(data.config));
+          localStorage.setItem(LOCAL_STORAGE_KEY, JSON.stringify(data.config));
+          setDbSyncStatus('synced');
+        }
+        // If no remote config yet, the auto-save effect will push it on first write
+      } catch (e) {
+        console.warn('Supabase load failed, using localStorage cache:', e);
+        setDbSyncStatus('local');
+      }
+    };
+    loadFromSupabase();
+  }, []); // eslint-disable-line react-hooks/exhaustive-deps
+
+  // Auto-save to localStorage AND Supabase whenever config changes
   useEffect(() => {
     try {
       localStorage.setItem(LOCAL_STORAGE_KEY, JSON.stringify(config));
     } catch (e) {
       console.error('Failed to save CMS config to localStorage:', e);
     }
+
+    // Skip Supabase sync for the update triggered by loading from Supabase (avoids echo)
+    if (isLoadingFromSupabaseRef.current) {
+      isLoadingFromSupabaseRef.current = false;
+      return;
+    }
+
+    // Debounce Supabase writes — 1.5s after last change
+    if (syncTimeoutRef.current) clearTimeout(syncTimeoutRef.current);
+    setDbSyncStatus('syncing');
+    syncTimeoutRef.current = setTimeout(async () => {
+      try {
+        const { error } = await supabase
+          .from('cms_config')
+          .upsert(
+            { id: 'main', config, updated_at: new Date().toISOString() },
+            { onConflict: 'id' }
+          );
+        setDbSyncStatus(error ? 'local' : 'synced');
+      } catch {
+        setDbSyncStatus('local');
+      }
+    }, 1500);
   }, [config]);
 
   // Apply dynamic theme changes (Font, Primary CSS Color variable, etc.)
@@ -486,7 +557,8 @@ export const CmsProvider: React.FC<{ children: React.ReactNode }> = ({ children 
         updatePage,
         deletePage,
         exportConfigAsJson,
-        importConfigFromJson
+        importConfigFromJson,
+        dbSyncStatus
       }}
     >
       {children}
