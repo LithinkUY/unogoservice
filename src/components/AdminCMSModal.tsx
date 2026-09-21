@@ -83,7 +83,8 @@ type TabType =
   | 'pages'
   | 'usuario'
   | 'whatsapp'
-  | 'backup';
+  | 'backup'
+  | 'maintenance';
 
 export const AdminCMSModal: React.FC<AdminCMSModalProps> = ({ isOpen, onClose, pageMode = false }) => {
   const {
@@ -121,7 +122,8 @@ export const AdminCMSModal: React.FC<AdminCMSModalProps> = ({ isOpen, onClose, p
     exportConfigAsJson,
     importConfigFromJson,
     updateScheduleModal,
-    dbSyncStatus
+    dbSyncStatus,
+    saveFullConfig
   } = useCms();
 
   const [activeTab, setActiveTab] = useState<TabType>('styles');
@@ -780,7 +782,8 @@ export const AdminCMSModal: React.FC<AdminCMSModalProps> = ({ isOpen, onClose, p
               { id: 'footer', label: t('16. Footer y Contacto', '16. Footer & Contact'), icon: Layout },
               { id: 'usuario', label: t('17. Usuario Admin', '17. Admin User & Password'), icon: User },
               { id: 'whatsapp', label: t('18. WhatsApp', '18. WhatsApp Widget'), icon: MessageCircle },
-              { id: 'backup', label: t('19. Backup', '19. Backup & Restore'), icon: RotateCcw }
+              { id: 'backup', label: t('19. Backup', '19. Backup & Restore'), icon: RotateCcw },
+              { id: 'maintenance', label: t('20. Mantenimiento', '20. Maintenance Mode'), icon: AlertCircle }
             ].map(tab => {
               const Icon = tab.icon;
               const isActive = activeTab === tab.id;
@@ -5057,6 +5060,35 @@ export const AdminCMSModal: React.FC<AdminCMSModalProps> = ({ isOpen, onClose, p
                     <Save className="w-4 h-4" />
                     <span>Guardar FAQs</span>
                   </button>
+                </div>
+              </div>
+            )}
+
+            {/* ================= TAB 20: MANTENIMIENTO ================= */}
+            {activeTab === 'maintenance' && (
+              <div className="space-y-6 max-w-3xl">
+                <div>
+                  <h4 className="text-lg font-black text-[#0f2942]">Modo de Mantenimiento</h4>
+                  <p className="text-xs text-slate-500">Habilita o deshabilita el modo de mantenimiento del sitio. Cuando esté activo, solo los usuarios autenticados como administradores podrán ver el sitio normalmente.</p>
+                </div>
+
+                <div className="bg-white p-5 rounded-2xl border border-slate-200 shadow-2xs space-y-4">
+                  <div className="flex items-center justify-between">
+                    <div>
+                      <div className="text-xs font-bold text-slate-900">Activar Modo Mantenimiento</div>
+                      <p className="text-[11px] text-slate-500">Si está activado, el público general verá una página de mantenimiento.</p>
+                    </div>
+                    <input
+                      type="checkbox"
+                      checked={config.maintenanceMode || false}
+                      onChange={(e) => {
+                        saveFullConfig({ ...config, maintenanceMode: e.target.checked });
+                        saveAndNotify('Modo Mantenimiento');
+                        showToast(`Modo mantenimiento ${e.target.checked ? 'activado' : 'desactivado'}`);
+                      }}
+                      className="w-5 h-5 accent-emerald-600 cursor-pointer"
+                    />
+                  </div>
                 </div>
               </div>
             )}

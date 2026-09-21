@@ -16,7 +16,7 @@ import { Footer } from './components/Footer';
 import { ClientPortalModal } from './components/ClientPortalModal';
 import { WalkthroughModal } from './components/WalkthroughModal';
 import { AdminCMSModal } from './components/AdminCMSModal';
-import { Phone, Calendar, CheckCircle2 } from 'lucide-react';
+import { Phone, Calendar, CheckCircle2, Settings } from 'lucide-react';
 import { PageSection } from './types';
 
 function AdminPage({ onBackToSite }: { onBackToSite: () => void }) {
@@ -177,6 +177,31 @@ function AppContent() {
 
   if (currentPath === '/admin') {
     return <AdminPage onBackToSite={() => navigateTo('/')} />;
+  }
+
+  if (config.maintenanceMode) {
+    const isAdminAuthenticated = typeof window !== 'undefined' ? localStorage.getItem('hasslefree_admin_auth') === 'true' : false;
+    if (!isAdminAuthenticated) {
+      return (
+        <div className="min-h-screen bg-slate-50 flex flex-col items-center justify-center p-4">
+          <div className="max-w-md text-center space-y-4">
+            <div className="mx-auto w-20 h-20 bg-slate-200 rounded-full flex items-center justify-center text-slate-400 mb-6">
+              <Settings className="w-10 h-10 animate-[spin_3s_linear_infinite]" />
+            </div>
+            <h1 className="text-3xl font-black text-[#0f2942]">Sitio en Mantenimiento</h1>
+            <p className="text-slate-600">
+              Estamos realizando mejoras en nuestro sitio web. Por favor, vuelve a visitarnos en unos momentos.
+            </p>
+            <button 
+               onClick={() => navigateTo('/admin')}
+               className="mt-8 px-4 py-2 text-xs font-bold text-slate-400 hover:text-slate-600 transition-colors cursor-pointer"
+            >
+              Acceso Administrador
+            </button>
+          </div>
+        </div>
+      );
+    }
   }
 
   if (currentPath.startsWith('/page/')) {

@@ -465,5 +465,6 @@ export interface SiteCMSConfig {
   adminPassword: string;
   footer: FooterConfig;
   scheduleModal?: ScheduleModalConfig;
+  maintenanceMode?: boolean;
 }
 
