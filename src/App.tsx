@@ -71,24 +71,24 @@ function AdminPage({ onBackToSite }: { onBackToSite: () => void }) {
           <form onSubmit={handleLogin} className="space-y-4">
             <div>
               <label className="mb-1 block text-xs font-bold uppercase tracking-wide text-slate-600">Usuario</label>
-              <input
-                type="text"
-                value={username}
-                onChange={(e) => setUsername(e.target.value)}
-                className="w-full rounded-xl border border-slate-300 bg-slate-50 px-3 py-2.5 text-sm text-slate-800 outline-none focus:border-emerald-500 focus:ring-2 focus:ring-emerald-200"
-                placeholder="admin"
-              />
+                <input
+                  type="text"
+                  value={username}
+                  onChange={(e) => setUsername(e.target.value)}
+                  className="w-full rounded-xl border border-slate-300 bg-slate-50 px-3 py-2.5 text-sm text-slate-800 outline-none focus:border-emerald-500 focus:ring-2 focus:ring-emerald-200"
+                  placeholder="Escribe tu usuario"
+                />
             </div>
 
             <div>
               <label className="mb-1 block text-xs font-bold uppercase tracking-wide text-slate-600">Contraseña</label>
-              <input
-                type="password"
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
-                className="w-full rounded-xl border border-slate-300 bg-slate-50 px-3 py-2.5 text-sm text-slate-800 outline-none focus:border-emerald-500 focus:ring-2 focus:ring-emerald-200"
-                placeholder="admin"
-              />
+                <input
+                  type="password"
+                  value={password}
+                  onChange={(e) => setPassword(e.target.value)}
+                  className="w-full rounded-xl border border-slate-300 bg-slate-50 px-3 py-2.5 text-sm text-slate-800 outline-none focus:border-emerald-500 focus:ring-2 focus:ring-emerald-200"
+                  placeholder="Escribe tu contraseña"
+                />
             </div>
 
             {error && (
@@ -192,14 +192,6 @@ function AppContent() {
             <p className="text-slate-600 text-sm sm:text-base leading-relaxed">
               We are currently performing scheduled maintenance and system upgrades. We will be back online shortly. Thank you for your patience!
             </p>
-            <div className="pt-6">
-              <button 
-                 onClick={() => navigateTo('/admin')}
-                 className="text-[11px] font-bold text-slate-400 hover:text-emerald-600 transition-colors cursor-pointer uppercase tracking-wider"
-              >
-                Admin Access
-              </button>
-            </div>
           </div>
         </div>
       );
