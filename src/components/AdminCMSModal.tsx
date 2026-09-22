@@ -3903,6 +3903,12 @@ export const AdminCMSModal: React.FC<AdminCMSModalProps> = ({ isOpen, onClose, p
 
                             <div className="flex items-center gap-1.5 pt-1">
                               <button
+                                onClick={() => setSelectedAppointment(apt)}
+                                className="px-2.5 py-1 rounded-lg bg-slate-800 hover:bg-slate-900 text-white font-bold text-[11px] cursor-pointer flex items-center gap-1"
+                              >
+                                <Eye className="w-3.5 h-3.5" /> Ver Detalle
+                              </button>
+                              <button
                                 onClick={() => updateAppointmentStatus(apt.id, 'confirmed')}
                                 className="px-2.5 py-1 rounded-lg bg-blue-600 hover:bg-blue-700 text-white font-bold text-[11px] cursor-pointer"
                               >
@@ -6031,6 +6037,142 @@ export const AdminCMSModal: React.FC<AdminCMSModalProps> = ({ isOpen, onClose, p
                   <Save className="w-3.5 h-3.5" />
                   <span>Guardar Cambios del Proyecto</span>
                 </button>
+              </div>
+            </div>
+          </div>
+        )
+      }
+
+      {/* MODAL: VER DETALLE DE CITA (IMPRIMIR / PDF) */}
+      {
+        selectedAppointment && (
+          <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-black/70 backdrop-blur-xs">
+            <div className="bg-white rounded-2xl max-w-2xl w-full max-h-[90vh] overflow-y-auto border border-slate-200 shadow-2xl flex flex-col">
+              
+              {/* Header */}
+              <div className="flex items-center justify-between border-b p-6 bg-slate-50 rounded-t-2xl sticky top-0 print:hidden">
+                <h5 className="font-black text-[#0f2942] text-lg flex items-center gap-2">
+                  <Calendar className="w-5 h-5 text-emerald-600" /> Detalle de la Cita
+                </h5>
+                <div className="flex items-center gap-2">
+                  <button 
+                    onClick={() => {
+                      const printContent = document.getElementById('printable-appointment');
+                      const printWindow = window.open('', '_blank');
+                      if (printWindow && printContent) {
+                        printWindow.document.write(`
+                          <html>
+                            <head>
+                              <title>Cita - ${selectedAppointment.fullName}</title>
+                              <style>
+                                body { font-family: sans-serif; padding: 40px; color: #333; line-height: 1.6; }
+                                h1 { color: #0f2942; border-bottom: 2px solid #eee; padding-bottom: 10px; }
+                                h3 { color: #0f2942; margin-top: 30px; border-bottom: 1px solid #eee; padding-bottom: 5px; }
+                                .grid { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; margin-bottom: 20px; }
+                                .field { margin-bottom: 15px; }
+                                .label { font-size: 12px; text-transform: uppercase; color: #666; font-weight: bold; margin-bottom: 3px; }
+                                .value { font-size: 16px; font-weight: 500; }
+                                .badge { display: inline-block; padding: 4px 10px; border-radius: 4px; font-size: 12px; font-weight: bold; text-transform: uppercase; background: #eee; }
+                              </style>
+                            </head>
+                            <body>
+                              ${printContent.innerHTML}
+                              <script>
+                                window.onload = () => { window.print(); window.close(); }
+                              </script>
+                            </body>
+                          </html>
+                        `);
+                        printWindow.document.close();
+                      }
+                    }}
+                    className="px-4 py-2 rounded-xl bg-[#0f2942] hover:bg-[#153a5e] text-white text-xs font-bold cursor-pointer flex items-center gap-2"
+                  >
+                    <span>🖨️ Imprimir / PDF</span>
+                  </button>
+                  <button onClick={() => setSelectedAppointment(null)} className="p-2 text-slate-400 hover:text-slate-600 bg-white rounded-xl border border-slate-200 cursor-pointer">
+                    <X className="w-4 h-4" />
+                  </button>
+                </div>
+              </div>
+
+              {/* Printable Body */}
+              <div id="printable-appointment" className="p-6 space-y-6">
+                <div>
+                  <h1 style={{ margin: 0 }}>{selectedAppointment.fullName}</h1>
+                  <p style={{ color: '#666', marginTop: '5px' }}>ID de Solicitud: {selectedAppointment.id}</p>
+                </div>
+
+                <div className="grid">
+                  <div className="field">
+                    <div className="label">Estado de la Cita</div>
+                    <div className="value">
+                      <span className="badge">{selectedAppointment.status}</span>
+                    </div>
+                  </div>
+                  <div className="field">
+                    <div className="label">Técnico Asignado</div>
+                    <div className="value">{selectedAppointment.technicianAssigned || 'Sin asignar'}</div>
+                  </div>
+                </div>
+
+                <h3>📅 Preferencia de Agenda</h3>
+                <div className="grid">
+                  <div className="field">
+                    <div className="label">Fecha Solicitada</div>
+                    <div className="value">{selectedAppointment.preferredDate}</div>
+                  </div>
+                  <div className="field">
+                    <div className="label">Horario Preferido</div>
+                    <div className="value">{selectedAppointment.preferredTime}</div>
+                  </div>
+                </div>
+
+                <h3>📍 Datos del Cliente</h3>
+                <div className="grid">
+                  <div className="field">
+                    <div className="label">Teléfono</div>
+                    <div className="value">{selectedAppointment.phone}</div>
+                  </div>
+                  <div className="field">
+                    <div className="label">Correo Electrónico</div>
+                    <div className="value">{selectedAppointment.email}</div>
+                  </div>
+                  <div className="field" style={{ gridColumn: '1 / -1' }}>
+                    <div className="label">Dirección</div>
+                    <div className="value">{selectedAppointment.address}, {selectedAppointment.city}, {selectedAppointment.state} {selectedAppointment.zip}</div>
+                  </div>
+                </div>
+
+                <h3>🏠 Detalles de la Propiedad</h3>
+                <div className="grid">
+                  <div className="field">
+                    <div className="label">Tipo de Residencia</div>
+                    <div className="value">{selectedAppointment.homeType}</div>
+                  </div>
+                  <div className="field">
+                    <div className="label">Metraje Estimado</div>
+                    <div className="value">{selectedAppointment.sqft}</div>
+                  </div>
+                </div>
+
+                <h3>🔧 Requerimientos</h3>
+                <div className="field">
+                  <div className="label">Prioridades Seleccionadas</div>
+                  <div className="value">
+                    <ul style={{ margin: 0, paddingLeft: '20px' }}>
+                      {selectedAppointment.priorities.map(p => (
+                        <li key={p}>{p}</li>
+                      ))}
+                    </ul>
+                  </div>
+                </div>
+                <div className="field">
+                  <div className="label">Notas Adicionales del Cliente</div>
+                  <div className="value" style={{ padding: '15px', background: '#f8fafc', borderRadius: '8px', border: '1px solid #e2e8f0', minHeight: '80px' }}>
+                    {selectedAppointment.notes || 'Sin notas adicionales.'}
+                  </div>
+                </div>
               </div>
             </div>
           </div>
