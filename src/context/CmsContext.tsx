@@ -161,7 +161,8 @@ export const CmsProvider: React.FC<{ children: React.ReactNode }> = ({ children 
 
   // Refs for Neon sync
   const syncTimeoutRef = useRef<any>(null);
-  const isLoadingFromDbRef = useRef(false);
+  const isInitialLoadCompleteRef = useRef(false);
+  const skipNextSyncRef = useRef(false);
 
   // Merge remote config with local defaults (safe merge)
   const normalizeRemoteConfig = (parsed: any): SiteCMSConfig => ({
@@ -187,7 +188,7 @@ export const CmsProvider: React.FC<{ children: React.ReactNode }> = ({ children 
         const data = await response.json();
 
         if (data.success && data.config) {
-          isLoadingFromDbRef.current = true;
+          skipNextSyncRef.current = true;
           setConfig(normalizeRemoteConfig(data.config));
           localStorage.setItem(LOCAL_STORAGE_KEY, JSON.stringify(data.config));
           setDbSyncStatus('synced');
@@ -195,6 +196,8 @@ export const CmsProvider: React.FC<{ children: React.ReactNode }> = ({ children 
       } catch (e) {
         console.warn('Neon DB load failed, using localStorage cache:', e);
         setDbSyncStatus('local');
+      } finally {
+        isInitialLoadCompleteRef.current = true;
       }
     };
     loadFromDb();
@@ -208,13 +211,15 @@ export const CmsProvider: React.FC<{ children: React.ReactNode }> = ({ children 
       console.error('Failed to save CMS config to localStorage:', e);
     }
 
-    // Skip DB sync for the update triggered by loading from DB (avoids echo)
-    if (isLoadingFromDbRef.current) {
-      isLoadingFromDbRef.current = false;
+    if (!isInitialLoadCompleteRef.current) {
       return;
     }
 
-    // Debounce DB writes - 1.5s after last change
+    if (skipNextSyncRef.current) {
+      skipNextSyncRef.current = false;
+      return;
+    }
+
     if (syncTimeoutRef.current) clearTimeout(syncTimeoutRef.current);
     setDbSyncStatus('syncing');
     
@@ -231,6 +236,8 @@ export const CmsProvider: React.FC<{ children: React.ReactNode }> = ({ children 
         setDbSyncStatus('local');
       }
     }, 1500);
+
+    return () => clearTimeout(syncTimeoutRef.current);
   }, [config]);
 
   // Apply dynamic theme changes (Font, Primary CSS Color variable, etc.)
