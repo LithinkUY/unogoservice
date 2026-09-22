@@ -1,5 +1,4 @@
 import React, { createContext, useContext, useState, useEffect, useRef } from 'react';
-import { supabase } from '../lib/supabaseClient';
 import {
   SiteCMSConfig,
   ThemeConfig,
@@ -160,11 +159,11 @@ export const CmsProvider: React.FC<{ children: React.ReactNode }> = ({ children 
   const [saveNotification, setSaveNotification] = useState<string | null>(null);
   const [dbSyncStatus, setDbSyncStatus] = useState<'synced' | 'local' | 'syncing'>('local');
 
-  // Refs for Supabase sync
+  // Refs for Neon sync
   const syncTimeoutRef = useRef<any>(null);
-  const isLoadingFromSupabaseRef = useRef(false);
+  const isLoadingFromDbRef = useRef(false);
 
-  // Merge remote Supabase config with local defaults (safe merge)
+  // Merge remote config with local defaults (safe merge)
   const normalizeRemoteConfig = (parsed: any): SiteCMSConfig => ({
     ...DEFAULT_CMS_CONFIG,
     ...parsed,
@@ -180,32 +179,28 @@ export const CmsProvider: React.FC<{ children: React.ReactNode }> = ({ children 
     scheduleModal: { ...DEFAULT_CMS_CONFIG.scheduleModal, ...(parsed.scheduleModal || {}) }
   });
 
-  // On mount: load config from Supabase (overrides localStorage if remote is available)
+  // On mount: load config from Neon (overrides localStorage if remote is available)
   useEffect(() => {
-    const loadFromSupabase = async () => {
+    const loadFromDb = async () => {
       try {
-        const { data, error } = await supabase
-          .from('cms_config')
-          .select('config')
-          .eq('id', 'main')
-          .single();
+        const response = await fetch('/api/config');
+        const data = await response.json();
 
-        if (data?.config && !error) {
-          isLoadingFromSupabaseRef.current = true;
+        if (data.success && data.config) {
+          isLoadingFromDbRef.current = true;
           setConfig(normalizeRemoteConfig(data.config));
           localStorage.setItem(LOCAL_STORAGE_KEY, JSON.stringify(data.config));
           setDbSyncStatus('synced');
         }
-        // If no remote config yet, the auto-save effect will push it on first write
       } catch (e) {
-        console.warn('Supabase load failed, using localStorage cache:', e);
+        console.warn('Neon DB load failed, using localStorage cache:', e);
         setDbSyncStatus('local');
       }
     };
-    loadFromSupabase();
+    loadFromDb();
   }, []); // eslint-disable-line react-hooks/exhaustive-deps
 
-  // Auto-save to localStorage AND Supabase whenever config changes
+  // Auto-save to localStorage AND Neon whenever config changes
   useEffect(() => {
     try {
       localStorage.setItem(LOCAL_STORAGE_KEY, JSON.stringify(config));
@@ -213,24 +208,25 @@ export const CmsProvider: React.FC<{ children: React.ReactNode }> = ({ children 
       console.error('Failed to save CMS config to localStorage:', e);
     }
 
-    // Skip Supabase sync for the update triggered by loading from Supabase (avoids echo)
-    if (isLoadingFromSupabaseRef.current) {
-      isLoadingFromSupabaseRef.current = false;
+    // Skip DB sync for the update triggered by loading from DB (avoids echo)
+    if (isLoadingFromDbRef.current) {
+      isLoadingFromDbRef.current = false;
       return;
     }
 
-    // Debounce Supabase writes — 1.5s after last change
+    // Debounce DB writes - 1.5s after last change
     if (syncTimeoutRef.current) clearTimeout(syncTimeoutRef.current);
     setDbSyncStatus('syncing');
+    
     syncTimeoutRef.current = setTimeout(async () => {
       try {
-        const { error } = await supabase
-          .from('cms_config')
-          .upsert(
-            { id: 'main', config, updated_at: new Date().toISOString() },
-            { onConflict: 'id' }
-          );
-        setDbSyncStatus(error ? 'local' : 'synced');
+        const response = await fetch('/api/config', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ config })
+        });
+        const result = await response.json();
+        setDbSyncStatus(result.success ? 'synced' : 'local');
       } catch {
         setDbSyncStatus('local');
       }

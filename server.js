@@ -3,9 +3,12 @@ import multer from 'multer';
 import fs from 'fs/promises';
 import path from 'path';
 import { fileURLToPath } from 'url';
+import { neon } from '@neondatabase/serverless';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
+
+const sql = neon('postgresql://neondb_owner:npg_Xo2rfLKC1Vsa@ep-orange-math-b4kcdvlt-pooler.c-6.us-east-2.aws.neon.tech/neondb?sslmode=require&channel_binding=require');
 
 const app = express();
 const PORT = Number(process.env.PORT || 3001);
@@ -51,6 +54,38 @@ app.use(express.urlencoded({ extended: true }));
 
 app.get('/api/health', (_req, res) => {
     res.json({ ok: true, message: 'backend-active' });
+});
+
+// Neon DB Routes for local backend
+app.get('/api/config', async (req, res) => {
+    try {
+        await sql`CREATE TABLE IF NOT EXISTS cms_config (id TEXT PRIMARY KEY, config JSONB NOT NULL, updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP)`;
+        const result = await sql`SELECT config FROM cms_config WHERE id = 'main' LIMIT 1`;
+        if (result.length > 0) {
+            return res.status(200).json({ success: true, config: result[0].config });
+        }
+        return res.status(200).json({ success: true, config: null });
+    } catch (e) {
+        console.error('Neon DB Error:', e);
+        return res.status(500).json({ success: false, error: e.message });
+    }
+});
+
+app.post('/api/config', async (req, res) => {
+    try {
+        const { config } = req.body;
+        if (!config) return res.status(400).json({ success: false, error: 'Config missing' });
+        await sql`CREATE TABLE IF NOT EXISTS cms_config (id TEXT PRIMARY KEY, config JSONB NOT NULL, updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP)`;
+        await sql`
+            INSERT INTO cms_config (id, config, updated_at) 
+            VALUES ('main', ${config}::jsonb, CURRENT_TIMESTAMP)
+            ON CONFLICT (id) DO UPDATE SET config = EXCLUDED.config, updated_at = CURRENT_TIMESTAMP
+        `;
+        return res.status(200).json({ success: true });
+    } catch (e) {
+        console.error('Neon DB Error:', e);
+        return res.status(500).json({ success: false, error: e.message });
+    }
 });
 
 app.post('/api/upload', (req, res, next) => {
