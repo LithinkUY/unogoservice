@@ -657,5 +657,11 @@ export const DEFAULT_CMS_CONFIG: SiteCMSConfig = {
       { label: 'GA Residential', enabled: true }
     ]
   },
-  scheduleModal: DEFAULT_SCHEDULE_MODAL_CONFIG
+  scheduleModal: DEFAULT_SCHEDULE_MODAL_CONFIG,
+  technicians: [
+    'Mark Jenkins (Sr. Lead)',
+    'David Ross',
+    'Christopher Vance',
+    'Michael Sterling'
+  ]
 };

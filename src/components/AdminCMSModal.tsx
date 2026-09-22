@@ -216,7 +216,7 @@ export const AdminCMSModal: React.FC<AdminCMSModalProps> = ({ isOpen, onClose, p
     preferredTime: 'Morning (9am - 12pm)',
     notes: '',
     status: 'pending' as Appointment['status'],
-    technicianAssigned: 'Mark Jenkins (Sr. Lead)'
+    technicianAssigned: config.technicians?.[0] || 'Sin asignar'
   });
 
   const [newClientModal, setNewClientModal] = useState(false);
@@ -3894,10 +3894,9 @@ export const AdminCMSModal: React.FC<AdminCMSModalProps> = ({ isOpen, onClose, p
                                 className="p-1.5 text-xs rounded-lg border border-slate-300 bg-white font-medium"
                               >
                                 <option>Sin asignar</option>
-                                <option>Mark Jenkins (Sr. Lead)</option>
-                                <option>David Ross</option>
-                                <option>Christopher Vance</option>
-                                <option>Michael Sterling</option>
+                                {(config.technicians || []).map(tech => (
+                                  <option key={tech} value={tech}>{tech}</option>
+                                ))}
                               </select>
                             </div>
 
@@ -3966,11 +3965,29 @@ export const AdminCMSModal: React.FC<AdminCMSModalProps> = ({ isOpen, onClose, p
                 <div className="space-y-6 max-w-4xl">
                   <div>
                     <h4 className="text-lg font-black text-[#0f2942]">
-                      Configuración del Modal de Schedule (Walkthrough)
+                      Configuración del Modal de Schedule & Técnicos
                     </h4>
                     <p className="text-xs text-slate-500">
-                      Personaliza todos los campos, textos, zonas, ciudades, lista de prioridades y opciones de metros cuadrados del modal que ven los clientes.
+                      Gestiona tu lista de técnicos asignables y personaliza todos los campos del modal de reservas.
                     </p>
+                  </div>
+
+                  {/* Técnicos (Staff) */}
+                  <div className="bg-white p-5 rounded-2xl border border-slate-200 shadow-2xs space-y-3">
+                    <span className="text-xs font-bold text-slate-900 block border-b pb-2">
+                      Gestión de Técnicos (Staff)
+                    </span>
+                    <p className="text-[11px] text-slate-500">Escribe los nombres de los técnicos disponibles (un nombre por línea). Estos aparecerán en el menú desplegable al asignar citas.</p>
+                    <textarea
+                      rows={5}
+                      value={(config.technicians || []).join('\n')}
+                      onChange={(e) => {
+                        const techs = e.target.value.split('\n').map(t => t.trim()).filter(Boolean);
+                        updateTechnicians(techs);
+                      }}
+                      className="w-full p-2.5 text-xs rounded-xl border border-slate-300 font-medium"
+                      placeholder="Ej:\nMark Jenkins (Sr. Lead)\nDavid Ross"
+                    />
                   </div>
 
                   {/* Encabezado y Textos Generales */}
@@ -5717,10 +5734,9 @@ export const AdminCMSModal: React.FC<AdminCMSModalProps> = ({ isOpen, onClose, p
                     onChange={(e) => setNewAptDraft({ ...newAptDraft, technicianAssigned: e.target.value })}
                     className="w-full p-2 text-xs rounded-xl border border-slate-300 bg-white"
                   >
-                    <option>Mark Jenkins (Sr. Lead)</option>
-                    <option>David Ross</option>
-                    <option>Christopher Vance</option>
-                    <option>Michael Sterling</option>
+                    {(config.technicians || []).map(tech => (
+                      <option key={tech} value={tech}>{tech}</option>
+                    ))}
                   </select>
                 </div>
               </div>

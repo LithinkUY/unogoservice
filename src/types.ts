@@ -466,5 +466,6 @@ export interface SiteCMSConfig {
   footer: FooterConfig;
   scheduleModal?: ScheduleModalConfig;
   maintenanceMode?: boolean;
+  technicians?: string[];
 }
 

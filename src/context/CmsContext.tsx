@@ -53,6 +53,7 @@ interface CmsContextType {
   updateAdminCredentials: (credentials: { adminUsername?: string; adminPassword?: string }) => void;
   updateFooter: (footer: Partial<FooterConfig>) => void;
   updateScheduleModal: (scheduleModal: Partial<ScheduleModalConfig>) => void;
+  updateTechnicians: (techs: string[]) => void;
   saveFullConfig: (newConfig: SiteCMSConfig) => void;
   saveAndNotify: (sectionLabel?: string) => void;
   saveNotification: string | null;
@@ -486,6 +487,10 @@ export const CmsProvider: React.FC<{ children: React.ReactNode }> = ({ children 
     }));
   };
 
+  const updateTechnicians = (techs: string[]) => {
+    setConfig(prev => ({ ...prev, technicians: techs }));
+  };
+
   const saveFullConfig = (newConfig: SiteCMSConfig) => {
     setConfig(newConfig);
   };
@@ -552,6 +557,7 @@ export const CmsProvider: React.FC<{ children: React.ReactNode }> = ({ children 
         updateAdminCredentials,
         updateFooter,
         updateScheduleModal,
+        updateTechnicians,
         saveFullConfig,
         saveAndNotify,
         saveNotification,
