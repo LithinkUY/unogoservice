@@ -183,21 +183,23 @@ function AppContent() {
     const isAdminAuthenticated = typeof window !== 'undefined' ? localStorage.getItem('hasslefree_admin_auth') === 'true' : false;
     if (!isAdminAuthenticated) {
       return (
-        <div className="min-h-screen bg-slate-50 flex flex-col items-center justify-center p-4">
-          <div className="max-w-md text-center space-y-4">
-            <div className="mx-auto w-20 h-20 bg-slate-200 rounded-full flex items-center justify-center text-slate-400 mb-6">
+        <div className="min-h-screen bg-slate-50 flex flex-col items-center justify-center p-6">
+          <div className="w-full max-w-md text-center space-y-6 bg-white p-8 sm:p-10 rounded-3xl shadow-xl border border-slate-100">
+            <div className="mx-auto w-20 h-20 bg-emerald-50 rounded-full flex items-center justify-center text-emerald-600 mb-2">
               <Settings className="w-10 h-10 animate-[spin_3s_linear_infinite]" />
             </div>
-            <h1 className="text-3xl font-black text-[#0f2942]">Sitio en Mantenimiento</h1>
-            <p className="text-slate-600">
-              Estamos realizando mejoras en nuestro sitio web. Por favor, vuelve a visitarnos en unos momentos.
+            <h1 className="text-2xl sm:text-3xl font-black text-[#0f2942] tracking-tight">Under Maintenance</h1>
+            <p className="text-slate-600 text-sm sm:text-base leading-relaxed">
+              We are currently performing scheduled maintenance and system upgrades. We will be back online shortly. Thank you for your patience!
             </p>
-            <button 
-               onClick={() => navigateTo('/admin')}
-               className="mt-8 px-4 py-2 text-xs font-bold text-slate-400 hover:text-slate-600 transition-colors cursor-pointer"
-            >
-              Acceso Administrador
-            </button>
+            <div className="pt-6">
+              <button 
+                 onClick={() => navigateTo('/admin')}
+                 className="text-[11px] font-bold text-slate-400 hover:text-emerald-600 transition-colors cursor-pointer uppercase tracking-wider"
+              >
+                Admin Access
+              </button>
+            </div>
           </div>
         </div>
       );
