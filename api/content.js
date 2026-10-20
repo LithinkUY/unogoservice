@@ -76,39 +76,57 @@ export default async function handler(req, res) {
     const defaultContent = await readDefaultContent();
 
     if (req.method === 'GET') {
+        const queryKey = req.query?.key;
+        const queryType = req.query?.type;
+
+        // Determine which key to fetch: 'cms_config' (default) or 'hasslefree-home' (legacy site content)
+        const targetKey = queryKey || (queryType === 'site' ? 'hasslefree-home' : 'cms_config');
+
         if (!databaseUrl) {
-            return res.status(200).json(defaultContent);
+            if (targetKey === 'hasslefree-home') {
+                return res.status(200).json(defaultContent);
+            }
+            return res.status(200).json({ success: true, config: null });
         }
 
         try {
             const sql = neon(databaseUrl);
 
             await sql`
-        CREATE TABLE IF NOT EXISTS site_content (
-          key TEXT PRIMARY KEY,
-          content JSONB NOT NULL,
-          updated_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
-        )
-      `;
+                CREATE TABLE IF NOT EXISTS site_content (
+                    key TEXT PRIMARY KEY,
+                    content JSONB NOT NULL,
+                    updated_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
+                )
+            `;
 
             const rows = await sql`
-        SELECT content FROM site_content WHERE key = 'hasslefree-home'
-      `;
+                SELECT content FROM site_content WHERE key = ${targetKey}
+            `;
 
             if (rows.length > 0 && rows[0]?.content) {
-                return res.status(200).json(rows[0].content);
+                if (targetKey === 'hasslefree-home') {
+                    return res.status(200).json(rows[0].content);
+                }
+                return res.status(200).json({ success: true, config: rows[0].content });
             }
 
-            await sql`
-        INSERT INTO site_content (key, content)
-        VALUES ('hasslefree-home', ${JSON.stringify(defaultContent)})
-        ON CONFLICT (key) DO NOTHING
-      `;
+            if (targetKey === 'hasslefree-home') {
+                await sql`
+                    INSERT INTO site_content (key, content)
+                    VALUES ('hasslefree-home', ${JSON.stringify(defaultContent)})
+                    ON CONFLICT (key) DO NOTHING
+                `;
+                return res.status(200).json(defaultContent);
+            }
 
-            return res.status(200).json(defaultContent);
+            return res.status(200).json({ success: true, config: null });
         } catch (error) {
             console.error('Failed to fetch content from database:', error);
-            return res.status(200).json(defaultContent);
+            if (targetKey === 'hasslefree-home') {
+                return res.status(200).json(defaultContent);
+            }
+            return res.status(200).json({ success: false, error: String(error) });
         }
     }
 
@@ -122,24 +140,28 @@ export default async function handler(req, res) {
 
         try {
             const body = req.body ?? {};
+            // If body has a specific key, or if legacy body contains 'company', use 'hasslefree-home', otherwise 'cms_config'
+            const targetKey = req.query?.key || body.key || (body.company ? 'hasslefree-home' : 'cms_config');
+            const dataToSave = body.config !== undefined ? body.config : body;
+
             const sql = neon(databaseUrl);
 
             await sql`
-        CREATE TABLE IF NOT EXISTS site_content (
-          key TEXT PRIMARY KEY,
-          content JSONB NOT NULL,
-          updated_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
-        )
-      `;
+                CREATE TABLE IF NOT EXISTS site_content (
+                    key TEXT PRIMARY KEY,
+                    content JSONB NOT NULL,
+                    updated_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
+                )
+            `;
 
             await sql`
-        INSERT INTO site_content (key, content, updated_at)
-        VALUES ('hasslefree-home', ${JSON.stringify(body)}, NOW())
-        ON CONFLICT (key)
-        DO UPDATE SET content = EXCLUDED.content, updated_at = NOW()
-      `;
+                INSERT INTO site_content (key, content, updated_at)
+                VALUES (${targetKey}, ${JSON.stringify(dataToSave)}, NOW())
+                ON CONFLICT (key)
+                DO UPDATE SET content = EXCLUDED.content, updated_at = NOW()
+            `;
 
-            return res.status(200).json({ success: true, data: body });
+            return res.status(200).json({ success: true, data: dataToSave });
         } catch (error) {
             console.error('Failed to save content to database:', error);
             return res.status(500).json({

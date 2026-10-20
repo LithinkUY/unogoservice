@@ -253,6 +253,7 @@ function AppContent() {
       case 'difference':
         return <TheDifference key={section.id} />;
       case 'three-pillars':
+      case 'pillars':
         return (
           <ThreePillars
             key={section.id}
@@ -323,7 +324,7 @@ function AppContent() {
                   </span>
                 )}
                 <h2 className="text-3xl sm:text-4xl font-extrabold text-[#0f2942]">
-                  {section.title}
+                  {section.title || section.name}
                 </h2>
                 {section.subtitle && (
                   <p className="text-slate-600 text-base sm:text-lg">
@@ -338,7 +339,7 @@ function AppContent() {
               )}
               {section.imageUrl && (
                 <div className="mt-8 max-w-4xl mx-auto rounded-3xl overflow-hidden shadow-lg border border-slate-200">
-                  <img src={section.imageUrl} alt={section.title} className="w-full h-80 object-cover" />
+                  <img src={section.imageUrl} alt={section.title || section.name} className="w-full h-80 object-cover" />
                 </div>
               )}
             </div>

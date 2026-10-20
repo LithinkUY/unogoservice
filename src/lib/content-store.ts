@@ -1,8 +1,8 @@
 import { promises as fs } from 'fs';
 import path from 'path';
 import { neon } from '@neondatabase/serverless';
-import { DEFAULT_SITE_CONTENT } from '@/data/content';
-import { SiteContent } from '@/types';
+import { DEFAULT_SITE_CONTENT } from '../data/content';
+import { SiteContent } from '../types';
 
 const CONTENT_FILE = path.join(process.cwd(), 'src/data/site-content.json');
 

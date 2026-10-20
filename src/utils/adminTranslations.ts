@@ -49,7 +49,7 @@ export const ADMIN_TRANSLATIONS: Record<string, string> = {
   "Ciudad": "City",
   "Ciudad:": "City:",
   "Estado": "State / Region",
-  "Estado:": "State / Region:",
+  "Estado / Región:": "State / Region:",
   "Código Postal": "Zip Code",
   "Código Postal:": "Zip Code:",
   "Visible": "Visible",
@@ -189,7 +189,7 @@ export const ADMIN_TRANSLATIONS: Record<string, string> = {
   "Texto Superior / Eyebrow": "Eyebrow Text",
   "Título Principal": "Slide Headline",
   "Texto Destacado (Gradiente)": "Headline Highlight (Gradient)",
-  "Descripción": "Slide Description",
+  "Descripción del Slide": "Slide Description",
   "Botón Principal": "Primary Button Text",
   "Botón Secundario": "Secondary Button Text",
   "Oscuridad del Fondo (%)": "Dark Overlay Opacity (%)",
@@ -205,7 +205,6 @@ export const ADMIN_TRANSLATIONS: Record<string, string> = {
   "Sección Hero (Cabecera)": "Hero Section (Header Copy)",
   "Texto Título 1:": "Headline Part 1:",
   "Texto Destacado:": "Highlighted Text:",
-  "Descripción:": "Description:",
   "Placeholder Buscador Zip:": "Zip Search Placeholder:",
   "Texto Botón Buscar:": "Search Button Text:",
   "Texto Botón Primario:": "Primary Button Text:",
@@ -440,7 +439,7 @@ export const ADMIN_TRANSLATIONS: Record<string, string> = {
   "Restaurar Copia de Seguridad": "Restore Backup",
   "Restablecer a Valores Iniciales de Fábrica": "Factory Reset to Initial Defaults",
   "Esta acción borrará todas las personalizaciones y volverá al estado predeterminado.": "Warning: This action will erase all local modifications and restore the original site presets.",
-  "Restablecer Todo": "Reset Everything to Factory Defaults"
+  "Restablecer Todo de Fábrica": "Reset Everything to Factory Defaults"
 };
 
 /**

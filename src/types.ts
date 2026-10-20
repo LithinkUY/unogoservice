@@ -161,9 +161,9 @@ export interface SlideItem {
   titleHighlight: string;
   description: string;
   primaryBtnText: string;
-  primaryBtnAction: 'walkthrough' | 'pricing' | 'portal' | 'gallery';
+  primaryBtnAction: 'walkthrough' | 'pricing' | 'portal' | 'gallery' | 'calculator';
   secondaryBtnText?: string;
-  secondaryBtnAction?: 'walkthrough' | 'pricing' | 'portal' | 'gallery';
+  secondaryBtnAction?: 'walkthrough' | 'pricing' | 'portal' | 'gallery' | 'calculator';
   overlayDarkness: number; // 20 to 80 percent
   align: 'left' | 'center' | 'right';
   enabled: boolean;
@@ -468,4 +468,55 @@ export interface SiteCMSConfig {
   maintenanceMode?: boolean;
   technicians?: string[];
 }
+
+export interface SitePageSection {
+  id: string;
+  title: string;
+  body: string;
+}
+
+export interface SitePage {
+  id: string;
+  title: string;
+  subtitle: string;
+  intro: string;
+  sections: SitePageSection[];
+}
+
+export interface SiteContent {
+  company: {
+    name: string;
+    phone: string;
+    phoneHref: string;
+    emergency: string;
+    tagline: string;
+    location: string;
+    footerBlurb: string;
+  };
+  home: {
+    hero: {
+      eyebrow: string;
+      title: string;
+      subtitle: string;
+      primaryCta: string;
+      secondaryCta: string;
+      zipPlaceholder: string;
+    };
+  };
+  gallery: Array<{
+    id: string;
+    title: string;
+    category: string;
+    description: string;
+    image: string;
+  }>;
+  pages: {
+    services: SitePage;
+    story: SitePage;
+    locations: SitePage;
+    faq: SitePage;
+    careers: SitePage;
+  };
+}
+
 

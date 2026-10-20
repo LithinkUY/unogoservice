@@ -68,6 +68,38 @@ interface CmsContextType {
 
 const CmsContext = createContext<CmsContextType | undefined>(undefined);
 
+export const normalizeSections = (rawSections?: any[]): PageSection[] => {
+  const currentSections: PageSection[] = Array.isArray(rawSections) && rawSections.length > 0
+    ? rawSections.filter(s => s && s.id && s.id !== 'checklist')
+    : [];
+
+  const existingMap = new Map<string, PageSection>();
+  for (const s of currentSections) {
+    existingMap.set(s.id, s);
+  }
+
+  const result: PageSection[] = [];
+  for (const def of DEFAULT_PAGE_SECTIONS) {
+    if (existingMap.has(def.id)) {
+      const existing = existingMap.get(def.id)!;
+      result.push({
+        ...def,
+        ...existing,
+        enabled: typeof existing.enabled === 'boolean' ? existing.enabled : def.enabled
+      });
+      existingMap.delete(def.id);
+    } else {
+      result.push({ ...def });
+    }
+  }
+
+  for (const [_, customSec] of existingMap) {
+    result.push(customSec);
+  }
+
+  return result;
+};
+
 export const CmsProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const [config, setConfig] = useState<SiteCMSConfig>(() => {
     try {
@@ -82,27 +114,7 @@ export const CmsProvider: React.FC<{ children: React.ReactNode }> = ({ children 
           return !(label.includes('50-point') || label.includes('50 point') || sectionId === 'checklist');
         });
 
-        const normalizedSections = (parsed.sections && parsed.sections.length > 0 ? parsed.sections : DEFAULT_PAGE_SECTIONS)
-          .filter((section: PageSection) => section.id !== 'checklist');
-
-        let finalSections = normalizedSections;
-        if (!finalSections.some((s: PageSection) => s.id === 'calculator')) {
-          const pricingIdx = finalSections.findIndex((s: PageSection) => s.id === 'pricing');
-          const calcSection: PageSection = {
-            id: 'calculator',
-            name: 'Calculadora de Estimación (Home Size Estimator)',
-            enabled: true
-          };
-          if (pricingIdx !== -1) {
-            finalSections = [
-              ...finalSections.slice(0, pricingIdx + 1),
-              calcSection,
-              ...finalSections.slice(pricingIdx + 1)
-            ];
-          } else {
-            finalSections = [...finalSections, calcSection];
-          }
-        }
+        const finalSections = normalizeSections(parsed.sections);
 
         let serviceAreasToUse = parsed.serviceAreas;
         if (!serviceAreasToUse || serviceAreasToUse.length === 0 || serviceAreasToUse.some((a: any) => a.state === 'Maryland' || a.state === 'Virginia')) {
@@ -160,10 +172,16 @@ export const CmsProvider: React.FC<{ children: React.ReactNode }> = ({ children 
   const [saveNotification, setSaveNotification] = useState<string | null>(null);
   const [dbSyncStatus, setDbSyncStatus] = useState<'synced' | 'local' | 'syncing'>('local');
 
+<<<<<<< HEAD
   // Refs for Neon sync
   const syncTimeoutRef = useRef<any>(null);
   const isInitialLoadCompleteRef = useRef(false);
   const skipNextSyncRef = useRef(false);
+=======
+  // Refs for remote sync
+  const syncTimeoutRef = useRef<any>(null);
+  const isLoadingFromRemoteRef = useRef(false);
+>>>>>>> 341280d (fix: correccion de toggle desactivar en precios y calculadora y persistencia de CMS en Vercel)
 
   // Merge remote config with local defaults (safe merge)
   const normalizeRemoteConfig = (parsed: any): SiteCMSConfig => ({
@@ -177,24 +195,62 @@ export const CmsProvider: React.FC<{ children: React.ReactNode }> = ({ children 
       ...(parsed.content || {}),
       calculator: { ...DEFAULT_CMS_CONFIG.content.calculator, ...(parsed.content?.calculator || {}) }
     },
+    sections: normalizeSections(parsed.sections),
     footer: { ...DEFAULT_CMS_CONFIG.footer, ...(parsed.footer || {}) },
     scheduleModal: { ...DEFAULT_CMS_CONFIG.scheduleModal, ...(parsed.scheduleModal || {}) }
   });
 
+<<<<<<< HEAD
   // On mount: load config from Neon (overrides localStorage if remote is available)
   useEffect(() => {
     const loadFromDb = async () => {
+=======
+  // On mount: load config from cloud (Neon via /api/content, or Supabase fallback)
+  useEffect(() => {
+    let isMounted = true;
+
+    const loadRemoteConfig = async () => {
+      // 1. Try Neon Postgres via /api/content (primary for Vercel)
+      try {
+        const res = await fetch('/api/content?key=cms_config');
+        if (res.ok) {
+          const json = await res.json();
+          if (json?.success && json?.config && isMounted) {
+            isLoadingFromRemoteRef.current = true;
+            const normalized = normalizeRemoteConfig(json.config);
+            setConfig(normalized);
+            localStorage.setItem(LOCAL_STORAGE_KEY, JSON.stringify(normalized));
+            setDbSyncStatus('synced');
+            return;
+          }
+        }
+      } catch (e) {
+        console.warn('Neon /api/content load failed, trying fallback:', e);
+      }
+
+      // 2. Fallback to Supabase if available
+>>>>>>> 341280d (fix: correccion de toggle desactivar en precios y calculadora y persistencia de CMS en Vercel)
       try {
         const response = await fetch('/api/config');
         const data = await response.json();
 
+<<<<<<< HEAD
         if (data.success && data.config) {
           skipNextSyncRef.current = true;
           setConfig(normalizeRemoteConfig(data.config));
           localStorage.setItem(LOCAL_STORAGE_KEY, JSON.stringify(data.config));
+=======
+        if (data?.config && !error && isMounted) {
+          isLoadingFromRemoteRef.current = true;
+          const normalized = normalizeRemoteConfig(data.config);
+          setConfig(normalized);
+          localStorage.setItem(LOCAL_STORAGE_KEY, JSON.stringify(normalized));
+>>>>>>> 341280d (fix: correccion de toggle desactivar en precios y calculadora y persistencia de CMS en Vercel)
           setDbSyncStatus('synced');
+          return;
         }
       } catch (e) {
+<<<<<<< HEAD
         console.warn('Neon DB load failed, using localStorage cache:', e);
         setDbSyncStatus('local');
       } finally {
@@ -202,6 +258,23 @@ export const CmsProvider: React.FC<{ children: React.ReactNode }> = ({ children 
       }
     };
     loadFromDb();
+  }, []); // eslint-disable-line react-hooks/exhaustive-deps
+
+  // Auto-save to localStorage AND Neon whenever config changes
+=======
+        // Supabase not available
+      }
+
+      if (isMounted) {
+        setDbSyncStatus(localStorage.getItem(LOCAL_STORAGE_KEY) ? 'local' : 'local');
+      }
+    };
+
+    loadRemoteConfig();
+
+    return () => {
+      isMounted = false;
+    };
   }, []); // eslint-disable-line react-hooks/exhaustive-deps
 
   // Auto-save to localStorage AND Neon whenever config changes
@@ -223,7 +296,7 @@ export const CmsProvider: React.FC<{ children: React.ReactNode }> = ({ children 
 
     if (syncTimeoutRef.current) clearTimeout(syncTimeoutRef.current);
     setDbSyncStatus('syncing');
-    
+
     syncTimeoutRef.current = setTimeout(async () => {
       try {
         const response = await fetch('/api/config', {
@@ -236,7 +309,7 @@ export const CmsProvider: React.FC<{ children: React.ReactNode }> = ({ children 
       } catch {
         setDbSyncStatus('local');
       }
-    }, 1500);
+    }, 1200);
 
     return () => clearTimeout(syncTimeoutRef.current);
   }, [config]);
@@ -284,25 +357,31 @@ export const CmsProvider: React.FC<{ children: React.ReactNode }> = ({ children 
   };
 
   const updateSections = (sections: PageSection[]) => {
-    setConfig(prev => ({ ...prev, sections }));
+    setConfig(prev => ({ ...prev, sections: normalizeSections(sections) }));
   };
 
   const updateSingleSection = (sectionId: string, updated: Partial<PageSection>) => {
-    setConfig(prev => ({
-      ...prev,
-      sections: prev.sections.map(sec =>
-        sec.id === sectionId ? { ...sec, ...updated } : sec
-      )
-    }));
+    setConfig(prev => {
+      const currentSections = normalizeSections(prev.sections);
+      return {
+        ...prev,
+        sections: currentSections.map(sec =>
+          sec.id === sectionId ? { ...sec, ...updated } : sec
+        )
+      };
+    });
   };
 
   const toggleSection = (sectionId: string) => {
-    setConfig(prev => ({
-      ...prev,
-      sections: prev.sections.map(sec =>
-        sec.id === sectionId ? { ...sec, enabled: !sec.enabled } : sec
-      )
-    }));
+    setConfig(prev => {
+      const currentSections = normalizeSections(prev.sections);
+      return {
+        ...prev,
+        sections: currentSections.map(sec =>
+          sec.id === sectionId ? { ...sec, enabled: !sec.enabled } : sec
+        )
+      };
+    });
   };
 
   const reorderSections = (newSectionsOrFrom: PageSection[] | number, toIndex?: number) => {
@@ -338,6 +417,11 @@ export const CmsProvider: React.FC<{ children: React.ReactNode }> = ({ children 
   const saveAndNotify = (sectionLabel?: string) => {
     try {
       localStorage.setItem(LOCAL_STORAGE_KEY, JSON.stringify(config));
+      fetch('/api/content', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ key: 'cms_config', config })
+      }).catch(() => {});
       const message = sectionLabel ? `¡${sectionLabel} guardado con éxito!` : '¡Cambios guardados con éxito!';
       setSaveNotification(message);
       setTimeout(() => setSaveNotification(null), 3500);

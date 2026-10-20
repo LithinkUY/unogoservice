@@ -563,7 +563,7 @@ export const AdminCMSModal: React.FC<AdminCMSModalProps> = ({ isOpen, onClose, p
         ? newClientDraft.priorities
         : ['Preventative Maintenance'],
       notes: newClientDraft.notes?.trim() || '',
-      status: newClientDraft.status === 'inactive' ? 'inactive' : 'active'
+      status: (newClientDraft.status === 'inactive' ? 'inactive' : 'active') as 'active' | 'inactive'
     };
 
     if (editingClientId) {
@@ -1318,7 +1318,7 @@ export const AdminCMSModal: React.FC<AdminCMSModalProps> = ({ isOpen, onClose, p
                             <div className="min-w-0 flex-1">
                               <div className="flex items-center gap-2 flex-wrap">
                                 <span className="font-bold text-sm text-[#0f2942] truncate">
-                                  {section.title}
+                                  {section.title || section.name}
                                 </span>
                                 {section.badge && (
                                   <span className="px-2 py-0.5 rounded-full text-[10px] font-extrabold bg-emerald-100 text-emerald-800 border border-emerald-300">
@@ -1346,7 +1346,7 @@ export const AdminCMSModal: React.FC<AdminCMSModalProps> = ({ isOpen, onClose, p
                                 checked={section.enabled}
                                 onChange={() => {
                                   toggleSection(section.id);
-                                  showToast(`Sección "${section.title}" ${section.enabled ? 'ocultada' : 'activada'}`);
+                                  showToast(`Sección "${section.title || section.name}" ${section.enabled ? 'ocultada' : 'activada'}`);
                                 }}
                                 className="w-4 h-4 accent-emerald-600 cursor-pointer"
                               />
@@ -2775,8 +2775,8 @@ export const AdminCMSModal: React.FC<AdminCMSModalProps> = ({ isOpen, onClose, p
             {/* ================= TAB 6: PLANES Y PRECIOS ================= */}
             {/* ================= TAB 9: TARJETAS DE PRECIOS ================= */}
             {activeTab === 'pricing' && (() => {
-              const pricingSection = config.sections.find(s => s.id === 'pricing');
-              const isPricingEnabled = pricingSection ? pricingSection.enabled : true;
+              const pricingSection = config.sections?.find(s => s.id === 'pricing');
+              const isPricingEnabled = pricingSection ? pricingSection.enabled !== false : true;
 
               return (
                 <div className="space-y-6 max-w-4xl">
@@ -2791,7 +2791,10 @@ export const AdminCMSModal: React.FC<AdminCMSModalProps> = ({ isOpen, onClose, p
                       </span>
                       <button
                         type="button"
-                        onClick={() => toggleSection('pricing')}
+                        onClick={() => {
+                          toggleSection('pricing');
+                          showToast(isPricingEnabled ? 'Tarjetas de precios desactivadas (ocultadas en web)' : 'Tarjetas de precios activadas (visibles en web)');
+                        }}
                         className={`w-12 h-6 rounded-full transition-colors relative cursor-pointer ${
                           isPricingEnabled ? 'bg-emerald-600' : 'bg-slate-300'
                         }`}
@@ -2943,8 +2946,8 @@ export const AdminCMSModal: React.FC<AdminCMSModalProps> = ({ isOpen, onClose, p
 
             {/* ================= TAB 10: CALCULADORA ESTIMADORA ================= */}
             {activeTab === 'calculator' && (() => {
-              const calcSection = config.sections.find(s => s.id === 'calculator');
-              const isCalcEnabled = calcSection ? calcSection.enabled : true;
+              const calcSection = config.sections?.find(s => s.id === 'calculator');
+              const isCalcEnabled = calcSection ? calcSection.enabled !== false : true;
               const calcConfig = config.content.calculator || {};
 
               return (
@@ -2962,7 +2965,10 @@ export const AdminCMSModal: React.FC<AdminCMSModalProps> = ({ isOpen, onClose, p
                       </span>
                       <button
                         type="button"
-                        onClick={() => toggleSection('calculator')}
+                        onClick={() => {
+                          toggleSection('calculator');
+                          showToast(isCalcEnabled ? 'Calculadora interactiva desactivada (ocultada en web)' : 'Calculadora interactiva activada (visible en web)');
+                        }}
                         className={`w-12 h-6 rounded-full transition-colors relative cursor-pointer ${
                           isCalcEnabled ? 'bg-emerald-600' : 'bg-slate-300'
                         }`}
