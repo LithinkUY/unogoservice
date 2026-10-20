@@ -172,18 +172,12 @@ export const CmsProvider: React.FC<{ children: React.ReactNode }> = ({ children 
   const [saveNotification, setSaveNotification] = useState<string | null>(null);
   const [dbSyncStatus, setDbSyncStatus] = useState<'synced' | 'local' | 'syncing'>('local');
 
-<<<<<<< HEAD
-  // Refs for Neon sync
+  // Refs para sincronización con Neon
   const syncTimeoutRef = useRef<any>(null);
   const isInitialLoadCompleteRef = useRef(false);
   const skipNextSyncRef = useRef(false);
-=======
-  // Refs for remote sync
-  const syncTimeoutRef = useRef<any>(null);
-  const isLoadingFromRemoteRef = useRef(false);
->>>>>>> 341280d (fix: correccion de toggle desactivar en precios y calculadora y persistencia de CMS en Vercel)
 
-  // Merge remote config with local defaults (safe merge)
+  // Merge remote config con defaults locales (merge seguro)
   const normalizeRemoteConfig = (parsed: any): SiteCMSConfig => ({
     ...DEFAULT_CMS_CONFIG,
     ...parsed,
@@ -200,58 +194,23 @@ export const CmsProvider: React.FC<{ children: React.ReactNode }> = ({ children 
     scheduleModal: { ...DEFAULT_CMS_CONFIG.scheduleModal, ...(parsed.scheduleModal || {}) }
   });
 
-<<<<<<< HEAD
-  // On mount: load config from Neon (overrides localStorage if remote is available)
+  // Al montar: carga config desde Neon (sobreescribe localStorage si está disponible)
   useEffect(() => {
     const loadFromDb = async () => {
-=======
-  // On mount: load config from cloud (Neon via /api/content, or Supabase fallback)
-  useEffect(() => {
-    let isMounted = true;
-
-    const loadRemoteConfig = async () => {
-      // 1. Try Neon Postgres via /api/content (primary for Vercel)
-      try {
-        const res = await fetch('/api/content?key=cms_config');
-        if (res.ok) {
-          const json = await res.json();
-          if (json?.success && json?.config && isMounted) {
-            isLoadingFromRemoteRef.current = true;
-            const normalized = normalizeRemoteConfig(json.config);
-            setConfig(normalized);
-            localStorage.setItem(LOCAL_STORAGE_KEY, JSON.stringify(normalized));
-            setDbSyncStatus('synced');
-            return;
-          }
-        }
-      } catch (e) {
-        console.warn('Neon /api/content load failed, trying fallback:', e);
-      }
-
-      // 2. Fallback to Supabase if available
->>>>>>> 341280d (fix: correccion de toggle desactivar en precios y calculadora y persistencia de CMS en Vercel)
       try {
         const response = await fetch('/api/config');
         const data = await response.json();
 
-<<<<<<< HEAD
         if (data.success && data.config) {
           skipNextSyncRef.current = true;
-          setConfig(normalizeRemoteConfig(data.config));
-          localStorage.setItem(LOCAL_STORAGE_KEY, JSON.stringify(data.config));
-=======
-        if (data?.config && !error && isMounted) {
-          isLoadingFromRemoteRef.current = true;
           const normalized = normalizeRemoteConfig(data.config);
           setConfig(normalized);
           localStorage.setItem(LOCAL_STORAGE_KEY, JSON.stringify(normalized));
->>>>>>> 341280d (fix: correccion de toggle desactivar en precios y calculadora y persistencia de CMS en Vercel)
           setDbSyncStatus('synced');
           return;
         }
       } catch (e) {
-<<<<<<< HEAD
-        console.warn('Neon DB load failed, using localStorage cache:', e);
+        console.warn('Neon DB load failed, usando localStorage:', e);
         setDbSyncStatus('local');
       } finally {
         isInitialLoadCompleteRef.current = true;
@@ -260,24 +219,7 @@ export const CmsProvider: React.FC<{ children: React.ReactNode }> = ({ children 
     loadFromDb();
   }, []); // eslint-disable-line react-hooks/exhaustive-deps
 
-  // Auto-save to localStorage AND Neon whenever config changes
-=======
-        // Supabase not available
-      }
-
-      if (isMounted) {
-        setDbSyncStatus(localStorage.getItem(LOCAL_STORAGE_KEY) ? 'local' : 'local');
-      }
-    };
-
-    loadRemoteConfig();
-
-    return () => {
-      isMounted = false;
-    };
-  }, []); // eslint-disable-line react-hooks/exhaustive-deps
-
-  // Auto-save to localStorage AND Neon whenever config changes
+  // Auto-save a localStorage Y Neon cuando config cambia
   useEffect(() => {
     try {
       localStorage.setItem(LOCAL_STORAGE_KEY, JSON.stringify(config));
